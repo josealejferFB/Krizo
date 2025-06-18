@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, Animated, Easing } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient'; // ¡Importa LinearGradient!
+import { LinearGradient } from 'expo-linear-gradient';
 import Logo from "../assets/logo.svg";
 
 export default function SplashScreen({ navigation }) {
@@ -38,7 +38,7 @@ export default function SplashScreen({ navigation }) {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [navigation]);
+  }, [navigation, fadeAnim, pulseAnim]);
 
   const animatedLogoStyle = {
     opacity: fadeAnim,
@@ -47,15 +47,14 @@ export default function SplashScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* El componente LinearGradient ocupa todo el fondo */}
       <LinearGradient
-        colors={['#FC5501', '#C24100']} // De FC5501 a C24100
-        start={{ x: 0, y: 1 }}           // Abajo a la izquierda (x=0, y=1)
-        end={{ x: 1, y: 0 }}             // Arriba a la derecha (x=1, y=0)
-        style={StyleSheet.absoluteFillObject} // Hace que ocupe todo el View padre
+        colors={['#FC5501', '#C24100']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 0 }}
+        style={StyleSheet.absoluteFillObject}
       />
 
-      {/* Contenido de la pantalla encima del degradado */}
+
 
       <Animated.View style={animatedLogoStyle}>
         <Logo width={200} height={200} />
@@ -72,6 +71,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // Ya no necesitamos backgroundColor aquí porque LinearGradient lo cubre
   },
 });

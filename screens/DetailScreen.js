@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { ThemedButton } from '../components/ThemedUIElements';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Nombre corregido aquí!
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
 
 export default function DetailScreen({ navigation }) {
   return (
-    <ThemedBackgroundGradient> {/* Usando el componente con el nombre correcto */}
+    <ThemedBackgroundGradient>
       <Text style={styles.title}>Esta es la pantalla de Detalles</Text>
       <ThemedButton
         onPress={() => navigation.goBack()}
@@ -24,6 +24,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#FFFFFF', // Texto blanco para que contraste
+    color: '#FFFFFF',
   },
 });

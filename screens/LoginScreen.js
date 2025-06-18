@@ -1,15 +1,15 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
+import { Text, TextInput } from 'react-native-paper'; // Asegúrate de que TextInput esté aquí para TextInput.Icon
 import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Nombre corregido aquí!
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
   return (
-    <ThemedBackgroundGradient> {/* Usando el componente con el nombre correcto */}
+    <ThemedBackgroundGradient>
       <Text style={styles.title}>¡Bienvenido! Inicia Sesión</Text>
 
       <ThemedInput
@@ -45,6 +45,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#FFFFFF', // Texto blanco para que contraste con el degradado
+    color: '#FFFFFF',
   },
 });
