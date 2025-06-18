@@ -1,66 +1,56 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-// ¡Importa los componentes directamente desde react-native-paper!
 import { Text, Button, TextInput } from 'react-native-paper';
+import BackgroundGradient from '../components/BackgroundGradient'; // ¡Importa el nuevo componente!
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
   return (
-    <View style={styles.container}>
-      {/* Usa el componente Text de Paper */}
+    <BackgroundGradient> {/* Envuelve tu contenido con el degradado */}
       <Text style={styles.title}>¡Bienvenido! Inicia Sesión</Text>
 
-      {/* Usa el componente TextInput de Paper */}
       <TextInput
-        label="Usuario" // El 'label' flota al escribir
+        label="Usuario"
         value={username}
         onChangeText={text => setUsername(text)}
-        mode="outlined" // Opciones: 'flat' (por defecto) o 'outlined'
+        mode="outlined"
         style={styles.input}
-        left={<TextInput.Icon icon="account" />} // Ejemplo de cómo añadir un ícono
+        left={<TextInput.Icon icon="account" />}
       />
       <TextInput
         label="Contraseña"
         value={password}
         onChangeText={text => setPassword(text)}
-        secureTextEntry // Para ocultar el texto
+        secureTextEntry
         mode="outlined"
         style={styles.input}
-        right={<TextInput.Icon icon="eye" onPress={() => console.log('Toggle password visibility')} />} // Ícono para visibilidad
+        right={<TextInput.Icon icon="eye" onPress={() => console.log('Toggle password visibility')} />}
       />
 
-      {/* Usa el componente Button de Paper */}
       <Button
-        mode="contained" // Opciones: 'text', 'outlined', 'contained'
+        mode="contained"
         onPress={() => {
           console.log('Usuario:', username, 'Contraseña:', password);
-          // Después de la lógica de autenticación, navega
           navigation.replace('Home');
         }}
         style={styles.button}
         labelStyle={styles.buttonLabel}
-        icon="login" // Ejemplo de cómo añadir un ícono al botón
+        icon="login"
       >
         Ingresar
       </Button>
-    </View>
+    </BackgroundGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20, // Añadir padding para los inputs no estén pegados a los bordes
-  },
+ 
   title: {
-    fontSize: 28, // Tamaño de fuente para el título
+    fontSize: 28,
     marginBottom: 30,
-    color: '#333',
+    color: '#FFFFFF', 
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -71,9 +61,9 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     width: '100%',
-    paddingVertical: 8, // Aumenta el padding para hacer el botón más alto
+    paddingVertical: 8,
   },
   buttonLabel: {
-    fontSize: 18, // Tamaño del texto dentro del botón
+    fontSize: 18,
   }
 });

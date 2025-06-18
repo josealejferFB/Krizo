@@ -1,7 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, Animated, Easing } from "react-native";
-import Logo from "../assets/logo.svg"; // Ajusta la ruta del logo
+import { LinearGradient } from 'expo-linear-gradient'; // ¡Importa LinearGradient!
+import Logo from "../assets/logo.svg";
 
 export default function SplashScreen({ navigation }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -32,13 +33,12 @@ export default function SplashScreen({ navigation }) {
       ),
     ]).start();
 
-    // Navega a la pantalla de Login después de 3 segundos
     const timer = setTimeout(() => {
-      navigation.replace('Login'); // Usamos 'replace' para que el usuario no pueda volver a la Splash Screen
-    }, 5000); // 3000 milisegundos = 3 segundos
+      navigation.replace('Login');
+    }, 3000);
 
-    return () => clearTimeout(timer); // Limpia el temporizador si el componente se desmonta
-  }, [navigation]); // El efecto se ejecuta cuando 'navigation' cambia (una vez al inicio)
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   const animatedLogoStyle = {
     opacity: fadeAnim,
@@ -47,9 +47,21 @@ export default function SplashScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {/* El componente LinearGradient ocupa todo el fondo */}
+      <LinearGradient
+        colors={['#FC5501', '#C24100']} // De FC5501 a C24100
+        start={{ x: 0, y: 1 }}           // Abajo a la izquierda (x=0, y=1)
+        end={{ x: 1, y: 0 }}             // Arriba a la derecha (x=1, y=0)
+        style={StyleSheet.absoluteFillObject} // Hace que ocupe todo el View padre
+      />
+
+      {/* Contenido de la pantalla encima del degradado */}
+
       <Animated.View style={animatedLogoStyle}>
         <Logo width={200} height={200} />
       </Animated.View>
+
+
       <StatusBar style="auto" />
     </View>
   );
@@ -58,8 +70,8 @@ export default function SplashScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f25101",
     alignItems: "center",
     justifyContent: "center",
+    // Ya no necesitamos backgroundColor aquí porque LinearGradient lo cubre
   },
 });
