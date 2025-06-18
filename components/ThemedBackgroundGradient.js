@@ -1,22 +1,15 @@
+// components/ThemedBackgroundGradient.js
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from 'react-native-paper'; // Importamos useTheme de react-native-paper
 
 const ThemedBackgroundGradient = ({ children }) => {
-  const theme = useTheme(); // Obtenemos el tema actual (claro u oscuro)
-
-  // Definimos los colores del degradado según el tema
-  const gradientColors = theme.dark // 'theme.dark' es true si es modo oscuro
-    ? ['#FC5501', '#C24100'] // Colores para el modo oscuro (ejemplo: morado oscuro a rojo oscuro)
-    : ['#FC5501', '#C24100']; // Tus colores originales para el modo claro
-
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={gradientColors} // Usamos los colores definidos dinámicamente
-        start={{ x: 0, y: 1 }}
-        end={{ x: 1, y: 0 }}
+        colors={['#FC5501', '#C24100']} // Colores fijos para el degradado
+        start={{ x: 0, y: 1 }}           // Abajo a la izquierda
+        end={{ x: 1, y: 0 }}             // Arriba a la derecha
         style={StyleSheet.absoluteFillObject}
       />
       <View style={styles.content}>
@@ -37,4 +30,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ThemedBackgroundGradient; // Exportamos el nuevo nombre
+export default ThemedBackgroundGradient;

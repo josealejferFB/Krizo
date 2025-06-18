@@ -1,26 +1,29 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Importa el nuevo componente!
+import { StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
+import { ThemedButton } from '../components/ThemedUIElements';
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Nombre corregido aquí!
 
 export default function HomeScreen({ navigation }) {
   return (
-    <ThemedBackgroundGradient> {/* Envuelve tu contenido con el degradado */}
+    <ThemedBackgroundGradient> {/* Usando el componente con el nombre correcto */}
       <Text style={styles.title}>¡Estás en la pantalla principal!</Text>
-      <Button
-        title="Ir a Detalles"
+      <ThemedButton
         onPress={() => navigation.navigate('Details')}
-        color="#FFFFFF" // Color del texto del botón para que contraste
-      />
+        mode="outlined"
+      >
+        Ir a Detalles
+      </ThemedButton>
     </ThemedBackgroundGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  // Similar al LoginScreen, el container base no necesita fondo ni flex aquí.
   title: {
     fontSize: 30,
     marginBottom: 20,
-    color: '#FFFFFF', // ¡Cambia el color del texto a blanco!
+    fontWeight: 'bold',
     textAlign: 'center',
+    color: '#FFFFFF', // Texto blanco para que contraste
   },
 });

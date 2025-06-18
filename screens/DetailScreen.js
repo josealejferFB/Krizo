@@ -1,17 +1,19 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native'; // Asegúrate de importar View si vas a usarlo internamente
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // Importa el componente de degradado
+import { StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
+import { ThemedButton } from '../components/ThemedUIElements';
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Nombre corregido aquí!
 
 export default function DetailScreen({ navigation }) {
   return (
-    // ¡Aquí está el cambio clave! El BackgroundGradient es ahora el elemento raíz.
-    <ThemedBackgroundGradient>
+    <ThemedBackgroundGradient> {/* Usando el componente con el nombre correcto */}
       <Text style={styles.title}>Esta es la pantalla de Detalles</Text>
-      <Button
-        title="Volver a Inicio"
+      <ThemedButton
         onPress={() => navigation.goBack()}
-        color="#FFFFFF" // Color del texto del botón para que contraste
-      />
+        mode="text"
+      >
+        Volver a Inicio
+      </ThemedButton>
     </ThemedBackgroundGradient>
   );
 }
@@ -20,9 +22,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     marginBottom: 20,
-    color: '#FFFFFF', // El color blanco es ideal para el degradado
+    fontWeight: 'bold',
     textAlign: 'center',
+    color: '#FFFFFF', // Texto blanco para que contraste
   },
-  // Si tienes más estilos para elementos específicos dentro de DetailScreen, agrégalos aquí.
-  // El 'container' que tenías antes ya no es necesario aquí porque BackgroundGradient maneja el fondo.
 });

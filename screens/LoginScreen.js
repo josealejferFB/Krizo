@@ -1,49 +1,40 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Text, Button, TextInput, useTheme } from 'react-native-paper';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Cambia la importación!
+import { StyleSheet } from 'react-native';
+import { Text, TextInput } from 'react-native-paper';
+import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Nombre corregido aquí!
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const theme = useTheme();
-
-  const textColor = theme.colors.onSurface; // Usa colores del tema de Paper
 
   return (
-    <ThemedBackgroundGradient> {/* ¡Usa el nuevo componente! */}
-      <Text style={[styles.title, { color: textColor }]}>¡Bienvenido! Inicia Sesión</Text>
+    <ThemedBackgroundGradient> {/* Usando el componente con el nombre correcto */}
+      <Text style={styles.title}>¡Bienvenido! Inicia Sesión</Text>
 
-      <TextInput
+      <ThemedInput
         label="Usuario"
         value={username}
-        onChangeText={text => setUsername(text)}
-        mode="outlined"
-        style={styles.input}
+        onChangeText={setUsername}
         left={<TextInput.Icon icon="account" />}
       />
-      <TextInput
+      <ThemedInput
         label="Contraseña"
         value={password}
-        onChangeText={text => setPassword(text)}
+        onChangeText={setPassword}
         secureTextEntry
-        mode="outlined"
-        style={styles.input}
         right={<TextInput.Icon icon="eye" onPress={() => console.log('Toggle password visibility')} />}
       />
 
-      <Button
-        mode="contained"
+      <ThemedButton
         onPress={() => {
           console.log('Usuario:', username, 'Contraseña:', password);
           navigation.replace('Home');
         }}
-        style={styles.button}
-        labelStyle={styles.buttonLabel}
         icon="login"
       >
         Ingresar
-      </Button>
+      </ThemedButton>
     </ThemedBackgroundGradient>
   );
 }
@@ -54,17 +45,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#FFFFFF', // Texto blanco para que contraste con el degradado
   },
-  input: {
-    width: '100%',
-    marginBottom: 15,
-  },
-  button: {
-    marginTop: 20,
-    width: '100%',
-    paddingVertical: 8,
-  },
-  buttonLabel: {
-    fontSize: 18,
-  }
 });
