@@ -26,17 +26,17 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={{ title: 'Iniciar Sesión' }}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={{ title: 'Principal' }}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Details"
             component={DetailScreen}
-            options={{ title: 'Detalles' }}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
