@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import BackgroundGradient from '../components/BackgroundGradient'; // ¡Importa el nuevo componente!
+import BackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Importa el nuevo componente!
 
 export default function HomeScreen({ navigation }) {
   return (

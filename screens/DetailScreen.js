@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native'; // Asegúrate de importar View si vas a usarlo internamente
-import BackgroundGradient from '../components/BackgroundGradient'; // Importa el componente de degradado
+import BackgroundGradient from '../components/ThemedBackgroundGradient'; // Importa el componente de degradado
 
 export default function DetailScreen({ navigation }) {
   return (
