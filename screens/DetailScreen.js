@@ -4,8 +4,8 @@ import BackgroundGradient from '../components/BackgroundGradient'; // ¡Importa 
 
 export default function DetailScreen({ navigation }) {
   return (
-    <BackgroundGradient> {/* Envuelve tu contenido con el degradado */}
-      <Text style={styles.title}>Esta es la pantalla de Detalles</Text>
+    <View style={styles.container}>
+      <Text style={{ fontSize: 30, marginBottom: 20 }}>Esta es la pantalla de Detalles</Text>
       <Button
         title="Volver a Inicio"
         onPress={() => navigation.goBack()}
