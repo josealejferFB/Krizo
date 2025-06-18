@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import BackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Importa el nuevo componente!
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // ¡Importa el nuevo componente!
 
 export default function HomeScreen({ navigation }) {
   return (
-    <BackgroundGradient> {/* Envuelve tu contenido con el degradado */}
+    <ThemedBackgroundGradient> {/* Envuelve tu contenido con el degradado */}
       <Text style={styles.title}>¡Estás en la pantalla principal!</Text>
       <Button
         title="Ir a Detalles"
         onPress={() => navigation.navigate('Details')}
         color="#FFFFFF" // Color del texto del botón para que contraste
       />
-    </BackgroundGradient>
+    </ThemedBackgroundGradient>
   );
 }
 

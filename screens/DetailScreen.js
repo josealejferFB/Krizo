@@ -1,18 +1,18 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native'; // Asegúrate de importar View si vas a usarlo internamente
-import BackgroundGradient from '../components/ThemedBackgroundGradient'; // Importa el componente de degradado
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // Importa el componente de degradado
 
 export default function DetailScreen({ navigation }) {
   return (
     // ¡Aquí está el cambio clave! El BackgroundGradient es ahora el elemento raíz.
-    <BackgroundGradient>
+    <ThemedBackgroundGradient>
       <Text style={styles.title}>Esta es la pantalla de Detalles</Text>
       <Button
         title="Volver a Inicio"
         onPress={() => navigation.goBack()}
         color="#FFFFFF" // Color del texto del botón para que contraste
       />
-    </BackgroundGradient>
+    </ThemedBackgroundGradient>
   );
 }
 
