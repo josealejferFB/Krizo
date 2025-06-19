@@ -2,8 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // ¡Importa PaperProvider desde react-native-paper!
-import { PaperProvider } from 'react-native-paper';
-
+import { PaperProvider, Surface, Text } from 'react-native-paper';
 // Importa tus pantallas
 import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
