@@ -10,7 +10,7 @@ export default function DetailScreen({ navigation }) {
       <Text style={styles.title}>Esta es la pantalla de Detalles</Text>
       <ThemedButton
         onPress={() => navigation.goBack()}
-        mode="text"
+        mode="contained"
       >
         Volver a Inicio
       </ThemedButton>

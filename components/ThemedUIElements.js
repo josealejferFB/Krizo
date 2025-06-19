@@ -17,6 +17,8 @@ export const ThemedInput = ({ label, value, onChangeText, secureTextEntry, style
       placeholder: '#877063',
       text: '#262525',
       primary: '#262525',
+      onSurfaceVariant: '#262525',
+      onSurface: '#262525',
     },
     roundness: 12,
   };
@@ -39,9 +41,17 @@ export const ThemedInput = ({ label, value, onChangeText, secureTextEntry, style
 };
 
 export const ThemedButton = ({ children, onPress, mode = "contained", icon, style, labelStyle, ...rest }) => {
-  const defaultButtonColors = {
-    backgroundColor: '#FC5501',
-    color: '#FFFFFF',
+  const baseBackgroundColor = '#262525';
+  const pressedBackgroundColor = '#3a3a3a'; 
+  const textColor = '#FFFFFF';
+
+  const buttonTheme = {
+    colors: {
+      primary: baseBackgroundColor, // Color base para el botón contenido
+      onPrimary: textColor, // Color del texto del botón
+
+    },
+    roundness: 20, // Border radius de 20 para el tema del botón
   };
 
   return (
@@ -49,15 +59,19 @@ export const ThemedButton = ({ children, onPress, mode = "contained", icon, styl
       mode={mode}
       onPress={onPress}
       icon={icon}
+      theme={buttonTheme} 
+      buttonColor={baseBackgroundColor} // Aseguramos el color de fondo base
+     
+      contentStyle={{ height: 55 }}
       style={[
-        { width: '100%', paddingVertical: 8, marginTop: 20 },
-        { backgroundColor: defaultButtonColors.backgroundColor },
+        { width: 300, marginTop: 20, borderRadius: 20 }, 
         style,
       ]}
       labelStyle={[
-        { fontSize: 18, color: defaultButtonColors.color },
+        { fontSize: 18, color: textColor },
         labelStyle,
       ]}
+     
       {...rest}
     >
       {children}
