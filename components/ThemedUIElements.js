@@ -7,7 +7,8 @@ export const ThemedInput = ({ label, value, onChangeText, secureTextEntry, style
     width: 300,
     height: 55,
     marginBottom: 15,
-    textAlign: 'center',
+    // Aquí cambiamos 'center' por 'left'
+    textAlign: 'left', // <-- ¡Este es el cambio clave!
     borderRadius: 12,
     backgroundColor: '#F5F2F0',
   };
