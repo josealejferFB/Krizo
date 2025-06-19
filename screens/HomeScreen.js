@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native'; // View y StyleSheet de react-native
-import { Text, Divider } from 'react-native-paper'; // Text y Divider de react-native-paper
+import { View, StyleSheet } from 'react-native';
+import { Text, Divider } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Logo from "../assets/logo.svg"; 
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient'; // Importa tu componente de gradiente
+import { LinearGradient } from 'expo-linear-gradient';
+import Logo from "../assets/logo.svg"; // Ruta exacta confirmada
 
 export default function HomeScreen({ navigation }) {
   const menuOptions = [
@@ -16,49 +16,59 @@ export default function HomeScreen({ navigation }) {
   ];
 
   return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#FC5501', '#C24100']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
 
-    <ThemedBackgroundGradient> 
-      {/* ENCABEZADO SOLO CON LOGO SVG */}
-      <View style={styles.logoContainer}>
-        <Logo 
-          width={200} 
-          height={80} 
-          preserveAspectRatio="xMidYMid meet"
-        />
-      </View>
+      <View style={styles.content}>
+        {/* ENCABEZADO SOLO CON LOGO SVG */}
+        <View style={styles.logoContainer}>
+          <Logo 
+            width={200} 
+            height={80} 
+            preserveAspectRatio="xMidYMid meet"
+          />
+        </View>
 
-      {/* MENÚ DE OPCIONES */}
-      <View style={styles.menuContainer}>
-        {menuOptions.map((item, index) => (
-          <React.Fragment key={item.screen}>
-            <View style={styles.menuItem}>
-              <MaterialCommunityIcons 
-                name={item.icon} 
-                size={26} 
-                color="white" 
-                onPress={() => navigation.navigate(item.screen)}
-              />
-              <Text 
-                style={styles.menuText}
-                onPress={() => navigation.navigate(item.screen)}
-              >
-                {item.title}
-              </Text>
-            </View>
-            {index < menuOptions.length - 1 && <Divider style={styles.divider} />}
-          </React.Fragment>
-        ))}
+        {/* MENÚ DE OPCIONES */}
+        <View style={styles.menuContainer}>
+          {menuOptions.map((item, index) => (
+            <React.Fragment key={item.screen}>
+              <View style={styles.menuItem}>
+                <MaterialCommunityIcons 
+                  name={item.icon} 
+                  size={26} 
+                  color="white" 
+                  onPress={() => navigation.navigate(item.screen)}
+                />
+                <Text 
+                  style={styles.menuText}
+                  onPress={() => navigation.navigate(item.screen)}
+                >
+                  {item.title}
+                </Text>
+              </View>
+              {index < menuOptions.length - 1 && <Divider style={styles.divider} />}
+            </React.Fragment>
+          ))}
+        </View>
       </View>
-    </ThemedBackgroundGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+  },
   content: {
-    flex: 1, 
+    flex: 1,
     padding: 20,
-
+    justifyContent: 'center',
   },
   logoContainer: {
     alignItems: 'center',
