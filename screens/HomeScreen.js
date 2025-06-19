@@ -10,7 +10,7 @@ export default function HomeScreen({ navigation }) {
       <Text style={styles.title}>¡Estás en la pantalla principal!</Text>
       <ThemedButton
         onPress={() => navigation.navigate('Details')}
-        mode="contained"
+        mode="outlined"
       >
         Ir a Detalles
       </ThemedButton>
