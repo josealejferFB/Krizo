@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native'; // Asegúrate de que View esté aquí y Text NO
-import { Text, TextInput } from 'react-native-paper'; // ¡Asegúrate que Text se importa de react-native-paper!
+import { StyleSheet, View } from 'react-native'; // Se quita Image si ya no se usa directamente aquí
+import { Text, TextInput } from 'react-native-paper';
 import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
-import Logo from "../assets/logo.svg";
+import Logo from "../assets/logo.svg"; // ¡Descomentado y usando logo.svg!
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = React.useState('');
@@ -13,6 +13,7 @@ export default function LoginScreen({ navigation }) {
     <ThemedBackgroundGradient>
       {/* Logo en la parte superior central */}
       <View style={styles.logoContainer}>
+        {/* Cambiado para usar el componente Logo importado directamente para SVG */}
         <Logo width={150} height={150} />
       </View>
 
@@ -54,6 +55,20 @@ export default function LoginScreen({ navigation }) {
       >
         Ingresar como KrizoWorker
       </ThemedButton>
+
+      {/* NUEVO: Botón para Registrarse */}
+      <ThemedButton
+        onPress={() => {
+          console.log('Navegando a Registro');
+          navigation.navigate('Registration'); // Navega a la pantalla de Registro
+        }}
+        style={styles.registerButton}
+        labelStyle={styles.registerButtonLabel}
+        mode="text" // Puedes usar 'text' para que sea un enlace, o 'outlined'
+      >
+        ¿No tienes cuenta? Regístrate
+      </ThemedButton>
+
     </ThemedBackgroundGradient>
   );
 }
@@ -61,6 +76,13 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   logoContainer: {
     marginBottom: 20,
+    alignItems: 'center', // Centra el logo si es más pequeño que el contenedor
+    justifyContent: 'center',
+  },
+  logo: { // ESTILO PARA EL LOGO SVG (Nota: los estilos de Image como width/height/resizeMode se aplican directamente al componente SVG)
+    width: 150, // O el tamaño que necesites para tu logo
+    height: 150,
+    // resizeMode: 'contain', // No aplica directamente a SVG de esta forma, se maneja con width/height
   },
   title: {
     fontSize: 28,
@@ -79,5 +101,12 @@ const styles = StyleSheet.create({
     color: '#FC5501',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  registerButton: {
+    marginTop: 20,
+  },
+  registerButtonLabel: {
+    color: '#FFFFFF',
+    fontSize: 16,
   }
 });

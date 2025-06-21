@@ -2,19 +2,20 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Importa PaperProvider desde react-native-paper
-import { PaperProvider, Surface, Text } from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper'; // Quitamos Surface y Text ya que no se usan directamente aquí
 // Importa tus pantallas
 import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
-import ServicesScreen from './screens/ServicesScreen'; // ¡IMPORTACIÓN CORREGIDA!
+import ServicesScreen from './screens/ServicesScreen'; // Tu pantalla de servicios
+import RegistrationScreen from './screens/RegistrationScreen'; // ¡NUEVA PANTALLA DE REGISTRO!
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    // <PaperProvider> debe envolver todo el contenido de tu aplicación
+    // PaperProvider debe envolver todo el contenido de tu aplicación
     <PaperProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
@@ -28,6 +29,12 @@ export default function App() {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
+          {/* ¡Aquí se añade la pantalla de REGISTRO! */}
+          <Stack.Screen
+            name="Registration" // Nombre de la ruta para la pantalla de registro
+            component={RegistrationScreen}
+            options={{ headerShown: false }} // La pantalla de registro tiene su propia AppBar
+          />
           <Stack.Screen
             name="Home"
             component={HomeScreen}
@@ -38,11 +45,10 @@ export default function App() {
             component={DetailScreen}
             options={{ headerShown: false }}
           />
-          {/* Aquí se añade la pantalla de Servicios */}
           <Stack.Screen
-            name="Services" // Este 'name' debe coincidir con el 'screen' en tu menuOptions
-            component={ServicesScreen} // ¡NOMBRE DEL COMPONENTE CORREGIDO!
-            options={{ headerShown: false }} // Ajusta esto si quieres que tenga un encabezado
+            name="Services"
+            component={ServicesScreen}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
