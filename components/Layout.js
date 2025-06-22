@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Surface, Text, Divider } from 'react-native-paper'; // Importa Surface y Text de Paper
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Surface, Text, Divider } from 'react-native-paper'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { 
@@ -9,50 +10,68 @@ import Animated, {
   withTiming,
   Easing
 } from 'react-native-reanimated';
-import { TapGestureHandler } from 'react-native-gesture-handler'; // Asegúrate de que gesture-handler esté bien instalado
-import Logo from "../assets/logo.svg"; // Ruta exacta confirmada y configuración SVG en metro.config.js
+
+// ¡IMPORTANTE! Importa GestureHandlerRootView, Gesture y GestureDetector
+import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler'; 
+
+// Asegúrate de que esta ruta sea correcta y que el SVG esté configurado en metro.config.js
+import Logo from "../assets/logo.svg"; 
 
 export default function Layout({ children, navigation }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const menuPosition = useSharedValue(-300); // Inicialmente oculto (izquierda)
+  const menuPosition = useSharedValue(-300); // Posición inicial del menú (oculto a la izquierda)
 
+  // Opciones del menú lateral.
+  // IMPORTANTE: 'screen' debe coincidir con el 'name' de las Stack.Screen en App.js
   const menuOptions = [
     { title: 'Inicio', icon: 'home', screen: 'Home' },
     { title: 'Servicios', icon: 'tools', screen: 'Services' },
-    { title: 'Mi Perfil', icon: 'account', screen: 'Details' }, // Usamos 'Details' como ruta genérica
+    { title: 'Mi Perfil', icon: 'account', screen: 'Details' }, // Usamos 'Details' como ruta genérica por ahora
     { title: 'Billetera', icon: 'wallet', screen: 'Details' },
     { title: 'Promociones', icon: 'tag', screen: 'Details' },
     { title: 'Ajustes', icon: 'cog', screen: 'Details' },
     { title: 'Cerrar Sesión', icon: 'logout', action: () => {
-        // Al cerrar sesión, navega a la pantalla de Login
-        navigation.navigate('Login'); // Navega a la ruta 'Login' definida en App.js
+        navigation.navigate('Login'); // Navega a la pantalla de Login
         toggleMenu(); // Cierra el menú después de la acción
       }
     },
   ];
 
+  // Estilo animado para el menú lateral
   const menuAnimation = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: menuPosition.value }],
     };
   });
 
+  // Función para abrir y cerrar el menú
   const toggleMenu = () => {
-    setIsMenuVisible(prev => !prev); // Usa la función de actualización de estado
+    setIsMenuVisible(prev => !prev); 
     menuPosition.value = withTiming(
-      isMenuVisible ? -300 : 0, // Si está visible, oculta; si no, muestra
+      isMenuVisible ? -300 : 0, // Si está visible, oculta (-300); si no, muestra (0)
       { duration: 300, easing: Easing.inOut(Easing.ease) }
     );
   };
 
+  // Define el gesto de tap para cerrar el menú al tocar fuera
+  const tapGesture = Gesture.Tap()
+    .onStart(() => {
+      // Solo si el menú está visible, ejecuta el toggle
+      if (isMenuVisible) {
+        toggleMenu();
+      }
+    });
+
   return (
-    <View style={styles.container}>
+    // GestureHandlerRootView DEBE envolver todo el contenido que usa gestos
+    <GestureHandlerRootView style={{ flex: 1 }}> 
+      {/* Gradiente de fondo que cubre toda la pantalla */}
       <LinearGradient
         colors={['#FC5501', '#C24100']}
         style={StyleSheet.absoluteFillObject}
       />
 
-      {/* Botón de hamburguesa */}
+      {/* Botón de hamburguesa para abrir el menú */}
       <TouchableOpacity 
         style={styles.menuButton} 
         onPress={toggleMenu}
@@ -60,80 +79,92 @@ export default function Layout({ children, navigation }) {
         <MaterialCommunityIcons name="menu" size={32} color="white" />
       </TouchableOpacity>
 
+      {/* Overlay para detectar taps fuera del menú y cerrarlo */}
+      {/* Solo se renderiza si el menú está visible */}
+      {isMenuVisible && ( 
+        <GestureDetector gesture={tapGesture}>
+          {/* El View 'overlay' ocupa todo el espacio de la pantalla detrás del menú */}
+          <View style={styles.overlay} /> 
+        </GestureDetector>
+      )}
+      
       {/* Menú lateral animado */}
-      {/* TapGestureHandler envuelve el menú para cerrar al tocar fuera */}
-      <TapGestureHandler onActivated={toggleMenu} enabled={isMenuVisible}>
-        <Animated.View style={[styles.menuContainer, menuAnimation]}>
-          <Surface style={styles.menuSurface} elevation={5}>
-            {/* Header del menú con Logo */}
-            <View style={styles.drawerHeader}>
-              <Logo width={100} height={100} />
-              <Text style={styles.drawerHeaderText}>Menú de Usuario</Text>
-            </View>
-            <Divider style={styles.divider} />
+      <Animated.View style={[styles.menuContainer, menuAnimation]}>
+        <Surface style={styles.menuSurface} elevation={5}>
+          {/* Encabezado del menú con el logo */}
+          <View style={styles.drawerHeader}>
+            <Logo width={100} height={100} />
+            <Text style={styles.drawerHeaderText}>Menú Krizo</Text>
+          </View>
+          <Divider style={styles.divider} />
 
-            {menuOptions.map((item, index) => (
-              <React.Fragment key={item.screen || item.title}> {/* Key más robusta */}
-                <TouchableOpacity 
-                  style={styles.menuItem}
-                  onPress={() => {
-                    if (item.action) {
-                      item.action(); // Ejecuta la acción si existe (ej. Cerrar Sesión)
-                    } else {
-                      navigation.navigate(item.screen); // Navega a la pantalla
-                      toggleMenu(); // Cierra el menú después de navegar
-                    }
-                  }}
-                >
-                  <MaterialCommunityIcons 
-                    name={item.icon} 
-                    size={26} 
-                    color="white" 
-                  />
-                  <Text style={styles.menuText}>
-                    {item.title}
-                  </Text>
-                </TouchableOpacity>
-                {/* Añadir un divisor después de "Ajustes" para agrupar "Cerrar Sesión" */}
-                {item.title === 'Ajustes' && <Divider style={styles.divider} />}
-              </React.Fragment>
-            ))}
-          </Surface>
-        </Animated.View>
-      </TapGestureHandler>
+          {/* Renderizado de las opciones del menú */}
+          {menuOptions.map((item, index) => (
+            // IMPORTANTE: Usamos el 'index' como key para asegurar unicidad
+            <React.Fragment key={index}> 
+              <TouchableOpacity 
+                style={styles.menuItem}
+                onPress={() => {
+                  if (item.action) {
+                    item.action(); 
+                  } else {
+                    navigation.navigate(item.screen); 
+                    toggleMenu(); 
+                  }
+                }}
+              >
+                <MaterialCommunityIcons 
+                  name={item.icon} 
+                  size={26} 
+                  color="white" 
+                />
+                <Text style={styles.menuText}>
+                  {item.title}
+                </Text>
+              </TouchableOpacity>
+              {/* Agrega un divisor después de "Ajustes" */}
+              {item.title === 'Ajustes' && <Divider style={styles.divider} />}
+            </React.Fragment>
+          ))}
+        </Surface>
+      </Animated.View>
 
-      {/* Contenido principal de la pantalla, pasado como children */}
+      {/* Contenido principal de la pantalla, que son los 'children' pasados al Layout */}
       <View style={styles.content}>
-        {children} {/* Aquí se renderiza el contenido de la pantalla real */}
+        {children} 
       </View>
-    </View>
+    </GestureHandlerRootView> 
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // No background color here, as LinearGradient will cover it
   },
   menuButton: {
     position: 'absolute',
     top: 40,
     left: 20,
-    zIndex: 100, // Asegura que el botón esté por encima del contenido
+    zIndex: 100, 
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'transparent', // Puedes cambiar a 'rgba(0,0,0,0.5)' para un efecto de sombra al abrir el menú
+    zIndex: 80, // Debe ser menor que el zIndex del menú (90)
   },
   menuContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: 300, // Ancho del menú
+    width: 300, 
     height: '100%',
-    zIndex: 90, // Por debajo del botón, pero por encima del contenido
+    zIndex: 90, 
   },
   menuSurface: {
     flex: 1,
-    backgroundColor: '#C24100', // Color del fondo del menú
+    backgroundColor: '#C24100', 
     padding: 20,
-    paddingTop: 80, // Espacio para la barra de estado y el logo/título
+    paddingTop: 80, 
   },
   drawerHeader: {
     padding: 20,
@@ -148,9 +179,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    // Esto es importante para que el contenido de la pantalla no se superponga con el botón de menú
-    paddingTop: 80, // Ajusta esto según la posición de tu botón o si añades una barra superior
-    paddingHorizontal: 20, // Padding lateral para el contenido
+    // Este paddingTop es importante para que el contenido no se superponga con el botón del menú
+    paddingTop: 80, 
+    paddingHorizontal: 20, 
   },
   menuItem: {
     flexDirection: 'row',
@@ -165,9 +196,9 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   divider: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)', 
     height: 1,
     marginVertical: 10,
-    marginLeft: 46, // Alinea el divisor con el texto del menú
+    marginLeft: 46, 
   },
 });
