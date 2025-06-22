@@ -1,21 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// Importa PaperProvider desde react-native-paper
-import { PaperProvider } from 'react-native-paper'; // Quitamos Surface y Text ya que no se usan directamente aquí
+import { PaperProvider } from 'react-native-paper'; 
+
 // Importa tus pantallas
 import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
-import ServicesScreen from './screens/ServicesScreen'; // Tu pantalla de servicios
-import RegistrationScreen from './screens/RegistrationScreen'; // ¡NUEVA PANTALLA DE REGISTRO!
+import ServicesScreen from './screens/ServicesScreen';
+import RegistrationScreen from './screens/RegistrationScreen'; 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    // PaperProvider debe envolver todo el contenido de tu aplicación
     <PaperProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
@@ -29,25 +28,24 @@ export default function App() {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
-          {/* ¡Aquí se añade la pantalla de REGISTRO! */}
           <Stack.Screen
-            name="Registration" // Nombre de la ruta para la pantalla de registro
+            name="Registration"
             component={RegistrationScreen}
-            options={{ headerShown: false }} // La pantalla de registro tiene su propia AppBar
+            options={{ headerShown: false }} 
           />
           <Stack.Screen
             name="Home"
-            component={HomeScreen}
+            component={HomeScreen} // HomeScreen ahora se encargará de su propio Layout
             options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Details"
-            component={DetailScreen}
+            component={DetailScreen} // Si esta necesita Layout, lo importará
             options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Services"
-            component={ServicesScreen}
+            component={ServicesScreen} // Si esta necesita Layout, lo importará
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
