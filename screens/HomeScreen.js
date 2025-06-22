@@ -3,35 +3,36 @@ import { View, StyleSheet, Dimensions, TouchableOpacity, Image, StatusBar } from
 import { Text, Card, Title, Paragraph } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Carousel from 'react-native-reanimated-carousel';
+import { LinearGradient } from 'expo-linear-gradient'; // Importar LinearGradient
 
 // Importa tu componente Layout que envuelve esta pantalla
 import Layout from '../components/Layout.js';
 
-const { width: viewportWidth } = Dimensions.get('window'); // Obtener el ancho de la ventana del dispositivo
+const { width: viewportWidth } = Dimensions.get('window');
 
 // --- Datos para las tarjetas del carrusel ---
 const carouselData = [
   {
     id: '1',
-    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
+    image: require('../assets/card_image_4.png'),
     title: 'Reparaciones del Hogar',
     description: 'Soluciones rápidas para el mantenimiento de tu casa.',
   },
   {
     id: '2',
-    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
+    image: require('../assets/card_image_4.png'),
     title: 'Mantenimiento de Jardines',
     description: 'Servicios de jardinería profesional a tu alcance.',
   },
   {
     id: '3',
-    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
+    image: require('../assets/card_image_4.png'),
     title: 'Servicios de Limpieza',
     description: 'Limpieza profunda para tu hogar u oficina.',
   },
   {
     id: '4',
-    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
+    image: require('../assets/card_image_4.png'),
     title: 'Asistencia Vial Profesional',
     description: 'Ayuda inmediata en carretera para cualquier emergencia.',
   },
@@ -50,7 +51,6 @@ export default function HomeScreen({ navigation }) {
   const carouselRef = useRef(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
 
-  // Función para renderizar cada tarjeta del carrusel
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Image source={item.image} style={styles.cardImage} />
@@ -61,7 +61,6 @@ export default function HomeScreen({ navigation }) {
     </Card>
   );
 
-  // Funciones para navegar en el carrusel con los botones de flecha
   const goToNextPage = () => {
     if (carouselRef.current) {
       carouselRef.current.next();
@@ -74,7 +73,6 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  // Función para manejar el cierre de sesión
   const handleLogout = () => {
     navigation.navigate('Login'); // Redirige a la pantalla de Login
   };
@@ -106,8 +104,9 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.carouselSection}>
           <Text style={styles.sectionTitle}>Nuestros Servicios</Text>
           <View style={styles.carouselWrapper}>
+            {/* Flechas del Carrusel ahora en color blanco */}
             <TouchableOpacity onPress={goToPrevPage} style={styles.arrowButton}>
-              <MaterialCommunityIcons name="chevron-left-circle" size={35} color="#262525" />
+              <MaterialCommunityIcons name="chevron-left-circle" size={35} color="white" /> 
             </TouchableOpacity>
 
             <Carousel
@@ -124,28 +123,34 @@ export default function HomeScreen({ navigation }) {
             />
 
             <TouchableOpacity onPress={goToNextPage} style={styles.arrowButton}>
-              <MaterialCommunityIcons name="chevron-right-circle" size={35} color="#262525" />
+              <MaterialCommunityIcons name="chevron-right-circle" size={35} color="white" /> 
             </TouchableOpacity>
           </View>
 
-          {/* Indicadores de Paginación (puntos debajo del carrusel) */}
+          {/* Indicadores de Paginación (puntos debajo del carrusel) ahora en blanco */}
           <View style={styles.paginationDots}>
             {carouselData.map((_, index) => (
               <View
                 key={index}
                 style={[
                   styles.dot,
-                  { opacity: index === currentCarouselIndex % carouselData.length ? 1 : 0.4 },
+                  { opacity: index === currentCarouselIndex % carouselData.length ? 1 : 0.4, backgroundColor: 'white' }, // Puntos en blanco
                 ]}
               />
             ))}
           </View>
         </View>
 
-        {/* Nueva Sección: Información de Mi Vehículo */}
+        {/* Nueva Sección: Información de Mi Vehículo con degradado */}
         <View style={styles.vehicleInfoSection}>
           <Text style={styles.sectionTitle}>Mi Vehículo</Text>
-          <View style={styles.infoCard}>
+          {/* Usamos LinearGradient como fondo de la tarjeta de información */}
+          <LinearGradient
+            colors={['#FF8C00', '#FF4500']} // De naranja a naranja oscuro/rojo anaranjado
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.infoCardGradient} // Nuevo estilo para el gradiente
+          >
             <MaterialCommunityIcons name="car" size={35} color="white" style={styles.carIcon} />
             <View style={styles.infoDetails}>
               <Text style={styles.infoText}>**Marca:** {vehicleInfo.make}</Text>
@@ -154,7 +159,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.infoText}>**Matrícula:** {vehicleInfo.plate}</Text>
               <Text style={styles.infoText}>**Color:** {vehicleInfo.color}</Text>
             </View>
-          </View>
+          </LinearGradient>
         </View>
 
       </View>
@@ -165,23 +170,23 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Para que el degradado del Layout se vea
-    paddingTop: 10, // Muy reducido para subir todo
-    paddingHorizontal: 20, // Padding general para un diseño más limpio
+    backgroundColor: 'transparent',
+    paddingTop: 10,
+    paddingHorizontal: 20,
   },
   headerSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15, // Reducido para comprimir
+    marginBottom: 15,
   },
   profileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   userIconContainer: {
-    width: 80, // Reducido
-    height: 80, // Reducido
+    width: 80,
+    height: 80,
     borderRadius: 40,
     overflow: 'hidden',
     justifyContent: 'center',
@@ -189,23 +194,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 2,
     borderColor: 'white',
-    marginRight: 10, // Reducido
+    marginRight: 10,
   },
   welcomeTextSmall: {
-    fontSize: 16, // Ligeramente más pequeño
+    fontSize: 16,
     color: 'white',
     opacity: 0.8,
   },
   userNameText: {
-    fontSize: 22, // Ligeramente más pequeño
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6, // Reducido
-    paddingHorizontal: 10, // Reducido
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 1,
@@ -213,19 +218,19 @@ const styles = StyleSheet.create({
   },
   logoutButtonText: {
     color: 'white',
-    fontSize: 14, // Ligeramente más pequeño
+    fontSize: 14,
     fontWeight: '600',
     marginLeft: 5,
   },
   carouselSection: {
     alignItems: 'center',
-    marginBottom: 20, // Reducido
+    marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 20, // Ligeramente más pequeño
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 15, // Reducido
+    marginBottom: 15,
     textAlign: 'center',
   },
   carouselWrapper: {
@@ -233,94 +238,90 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginBottom: 10, // Reducido
+    marginBottom: 10,
   },
   carousel: {
     flexGrow: 0,
-    width: viewportWidth * 0.78, // Ligeramente más ancho
-    height: viewportWidth * 0.8, // Altura reducida
+    width: viewportWidth * 0.78,
+    height: viewportWidth * 0.8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   arrowButton: {
-    paddingHorizontal: 8, // Reducido
+    paddingHorizontal: 8,
   },
   card: {
     width: '100%',
     height: '100%',
-    borderRadius: 12, // Ligeramente más pequeños los bordes
-    overflow: 'hidden', // Importante para las imágenes y bordes
-    elevation: 4, // Sombra sutil Android
-    shadowColor: '#000', // Sombra iOS
-    shadowOffset: { width: 0, height: 2 }, // Sombra iOS
-    shadowOpacity: 0.2, // Sombra iOS
-    shadowRadius: 3, // Sombra iOS
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   cardImage: {
     width: '100%',
-    height: '55%', // Imagen un poco más pequeña
+    height: '55%',
     resizeMode: 'cover',
   },
   cardContent: {
-    padding: 12, // Padding reducido
+    padding: 12,
     backgroundColor: 'white',
-    height: '45%', // Contenido de texto un poco más grande
+    height: '45%',
     justifyContent: 'center',
   },
   cardTitle: {
-    fontSize: 16, // Ligeramente más pequeño
+    fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 3, // Margen reducido
+    marginBottom: 3,
     color: '#333',
   },
   cardDescription: {
-    fontSize: 12, // Ligeramente más pequeño
+    fontSize: 12,
     color: '#666',
   },
   paginationDots: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5, // Reducido
+    marginTop: 5,
   },
   dot: {
-    width: 8, // Reducido
-    height: 8, // Reducido
+    width: 8,
+    height: 8,
     borderRadius: 4,
-    backgroundColor: '#262525',
-    marginHorizontal: 3, // Reducido
+    // backgroundColor: 'white', // YA ESTÁ DEFINIDO INLINE EN EL JSX
+    marginHorizontal: 3,
   },
   // --- Estilos para la Nueva Sección de Información del Vehículo ---
   vehicleInfoSection: {
     alignItems: 'center',
-    // marginBottom: 20, // Lo eliminamos o reducimos para que ocupe menos espacio si es necesario
-    marginTop: 20, // Añadir un poco de margen superior para separarlo del carrusel si el marginBottom del carrusel es muy pequeño
+    marginTop: 20,
   },
-  infoCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 12, // Ligeramente más pequeños los bordes
-    padding: 15, // Padding reducido
+  infoCardGradient: { // Nuevo estilo para el LinearGradient
+    borderRadius: 12,
+    padding: 15,
     width: '100%',
-    maxWidth: 400, // Limita el ancho para pantallas grandes
-    borderColor: 'white',
-    borderWidth: 1,
+    maxWidth: 400,
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
+    flexDirection: 'row', // Para alinear icono y texto
+    alignItems: 'center',
   },
   carIcon: {
-    marginRight: 10, // Reducido
+    marginRight: 10,
   },
   infoDetails: {
     flex: 1,
   },
   infoText: {
-    color: 'white',
-    fontSize: 14, // Ligeramente más pequeño
-    marginBottom: 3, // Margen reducido
+    color: 'white', // Texto en blanco para contraste con el fondo naranja
+    fontSize: 14,
+    marginBottom: 3,
   },
 });
