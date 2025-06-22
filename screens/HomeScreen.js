@@ -46,8 +46,8 @@ export default function HomeScreen({ navigation }) {
     <Card style={styles.card}>
       <Image source={item.image} style={styles.cardImage} />
       <Card.Content style={styles.cardContent}>
-        <Title style={styles.cardTitle}>{item.title}</Title>
-        <Paragraph style={styles.cardDescription}>{item.description}</Paragraph>
+        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardDescription}>{item.description}</Text>
       </Card.Content>
     </Card>
   );
@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <Layout navigation={navigation}>
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#FC5501" /> {/* Asegura que la barra de estado se vea bien con el color naranja */}
+        <StatusBar barStyle="light-content" backgroundColor="#FC5501" />
         
         {/* Icono de usuario circular */}
         <View style={styles.userIconContainer}>
@@ -126,7 +126,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 80, // Mantenemos el paddingTop para respetar el botón del menú de Layout
+    paddingTop: 80,
+    backgroundColor: 'transparent',
   },
   userIconContainer: {
     marginTop: 20,
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 28,
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     color: 'white',
     marginBottom: 30,
     marginTop: 20,
