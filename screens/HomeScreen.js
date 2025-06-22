@@ -7,33 +7,33 @@ import Carousel from 'react-native-reanimated-carousel';
 // Importa tu componente Layout que envuelve esta pantalla
 import Layout from '../components/Layout.js';
 
-const { width: viewportWidth } = Dimensions.get('window');
+const { width: viewportWidth } = Dimensions.get('window'); // Obtener el ancho de la ventana del dispositivo
 
 // --- Datos para las tarjetas del carrusel ---
 const carouselData = [
   {
     id: '1',
-    image: require('../assets/card_image_4.png'),
+    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
     title: 'Reparaciones del Hogar',
-    description: 'Servicios rápidos y eficientes para tu auto.',
+    description: 'Soluciones rápidas para el mantenimiento de tu casa.',
   },
   {
     id: '2',
-    image: require('../assets/card_image_4.png'),
+    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
     title: 'Mantenimiento de Jardines',
-    description: 'Deja tu vehículo impecable con nuestros expertos.',
+    description: 'Servicios de jardinería profesional a tu alcance.',
   },
   {
     id: '3',
-    image: require('../assets/card_image_4.png'),
+    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
     title: 'Servicios de Limpieza',
-    description: 'Servicio de grúa 24/7.',
+    description: 'Limpieza profunda para tu hogar u oficina.',
   },
   {
     id: '4',
-    image: require('../assets/card_image_4.png'),
+    image: require('../assets/card_image_4.png'), // Asegúrate de que esta ruta sea correcta
     title: 'Asistencia Vial Profesional',
-    description: 'Soluciones rápidas para cualquier emergencia en carretera.',
+    description: 'Ayuda inmediata en carretera para cualquier emergencia.',
   },
 ];
 
@@ -50,6 +50,7 @@ export default function HomeScreen({ navigation }) {
   const carouselRef = useRef(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
 
+  // Función para renderizar cada tarjeta del carrusel
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Image source={item.image} style={styles.cardImage} />
@@ -60,6 +61,7 @@ export default function HomeScreen({ navigation }) {
     </Card>
   );
 
+  // Funciones para navegar en el carrusel con los botones de flecha
   const goToNextPage = () => {
     if (carouselRef.current) {
       carouselRef.current.next();
@@ -72,6 +74,7 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  // Función para manejar el cierre de sesión
   const handleLogout = () => {
     navigation.navigate('Login'); // Redirige a la pantalla de Login
   };
@@ -81,11 +84,11 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#FC5501" />
         
-        {/* Sección Superior: Bienvenida y Perfil */}
+        {/* Sección Superior: Bienvenida, Perfil y Botón de Cerrar Sesión */}
         <View style={styles.headerSection}>
           <View style={styles.profileInfo}>
             <View style={styles.userIconContainer}>
-              <MaterialCommunityIcons name="account-circle" size={70} color="white" /> {/* Tamaño reducido */}
+              <MaterialCommunityIcons name="account-circle" size={70} color="white" />
             </View>
             <View>
               <Text style={styles.welcomeTextSmall}>Bienvenido,</Text>
@@ -94,7 +97,7 @@ export default function HomeScreen({ navigation }) {
           </View>
           {/* Botón de Cerrar Sesión */}
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-            <MaterialCommunityIcons name="logout" size={20} color="white" /> {/* Tamaño reducido */}
+            <MaterialCommunityIcons name="logout" size={20} color="white" />
             <Text style={styles.logoutButtonText}>Salir</Text>
           </TouchableOpacity>
         </View>
@@ -104,13 +107,13 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Nuestros Servicios</Text>
           <View style={styles.carouselWrapper}>
             <TouchableOpacity onPress={goToPrevPage} style={styles.arrowButton}>
-              <MaterialCommunityIcons name="chevron-left-circle" size={35} color="#262525" /> {/* Tamaño reducido */}
+              <MaterialCommunityIcons name="chevron-left-circle" size={35} color="#262525" />
             </TouchableOpacity>
 
             <Carousel
               ref={carouselRef}
-              width={viewportWidth * 0.78} // Ancho ligeramente aumentado para compensar
-              height={viewportWidth * 0.8} // <--- AJUSTE CLAVE: Altura reducida
+              width={viewportWidth * 0.78}
+              height={viewportWidth * 0.8}
               data={carouselData}
               renderItem={renderItem}
               loop={true}
@@ -121,10 +124,11 @@ export default function HomeScreen({ navigation }) {
             />
 
             <TouchableOpacity onPress={goToNextPage} style={styles.arrowButton}>
-              <MaterialCommunityIcons name="chevron-right-circle" size={35} color="#262525" /> {/* Tamaño reducido */}
+              <MaterialCommunityIcons name="chevron-right-circle" size={35} color="#262525" />
             </TouchableOpacity>
           </View>
 
+          {/* Indicadores de Paginación (puntos debajo del carrusel) */}
           <View style={styles.paginationDots}>
             {carouselData.map((_, index) => (
               <View
@@ -142,13 +146,13 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.vehicleInfoSection}>
           <Text style={styles.sectionTitle}>Mi Vehículo</Text>
           <View style={styles.infoCard}>
-            <MaterialCommunityIcons name="car" size={35} color="white" style={styles.carIcon} /> {/* Tamaño reducido */}
+            <MaterialCommunityIcons name="car" size={35} color="white" style={styles.carIcon} />
             <View style={styles.infoDetails}>
-              <Text style={styles.infoText}>Marca: {vehicleInfo.make}</Text>
-              <Text style={styles.infoText}>Modelo: {vehicleInfo.model}</Text>
-              <Text style={styles.infoText}>Año: {vehicleInfo.year}</Text>
-              <Text style={styles.infoText}>Matrícula: {vehicleInfo.plate}</Text>
-              <Text style={styles.infoText}>Color: {vehicleInfo.color}</Text>
+              <Text style={styles.infoText}>**Marca:** {vehicleInfo.make}</Text>
+              <Text style={styles.infoText}>**Modelo:** {vehicleInfo.model}</Text>
+              <Text style={styles.infoText}>**Año:** {vehicleInfo.year}</Text>
+              <Text style={styles.infoText}>**Matrícula:** {vehicleInfo.plate}</Text>
+              <Text style={styles.infoText}>**Color:** {vehicleInfo.color}</Text>
             </View>
           </View>
         </View>
@@ -161,23 +165,23 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
-    paddingTop: 10, // <--- AJUSTE CLAVE: Muy reducido para subir todo
-    paddingHorizontal: 20,
+    backgroundColor: 'transparent', // Para que el degradado del Layout se vea
+    paddingTop: 10, // Muy reducido para subir todo
+    paddingHorizontal: 20, // Padding general para un diseño más limpio
   },
   headerSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15, // <--- AJUSTE CLAVE: Reducido para comprimir
+    marginBottom: 15, // Reducido para comprimir
   },
   profileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   userIconContainer: {
-    width: 80, // <--- AJUSTE CLAVE: Reducido
-    height: 80, // <--- AJUSTE CLAVE: Reducido
+    width: 80, // Reducido
+    height: 80, // Reducido
     borderRadius: 40,
     overflow: 'hidden',
     justifyContent: 'center',
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 2,
     borderColor: 'white',
-    marginRight: 10, // <--- AJUSTE CLAVE: Reducido
+    marginRight: 10, // Reducido
   },
   welcomeTextSmall: {
     fontSize: 16, // Ligeramente más pequeño
@@ -200,8 +204,8 @@ const styles = StyleSheet.create({
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6, // <--- AJUSTE CLAVE: Reducido
-    paddingHorizontal: 10, // <--- AJUSTE CLAVE: Reducido
+    paddingVertical: 6, // Reducido
+    paddingHorizontal: 10, // Reducido
     borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderWidth: 1,
@@ -215,13 +219,13 @@ const styles = StyleSheet.create({
   },
   carouselSection: {
     alignItems: 'center',
-    marginBottom: 20, // <--- AJUSTE CLAVE: Reducido
+    marginBottom: 20, // Reducido
   },
   sectionTitle: {
     fontSize: 20, // Ligeramente más pequeño
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 15, // <--- AJUSTE CLAVE: Reducido
+    marginBottom: 15, // Reducido
     textAlign: 'center',
   },
   carouselWrapper: {
@@ -229,43 +233,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginBottom: 10, // <--- AJUSTE CLAVE: Reducido
+    marginBottom: 10, // Reducido
   },
   carousel: {
     flexGrow: 0,
-    width: viewportWidth * 0.78, // Ligeramente más ancho para aprovechar el espacio horizontal
-    height: viewportWidth * 0.8, // <--- AJUSTE CLAVE: Altura reducida
+    width: viewportWidth * 0.78, // Ligeramente más ancho
+    height: viewportWidth * 0.8, // Altura reducida
     justifyContent: 'center',
     alignItems: 'center',
   },
   arrowButton: {
-    paddingHorizontal: 8, // <--- AJUSTE CLAVE: Reducido
+    paddingHorizontal: 8, // Reducido
   },
   card: {
     width: '100%',
     height: '100%',
     borderRadius: 12, // Ligeramente más pequeños los bordes
-    elevation: 4, // Sombra sutil
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    overflow: 'hidden', // Importante para las imágenes y bordes
+    elevation: 4, // Sombra sutil Android
+    shadowColor: '#000', // Sombra iOS
+    shadowOffset: { width: 0, height: 2 }, // Sombra iOS
+    shadowOpacity: 0.2, // Sombra iOS
+    shadowRadius: 3, // Sombra iOS
   },
   cardImage: {
     width: '100%',
-    height: '55%', // <--- AJUSTE CLAVE: Imagen un poco más pequeña
+    height: '55%', // Imagen un poco más pequeña
     resizeMode: 'cover',
   },
   cardContent: {
-    padding: 12, // <--- AJUSTE CLAVE: Padding reducido
+    padding: 12, // Padding reducido
     backgroundColor: 'white',
-    height: '45%', // <--- AJUSTE CLAVE: Contenido de texto un poco más grande
+    height: '45%', // Contenido de texto un poco más grande
     justifyContent: 'center',
   },
   cardTitle: {
     fontSize: 16, // Ligeramente más pequeño
     fontWeight: 'bold',
-    marginBottom: 3, // <--- AJUSTE CLAVE: Margen reducido
+    marginBottom: 3, // Margen reducido
     color: '#333',
   },
   cardDescription: {
@@ -276,28 +281,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5, // <--- AJUSTE CLAVE: Reducido
+    marginTop: 5, // Reducido
   },
   dot: {
-    width: 8, // <--- AJUSTE CLAVE: Reducido
-    height: 8, // <--- AJUSTE CLAVE: Reducido
+    width: 8, // Reducido
+    height: 8, // Reducido
     borderRadius: 4,
     backgroundColor: '#262525',
-    marginHorizontal: 3, // <--- AJUSTE CLAVE: Reducido
+    marginHorizontal: 3, // Reducido
   },
   // --- Estilos para la Nueva Sección de Información del Vehículo ---
   vehicleInfoSection: {
     alignItems: 'center',
-    marginBottom: 20, // <--- AJUSTE CLAVE: Reducido (se ajusta al final de la pantalla)
+    // marginBottom: 20, // Lo eliminamos o reducimos para que ocupe menos espacio si es necesario
+    marginTop: 20, // Añadir un poco de margen superior para separarlo del carrusel si el marginBottom del carrusel es muy pequeño
   },
   infoCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.2)',
     borderRadius: 12, // Ligeramente más pequeños los bordes
-    padding: 15, // <--- AJUSTE CLAVE: Padding reducido
+    padding: 15, // Padding reducido
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 400, // Limita el ancho para pantallas grandes
     borderColor: 'white',
     borderWidth: 1,
     elevation: 3,
@@ -307,7 +313,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   carIcon: {
-    marginRight: 10, // <--- AJUSTE CLAVE: Reducido
+    marginRight: 10, // Reducido
   },
   infoDetails: {
     flex: 1,
@@ -315,6 +321,6 @@ const styles = StyleSheet.create({
   infoText: {
     color: 'white',
     fontSize: 14, // Ligeramente más pequeño
-    marginBottom: 3, // <--- AJUSTE CLAVE: Margen reducido
+    marginBottom: 3, // Margen reducido
   },
 });

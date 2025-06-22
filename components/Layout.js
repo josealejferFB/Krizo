@@ -52,7 +52,6 @@ export default function Layout({ children, navigation }) {
       { duration: 300, easing: Easing.inOut(Easing.ease) }
     );
   };
-
   // Define el gesto de tap para cerrar el menú al tocar fuera
   const tapGesture = Gesture.Tap()
     .onStart(() => {
@@ -61,7 +60,6 @@ export default function Layout({ children, navigation }) {
         toggleMenu();
       }
     });
-
   return (
     // GestureHandlerRootView DEBE envolver todo el contenido que usa gestos
     <GestureHandlerRootView style={{ flex: 1 }}> 
@@ -78,7 +76,6 @@ export default function Layout({ children, navigation }) {
       >
         <MaterialCommunityIcons name="menu" size={32} color="white" />
       </TouchableOpacity>
-
       {/* Overlay para detectar taps fuera del menú y cerrarlo */}
       {/* Solo se renderiza si el menú está visible */}
       {isMenuVisible && ( 
@@ -87,7 +84,6 @@ export default function Layout({ children, navigation }) {
           <View style={styles.overlay} /> 
         </GestureDetector>
       )}
-      
       {/* Menú lateral animado */}
       <Animated.View style={[styles.menuContainer, menuAnimation]}>
         <Surface style={styles.menuSurface} elevation={5}>
@@ -97,7 +93,6 @@ export default function Layout({ children, navigation }) {
             <Text style={styles.drawerHeaderText}>Menú Krizo</Text>
           </View>
           <Divider style={styles.divider} />
-
           {/* Renderizado de las opciones del menú */}
           {menuOptions.map((item, index) => (
             // IMPORTANTE: Usamos el 'index' como key para asegurar unicidad
@@ -128,7 +123,6 @@ export default function Layout({ children, navigation }) {
           ))}
         </Surface>
       </Animated.View>
-
       {/* Contenido principal de la pantalla, que son los 'children' pasados al Layout */}
       <View style={styles.content}>
         {children} 
@@ -136,7 +130,6 @@ export default function Layout({ children, navigation }) {
     </GestureHandlerRootView> 
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
