@@ -1,41 +1,39 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
-import { Text, Card, Title, Paragraph } from 'react-native-paper'; 
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image, StatusBar } from 'react-native';
+import { Text, Card, Title, Paragraph } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Carousel from 'react-native-reanimated-carousel'; 
+import Carousel from 'react-native-reanimated-carousel';
 
 // Importa tu componente Layout que envuelve esta pantalla
 import Layout from '../components/Layout.js';
 
 const { width: viewportWidth } = Dimensions.get('window'); // Obtener el ancho de la ventana del dispositivo
 
-// --- Datos de ejemplo para las tarjetas del carrusel ---
-// ¡IMPORTANTE!: Reemplaza 'require(...)' con tus propias rutas de imágenes locales.
-// Si usas URLs de internet, asegúrate de que sean accesibles y estables.
+// --- Datos para las tarjetas del carrusel ---
 const carouselData = [
   {
     id: '1',
-    image: require('../assets/card_image_4.png'), // <<-- ¡CAMBIA ESTO por tu imagen 1!
-    title: 'Reparaciones Automotrices',
+    image: require('../assets/card_image_4.png'),
+    title: 'Reparaciones del Hogar',
     description: 'Servicios rápidos y eficientes para tu auto.',
   },
   {
     id: '2',
-    image: require('../assets/card_image_4.png'), // <<-- ¡CAMBIA ESTO por tu imagen 2!
-    title: 'Mantenimiento de tu Vehículo',
+    image: require('../assets/card_image_4.png'),
+    title: 'Mantenimiento de Jardines',
     description: 'Deja tu vehículo impecable con nuestros expertos.',
   },
   {
     id: '3',
-    image: require('../assets/card_image_4.png'), // <<-- ¡CAMBIA ESTO por tu imagen 3!
-    title: 'Servicios de ayuda en carretera',
+    image: require('../assets/card_image_4.png'),
+    title: 'Servicios de Limpieza',
     description: 'Servicio de grúa 24/7.',
   },
   {
     id: '4',
-    image: require('../assets/card_image_4.png'), // <<-- ¡CAMBIA ESTO por tu imagen 4!
-    title: 'Mecánica Profesional',
-    description: 'Soluciones rápidas para cualquier fuga o avería.',
+    image: require('../assets/card_image_4.png'),
+    title: 'Asistencia Vial Profesional',
+    description: 'Soluciones rápidas para cualquier emergencia en carretera.',
   },
 ];
 
@@ -46,8 +44,7 @@ export default function HomeScreen({ navigation }) {
   // Función para renderizar cada tarjeta del carrusel
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
-      {/* Usamos Image directamente para mayor control sobre el `resizeMode` */}
-      <Image source={item.image} style={styles.cardImage} /> 
+      <Image source={item.image} style={styles.cardImage} />
       <Card.Content style={styles.cardContent}>
         <Title style={styles.cardTitle}>{item.title}</Title>
         <Paragraph style={styles.cardDescription}>{item.description}</Paragraph>
@@ -58,21 +55,26 @@ export default function HomeScreen({ navigation }) {
   // Funciones para navegar en el carrusel con los botones de flecha
   const goToNextPage = () => {
     if (carouselRef.current) {
-      carouselRef.current.next(); // Mueve el carrusel a la siguiente tarjeta
+      carouselRef.current.next();
     }
   };
 
   const goToPrevPage = () => {
     if (carouselRef.current) {
-      carouselRef.current.prev(); // Mueve el carrusel a la tarjeta anterior
+      carouselRef.current.prev();
     }
   };
 
   return (
-    // Envuelve el contenido de esta pantalla con el componente Layout.
-    // Esto provee el gradiente de fondo, el botón de menú y el menú lateral.
     <Layout navigation={navigation}>
       <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#FC5501" /> {/* Asegura que la barra de estado se vea bien con el color naranja */}
+        
+        {/* Icono de usuario circular */}
+        <View style={styles.userIconContainer}>
+          <MaterialCommunityIcons name="account-circle" size={100} color="white" />
+        </View>
+
         {/* Sección de Bienvenida al Usuario */}
         <Text style={styles.welcomeText}>Bienvenido, Usuario</Text>
 
@@ -80,27 +82,26 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.carouselWrapper}>
           {/* Botón de flecha izquierda */}
           <TouchableOpacity onPress={goToPrevPage} style={styles.arrowButton}>
-            <MaterialCommunityIcons name="chevron-left-circle" size={40} color="#FC5501" />
+            <MaterialCommunityIcons name="chevron-left-circle" size={40} color="#262525" />
           </TouchableOpacity>
 
           {/* Componente Carrusel */}
           <Carousel
-            ref={carouselRef} // Asigna la referencia para control programático
-            width={viewportWidth * 0.75} // Ancho de cada tarjeta (ej. 75% del ancho de la pantalla)
-            height={viewportWidth * 0.9} // Altura de cada tarjeta
-            data={carouselData} // Datos a mostrar en el carrusel
-            renderItem={renderItem} // Función para renderizar cada tarjeta
-            loop={true} // Permite que el carrusel se repita infinitamente
+            ref={carouselRef}
+            width={viewportWidth * 0.75}
+            height={viewportWidth * 0.9}
+            data={carouselData}
+            renderItem={renderItem}
+            loop={true}
             onProgressChange={(_, absoluteProgress) => {
-              // Actualiza el índice actual para los puntos de paginación
               setCurrentCarouselIndex(Math.round(absoluteProgress));
             }}
-            style={styles.carousel} // Estilos para el contenedor del carrusel
+            style={styles.carousel}
           />
 
           {/* Botón de flecha derecha */}
           <TouchableOpacity onPress={goToNextPage} style={styles.arrowButton}>
-            <MaterialCommunityIcons name="chevron-right-circle" size={40} color="#FC5501" />
+            <MaterialCommunityIcons name="chevron-right-circle" size={40} color="#262525" />
           </TouchableOpacity>
         </View>
 
@@ -108,17 +109,14 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.paginationDots}>
           {carouselData.map((_, index) => (
             <View
-              key={index} // Key única para cada punto (usamos el índice, ya que la lista es estática)
+              key={index}
               style={[
                 styles.dot,
-                // Resalta el punto si coincide con el índice de la tarjeta actual
                 { opacity: index === currentCarouselIndex % carouselData.length ? 1 : 0.4 },
               ]}
             />
           ))}
         </View>
-
-        {/* Puedes añadir más contenido específico para la pantalla de inicio aquí */}
       </View>
     </Layout>
   );
@@ -127,15 +125,26 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center', // Centra los elementos hijos horizontalmente
-    // El paddingTop es crucial si tu Layout tiene un botón de menú o una barra superior fija.
-    // Ajusta este valor si el contenido se superpone con el botón del menú de tu Layout.
-    paddingTop: 80, 
+    alignItems: 'center',
+    paddingTop: 80, // Mantenemos el paddingTop para respetar el botón del menú de Layout
+  },
+  userIconContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderWidth: 2,
+    borderColor: 'white',
   },
   welcomeText: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white', // Asume que tu fondo es oscuro debido al gradiente del Layout
+    fontWeight: 'bold', 
+    color: 'white',
     marginBottom: 30,
     marginTop: 20,
     textAlign: 'center',
@@ -143,39 +152,39 @@ const styles = StyleSheet.create({
   carouselWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', // Centra el carrusel y los botones de flecha
-    width: '100%', 
+    justifyContent: 'center',
+    width: '100%',
     marginBottom: 20,
   },
   carousel: {
-    flexGrow: 0, // Evita que el carrusel ocupe todo el espacio, dejando lugar para los botones
-    width: viewportWidth * 0.75, // Ancho de la parte visible de cada tarjeta del carrusel
+    flexGrow: 0,
+    width: viewportWidth * 0.75,
     justifyContent: 'center',
     alignItems: 'center',
   },
   arrowButton: {
-    paddingHorizontal: 10, // Espaciado para los botones de flecha
+    paddingHorizontal: 10,
   },
   card: {
-    width: '100%', // La tarjeta ocupa todo el ancho del carrusel asignado
-    height: '100%', // La tarjeta ocupa toda la altura del carrusel asignada
+    width: '100%',
+    height: '100%',
     borderRadius: 15,
-    overflow: 'hidden', // Importante para que la imagen y el contenido respeten el `borderRadius`
-    elevation: 5, // Sombra para Android
-    shadowColor: '#000', // Sombra para iOS
+    overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
   cardImage: {
     width: '100%',
-    height: '60%', // La imagen ocupa el 60% de la altura total de la tarjeta
-    resizeMode: 'cover', // Escala la imagen para que cubra el área sin distorsionarse
+    height: '60%',
+    resizeMode: 'cover',
   },
   cardContent: {
     padding: 15,
     backgroundColor: 'white',
-    height: '40%', // El contenido ocupa el 40% restante de la altura de la tarjeta
+    height: '40%',
     justifyContent: 'center',
   },
   cardTitle: {
@@ -198,7 +207,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#FC5501', // Color principal de tu app para los puntos de paginación
+    backgroundColor: '#262525',
     marginHorizontal: 5,
   },
 });
