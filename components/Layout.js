@@ -20,22 +20,6 @@ export default function Layout({ children, navigation }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const menuPosition = useSharedValue(-300); // Posición inicial del menú (oculto a la izquierda)
 
-  // Opciones del menú lateral.
-  // IMPORTANTE: 'screen' debe coincidir con el 'name' de las Stack.Screen en App.js
-  const menuOptions = [
-    { title: 'Inicio', icon: 'home', screen: 'Home' },
-    { title: 'Servicios', icon: 'tools', screen: 'Services' },
-    { title: 'Mi Perfil', icon: 'account', screen: 'Details' }, // Usamos 'Details' como ruta genérica por ahora
-    { title: 'Billetera', icon: 'wallet', screen: 'Details' },
-    { title: 'Promociones', icon: 'tag', screen: 'Details' },
-    { title: 'Ajustes', icon: 'cog', screen: 'Details' },
-    { title: 'Cerrar Sesión', icon: 'logout', action: () => {
-        navigation.navigate('Login'); // Navega a la pantalla de Login
-        toggleMenu(); // Cierra el menú después de la acción
-      }
-    },
-  ];
-
   // Estilo animado para el menú lateral
   const menuAnimation = useAnimatedStyle(() => {
     return {
@@ -60,6 +44,21 @@ export default function Layout({ children, navigation }) {
         toggleMenu();
       }
     });
+  // Ahora define el array de opciones del menú
+  const menuOptions = [
+    { title: 'Inicio', icon: 'home', screen: 'Home' },
+    { title: 'Servicios', icon: 'tools', screen: 'Services' },
+    { title: 'Mi Perfil', icon: 'account', screen: 'Details' },
+    { title: 'Billetera', icon: 'wallet', screen: 'Details' },
+    { title: 'Promociones', icon: 'tag', screen: 'Details' },
+    { title: 'Ajustes', icon: 'cog', screen: 'Details' },
+    { title: 'Cerrar Sesión', icon: 'logout', action: () => {
+        navigation.navigate('Login');
+        toggleMenu();
+      }
+    },
+  ];
+
   return (
     // GestureHandlerRootView DEBE envolver todo el contenido que usa gestos
     <GestureHandlerRootView style={{ flex: 1 }}> 
