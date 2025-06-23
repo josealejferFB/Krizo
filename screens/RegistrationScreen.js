@@ -76,9 +76,8 @@ const RegistrationScreen = () => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
-          style={styles.themedInputOverride}
           right={
-            <ThemedInput.Icon
+            <TextInput.Icon
               icon={showPassword ? 'eye-off' : 'eye'}
               onPress={() => setShowPassword(!showPassword)}
               color={theme.colors.onSurfaceVariant}
