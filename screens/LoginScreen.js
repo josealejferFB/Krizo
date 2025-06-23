@@ -1,112 +1,172 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native'; // Se quita Image si ya no se usa directamente aquí
+import { StyleSheet, View } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
-import Logo from "../assets/logo.svg"; // ¡Descomentado y usando logo.svg!
+import Logo from "../assets/logo.svg";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
 
   return (
     <ThemedBackgroundGradient>
       {/* Logo en la parte superior central */}
       <View style={styles.logoContainer}>
-        {/* Cambiado para usar el componente Logo importado directamente para SVG */}
-        <Logo width={150} height={150} />
+        <Logo width={120} height={120} />
       </View>
 
       <Text style={styles.title}>¡Bienvenido! Inicia Sesión</Text>
 
-      <ThemedInput
-        label="Usuario"
-        value={username}
-        onChangeText={setUsername}
-        left={<TextInput.Icon icon="account" color="#262525" />}
-      />
-      <ThemedInput
-        label="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        right={<TextInput.Icon icon="eye" color="#262525" onPress={() => console.log('Toggle password visibility')} />}
-      />
+      <View style={styles.formCard}>
+        <ThemedInput
+          label="Usuario"
+          value={username}
+          onChangeText={setUsername}
+          left={<TextInput.Icon icon="account" color="#262525" />}
+        />
+        <ThemedInput
+          label="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? "eye-off" : "eye"}
+              color="#262525"
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
+        />
 
-      <ThemedButton
-        onPress={() => {
-          console.log('Usuario:', username, 'Contraseña:', password);
-          navigation.replace('Home');
-        }}
-        icon="login"
-      >
-        Ingresar
-      </ThemedButton>
+        <ThemedButton
+          onPress={() => {
+            console.log('Usuario:', username, 'Contraseña:', password);
+            navigation.replace('Home');
+          }}
+          icon="login"
+          style={styles.loginButton}
+        >
+          Ingresar
+        </ThemedButton>
 
-      {/* Botón "Ingresar como KrizoWorker" */}
-      <ThemedButton
-        onPress={() => {
-          console.log('Ingresando como KrizoWorker');
-          navigation.replace('Home');
-        }}
-        style={styles.krizoWorkerButton}
-        labelStyle={styles.krizoWorkerButtonLabel}
-        mode="contained"
-      >
-        Ingresar como KrizoWorker
-      </ThemedButton>
+        <View style={styles.krizoWorkerButton}>
+          <MaterialCommunityIcons name="tow-truck" size={38} color="#FC5501" style={styles.krizoWorkerIcon} />
+          <ThemedButton
+            onPress={() => {
+              console.log('Ingresando como KrizoWorker');
+              navigation.replace('Home');
+            }}
+            style={styles.krizoWorkerButtonInner}
+            labelStyle={styles.krizoWorkerButtonLabel}
+            mode="contained"
+            contentStyle={{ height: 70 }}
+          >
+            Ingresar como KrizoWorker
+          </ThemedButton>
+        </View>
+      </View>
 
-      {/* NUEVO: Botón para Registrarse */}
       <ThemedButton
         onPress={() => {
           console.log('Navegando a Registro');
-          navigation.navigate('Registration'); // Navega a la pantalla de Registro
+          navigation.navigate('Registration');
         }}
         style={styles.registerButton}
         labelStyle={styles.registerButtonLabel}
-        mode="text" // Puedes usar 'text' para que sea un enlace, o 'outlined'
+        mode="text"
       >
         ¿No tienes cuenta? Regístrate
       </ThemedButton>
-
     </ThemedBackgroundGradient>
   );
 }
 
 const styles = StyleSheet.create({
   logoContainer: {
-    marginBottom: 20,
-    alignItems: 'center', // Centra el logo si es más pequeño que el contenedor
+    marginTop: 40,
+    marginBottom: 10,
+    alignItems: 'center',
     justifyContent: 'center',
-  },
-  logo: { // ESTILO PARA EL LOGO SVG (Nota: los estilos de Image como width/height/resizeMode se aplican directamente al componente SVG)
-    width: 150, // O el tamaño que necesites para tu logo
-    height: 150,
-    // resizeMode: 'contain', // No aplica directamente a SVG de esta forma, se maneja con width/height
   },
   title: {
     fontSize: 28,
-    marginBottom: 30,
+    marginBottom: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#FFFFFF',
+    color: '#fff',
+    letterSpacing: 1,
+    textShadowColor: '#FC5501',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+  formCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 28,
+    width: '90%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    marginBottom: 20,
+  },
+  loginButton: {
+    marginTop: 10,
+    width: '100%',
+    borderRadius: 16,
+    backgroundColor: '#FC5501',
   },
   krizoWorkerButton: {
-    height: 70,
-    marginTop: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 18,
+    width: '100%',
+    height: 90,
+    backgroundColor: '#FFF7F0',
+    borderRadius: 16,
+    position: 'relative',
+    paddingBottom: 12, // Añade espacio abajo
+  },
+  krizoWorkerIcon: {
+    position: 'absolute',
+    left: '50%',
+    top: 10,
+    marginLeft: -19,
+    zIndex: 2,
+  },
+  krizoWorkerButtonInner: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    elevation: 0,
+    shadowColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    marginLeft: 0,
   },
   krizoWorkerButtonLabel: {
     color: '#FC5501',
     fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: 0,
+    marginTop: 24, // Subido un poco más respecto al icono
   },
   registerButton: {
-    marginTop: 20,
+    marginTop: 10,
+    alignSelf: 'center',
   },
   registerButtonLabel: {
-    color: '#FFFFFF',
+    color: '#FC5501',
     fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   }
 });

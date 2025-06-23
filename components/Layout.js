@@ -45,16 +45,17 @@ export default function Layout({ children, navigation }) {
 
   // Función para abrir y cerrar el menú
   const toggleMenu = () => {
-    setIsMenuVisible(prev => !prev); 
-    menuPosition.value = withTiming(
-      isMenuVisible ? -300 : 0, // Si está visible, oculta (-300); si no, muestra (0)
-      { duration: 300, easing: Easing.inOut(Easing.ease) }
-    );
+    setIsMenuVisible(prev => {
+      menuPosition.value = withTiming(
+        prev ? -300 : 0,
+        { duration: 300, easing: Easing.inOut(Easing.ease) }
+      );
+      return !prev;
+    });
   };
   // Define el gesto de tap para cerrar el menú al tocar fuera
   const tapGesture = Gesture.Tap()
     .onStart(() => {
-      // Solo si el menú está visible, ejecuta el toggle
       if (isMenuVisible) {
         toggleMenu();
       }
@@ -83,10 +84,9 @@ export default function Layout({ children, navigation }) {
       
       {/* Overlay para detectar taps fuera del menú y cerrarlo */}
       {/* Solo se renderiza si el menú está visible */}
-      {isMenuVisible && ( 
+      {isMenuVisible && (
         <GestureDetector gesture={tapGesture}>
-          {/* El View 'overlay' ocupa todo el espacio de la pantalla detrás del menú */}
-          <View style={styles.overlay} /> 
+          <View style={styles.overlay} pointerEvents="auto" />
         </GestureDetector>
       )}
       {/* Menú lateral animado */}
