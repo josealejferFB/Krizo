@@ -1,11 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Image, StatusBar } from 'react-native';
-import { Text, Card, Title, Paragraph } from 'react-native-paper';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Carousel from 'react-native-reanimated-carousel';
-import { LinearGradient } from 'expo-linear-gradient'; // Importar LinearGradient
-
-// Importa tu componente Layout que envuelve esta pantalla
+import { LinearGradient } from 'expo-linear-gradient';
 import Layout from '../components/Layout.js';
 
 const { width: viewportWidth } = Dimensions.get('window');
@@ -52,186 +50,248 @@ export default function HomeScreen({ navigation }) {
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
 
   const renderItem = ({ item }) => (
-    <Card style={styles.card}>
+    <View style={styles.carouselCard}>
       <Image source={item.image} style={styles.cardImage} />
-      <Card.Content style={styles.cardContent}>
-        <Title style={styles.cardTitle}>{item.title}</Title>
-        <Paragraph style={styles.cardDescription}>{item.description}</Paragraph>
-      </Card.Content>
-    </Card>
+      <View style={styles.carouselCardContent}>
+        <Text style={styles.carouselCardTitle}>{item.title}</Text>
+        <Text style={styles.carouselCardDescription}>{item.description}</Text>
+      </View>
+    </View>
   );
-
-  const goToNextPage = () => {
-    if (carouselRef.current) {
-      carouselRef.current.next();
-    }
-  };
-
-  const goToPrevPage = () => {
-    if (carouselRef.current) {
-      carouselRef.current.prev();
-    }
-  };
-
-  const handleLogout = () => {
-    navigation.navigate('Login'); // Redirige a la pantalla de Login
-  };
 
   return (
     <Layout navigation={navigation}>
-      <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#FC5501" />
-        
-        {/* Sección Superior: Bienvenida, Perfil y Botón de Cerrar Sesión */}
-        <View style={styles.headerSection}>
-          <View style={styles.profileInfo}>
-            <View style={styles.userIconContainer}>
-              <MaterialCommunityIcons name="account-circle" size={70} color="white" />
-            </View>
+      <LinearGradient
+        colors={['#fff7f0', '#ffe0c2', '#ffd6b8']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
+      >
+        {/* Botón de logout arriba a la derecha, fuera de la tarjeta */}
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={() => navigation.replace('Login')}
+          activeOpacity={0.7}
+        >
+          <MaterialCommunityIcons name="logout" size={22} color="#FC5501" />
+        </TouchableOpacity>
+
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <View style={styles.headerCard}>
+            <MaterialCommunityIcons name="account-circle" size={60} color="#FC5501" style={styles.headerIcon} />
             <View>
-              <Text style={styles.welcomeTextSmall}>Bienvenido,</Text>
-              <Text style={styles.userNameText}>Usuario</Text>
+              <Text style={styles.headerTitle}>¡Bienvenido, Usuario!</Text>
+              <Text style={styles.headerSubtitle}>¿Qué necesitas hoy?</Text>
             </View>
           </View>
-          {/* Botón de Cerrar Sesión */}
-          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-            <MaterialCommunityIcons name="logout" size={20} color="white" />
-            <Text style={styles.logoutButtonText}>Salir</Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Sección de Carrusel de Servicios */}
-        <View style={styles.carouselSection}>
-          <Text style={styles.sectionTitle}>Nuestros Servicios</Text>
-          <View style={styles.carouselWrapper}>
-            {/* Flechas del Carrusel ahora en color blanco */}
-            <TouchableOpacity onPress={goToPrevPage} style={styles.arrowButton}>
-              <MaterialCommunityIcons name="chevron-left-circle" size={35} color="white" /> 
-            </TouchableOpacity>
-
-            <Carousel
-              ref={carouselRef}
-              width={viewportWidth * 0.78}
-              height={viewportWidth * 0.8}
-              data={carouselData}
-              renderItem={renderItem}
-              loop={true}
-              onProgressChange={(_, absoluteProgress) => {
-                setCurrentCarouselIndex(Math.round(absoluteProgress));
-              }}
-              style={styles.carousel}
-            />
-
-            <TouchableOpacity onPress={goToNextPage} style={styles.arrowButton}>
-              <MaterialCommunityIcons name="chevron-right-circle" size={35} color="white" /> 
-            </TouchableOpacity>
-          </View>
-
-          {/* Indicadores de Paginación (puntos debajo del carrusel) ahora en blanco */}
-          <View style={styles.paginationDots}>
-            {carouselData.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  { opacity: index === currentCarouselIndex % carouselData.length ? 1 : 0.4, backgroundColor: 'white' }, // Puntos en blanco
-                ]}
+          {/* Carrusel adaptado al nuevo diseño */}
+          <View style={styles.carouselSection}>
+            <Text style={styles.sectionTitle}>Promociones y novedades</Text>
+            <View style={styles.carouselWrapper}>
+              <TouchableOpacity style={styles.arrowButton} onPress={() => carouselRef.current?.prev()}>
+                <MaterialCommunityIcons name="chevron-left" size={22} color="#FC5501" />
+              </TouchableOpacity>
+              <Carousel
+                ref={carouselRef}
+                width={viewportWidth * 0.74}
+                height={viewportWidth * 0.55}
+                data={carouselData}
+                renderItem={renderItem}
+                scrollAnimationDuration={600}
+                onSnapToItem={setCurrentCarouselIndex}
+                style={styles.carousel}
+                loop
               />
-            ))}
-          </View>
-        </View>
-
-        {/* Nueva Sección: Información de Mi Vehículo con degradado */}
-        <View style={styles.vehicleInfoSection}>
-          <Text style={styles.sectionTitle}>Mi Vehículo</Text>
-          {/* Usamos LinearGradient como fondo de la tarjeta de información */}
-          <LinearGradient
-            colors={['#FF8C00', '#FF4500']} // De naranja a naranja oscuro/rojo anaranjado
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.infoCardGradient} // Nuevo estilo para el gradiente
-          >
-            <MaterialCommunityIcons name="car" size={35} color="white" style={styles.carIcon} />
-            <View style={styles.infoDetails}>
-              <Text style={styles.infoText}>**Marca:** {vehicleInfo.make}</Text>
-              <Text style={styles.infoText}>**Modelo:** {vehicleInfo.model}</Text>
-              <Text style={styles.infoText}>**Año:** {vehicleInfo.year}</Text>
-              <Text style={styles.infoText}>**Matrícula:** {vehicleInfo.plate}</Text>
-              <Text style={styles.infoText}>**Color:** {vehicleInfo.color}</Text>
+              <TouchableOpacity style={styles.arrowButton} onPress={() => carouselRef.current?.next()}>
+                <MaterialCommunityIcons name="chevron-right" size={22} color="#FC5501" />
+              </TouchableOpacity>
             </View>
-          </LinearGradient>
-        </View>
+            <View style={styles.paginationDots}>
+              {carouselData.map((_, idx) => (
+                <View
+                  key={idx}
+                  style={[
+                    styles.dot,
+                    { backgroundColor: idx === currentCarouselIndex ? '#FC5501' : '#FFD6B8' },
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
 
-      </View>
+          <View style={styles.sectionTitleContainer}>
+            <Text style={styles.sectionTitle}>Servicios Destacados</Text>
+          </View>
+
+          <View style={styles.cardsRow}>
+            <TouchableOpacity style={styles.serviceCard} onPress={() => navigation.navigate('Services')}>
+              <MaterialCommunityIcons name="tools" size={40} color="#FC5501" />
+              <Text style={styles.cardTitle}>Servicios Mecánicos</Text>
+              <Text style={styles.cardDesc}>Reparación, mantenimiento y más</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.serviceCard} onPress={() => navigation.navigate('Services')}>
+              <MaterialCommunityIcons name="tow-truck" size={40} color="#FC5501" />
+              <Text style={styles.cardTitle}>Solicitar Grúa</Text>
+              <Text style={styles.cardDesc}>Asistencia vial inmediata</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.cardsRow}>
+            <TouchableOpacity style={styles.serviceCard} onPress={() => navigation.navigate('Services')}>
+              <MaterialCommunityIcons name="car-cog" size={40} color="#FC5501" />
+              <Text style={styles.cardTitle}>Repuestos</Text>
+              <Text style={styles.cardDesc}>Pide repuestos originales</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.serviceCard} onPress={() => navigation.navigate('Details')}>
+              <MaterialCommunityIcons name="account" size={40} color="#FC5501" />
+              <Text style={styles.cardTitle}>Mi Perfil</Text>
+              <Text style={styles.cardDesc}>Gestiona tu información</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.sectionTitleContainer}>
+            <Text style={styles.sectionTitle}>Mi Vehículo</Text>
+          </View>
+          <View style={styles.vehicleCard}>
+            <MaterialCommunityIcons name="car" size={40} color="#FC5501" style={{ marginRight: 10 }} />
+            <View>
+              <Text style={styles.vehicleText}>
+                {vehicleInfo.make} {vehicleInfo.model} {vehicleInfo.year}
+              </Text>
+              <Text style={styles.vehicleTextSmall}>
+                Placa: {vehicleInfo.plate}  |  Color: {vehicleInfo.color}
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </LinearGradient>
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
-    backgroundColor: 'transparent',
-    paddingTop: 10,
-    paddingHorizontal: 20,
-  },
-  headerSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  profileInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  userIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderWidth: 2,
-    borderColor: 'white',
-    marginRight: 10,
-  },
-  welcomeTextSmall: {
-    fontSize: 16,
-    color: 'white',
-    opacity: 0.8,
-  },
-  userNameText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: 'white',
   },
   logoutButton: {
+    position: 'absolute',
+    top: 38,
+    right: 24,
+    zIndex: 10,
+    backgroundColor: '#FFF7F0',
+    borderRadius: 20,
+    padding: 4,
+    elevation: 2,
+  },
+  scrollContainer: {
+    alignItems: 'center',
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+    paddingTop: 60, // deja espacio para el botón de logout
+  },
+  headerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderWidth: 1,
-    borderColor: 'white',
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 24,
+    width: '95%',
+    maxWidth: 420,
+    marginBottom: 30,
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
   },
-  logoutButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 5,
+  headerIcon: {
+    marginRight: 18,
   },
-  carouselSection: {
-    alignItems: 'center',
-    marginBottom: 20,
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FC5501',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#877063',
+  },
+  sectionTitleContainer: {
+    width: '95%',
+    marginTop: 10,
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 15,
+    color: '#FC5501',
+    marginLeft: 8,
+    marginBottom: 6,
+  },
+  cardsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '95%',
+    marginBottom: 18,
+  },
+  serviceCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '48%',
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#262525',
+    marginTop: 10,
+    marginBottom: 2,
     textAlign: 'center',
+  },
+  cardDesc: {
+    fontSize: 13,
+    color: '#877063',
+    textAlign: 'center',
+  },
+  vehicleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 18,
+    width: '95%',
+    maxWidth: 420,
+    marginTop: 10,
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+  },
+  vehicleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#262525',
+  },
+  vehicleTextSmall: {
+    fontSize: 13,
+    color: '#877063',
+    marginTop: 2,
+  },
+  // Carrusel adaptado
+  carouselSection: {
+    alignItems: 'center',
+    marginBottom: 28,
+    width: '100%',
   },
   carouselWrapper: {
     flexDirection: 'row',
@@ -242,45 +302,51 @@ const styles = StyleSheet.create({
   },
   carousel: {
     flexGrow: 0,
-    width: viewportWidth * 0.78,
-    height: viewportWidth * 0.8,
+    width: viewportWidth * 0.74,
+    height: viewportWidth * 0.55,
     justifyContent: 'center',
     alignItems: 'center',
   },
   arrowButton: {
-    paddingHorizontal: 8,
+    paddingHorizontal: 2,
+    paddingVertical: 8,
   },
-  card: {
+  carouselCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    overflow: 'hidden',
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
     width: '100%',
     height: '100%',
-    borderRadius: 12,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    alignItems: 'center',
   },
   cardImage: {
     width: '100%',
     height: '55%',
     resizeMode: 'cover',
   },
-  cardContent: {
-    padding: 12,
-    backgroundColor: 'white',
-    height: '45%',
+  carouselCardContent: {
+    padding: 14,
+    alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
+    flex: 1,
   },
-  cardTitle: {
-    fontSize: 16,
+  carouselCardTitle: {
+    fontSize: 17,
     fontWeight: 'bold',
-    marginBottom: 3,
-    color: '#333',
+    color: '#FC5501',
+    marginBottom: 6,
+    textAlign: 'center',
   },
-  cardDescription: {
-    fontSize: 12,
-    color: '#666',
+  carouselCardDescription: {
+    fontSize: 14,
+    color: '#877063',
+    textAlign: 'center',
   },
   paginationDots: {
     flexDirection: 'row',
@@ -292,7 +358,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    // backgroundColor: 'white', // YA ESTÁ DEFINIDO INLINE EN EL JSX
     marginHorizontal: 3,
   },
   // --- Estilos para la Nueva Sección de Información del Vehículo ---

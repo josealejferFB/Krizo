@@ -1,11 +1,39 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
-import { Appbar, Card, Title } from 'react-native-paper';
+import { Appbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width / 2) - 30;
+
+const services = [
+  {
+    name: 'Servicio Mecánico',
+    image: require('../assets/car_repair.png'),
+    icon: 'tools',
+    color: '#FC5501',
+  },
+  {
+    name: 'Solicitar Grúa',
+    image: require('../assets/tow_truck.png'),
+    icon: 'tow-truck',
+    color: '#FC5501',
+  },
+  {
+    name: 'Solicitar Repuesto',
+    image: require('../assets/car_parts.png'),
+    icon: 'car-cog',
+    color: '#FC5501',
+  },
+  {
+    name: 'Otro Servicio Mecánico',
+    image: require('../assets/car_repair_2.png'),
+    icon: 'car-wrench',
+    color: '#FC5501',
+  },
+];
 
 const ServicesScreen = () => {
   const navigation = useNavigation();
@@ -16,7 +44,12 @@ const ServicesScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#fff7f0', '#ffe0c2', '#ffd6b8']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+    >
       <Appbar.Header style={styles.appBar}>
         <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
         <Appbar.Content
@@ -30,75 +63,42 @@ const ServicesScreen = () => {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        <Text style={styles.sectionTitle}>Elige un servicio de Krizo</Text>
         <View style={styles.cardsContainer}>
-          {/* Tarjeta de Servicio Mecánico */}
-          <TouchableOpacity
-            style={styles.cardWrapper}
-            onPress={() => handleServicePress('Servicio Mecánico')}
-          >
-            <Card style={styles.card}>
-              <Card.Cover source={require('../assets/car_repair.png')} style={styles.cardImage} />
-              <Card.Content style={styles.cardContent}>
-                <Title style={styles.cardTitle}>Servicio Mecánico</Title>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
-
-          {/* Tarjeta de Solicitar Grúa */}
-          <TouchableOpacity
-            style={styles.cardWrapper}
-            onPress={() => handleServicePress('Solicitar Grúa')}
-          >
-            <Card style={styles.card}>
-              <Card.Cover source={require('../assets/tow_truck.png')} style={styles.cardImage} />
-              <Card.Content style={styles.cardContent}>
-                <Title style={styles.cardTitle}>Solicitar Grúa</Title>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
-
-          {/* Tarjeta de Solicitar Repuesto */}
-          <TouchableOpacity
-            style={styles.cardWrapper}
-            onPress={() => handleServicePress('Solicitar Repuesto')}
-          >
-            <Card style={styles.card}>
-              <Card.Cover source={require('../assets/car_parts.png')} style={styles.cardImage} />
-              <Card.Content style={styles.cardContent}>
-                <Title style={styles.cardTitle}>Solicitar Repuesto</Title>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
-
-          {/* Otra Tarjeta de Servicio Mecánico (como en tu capture) */}
-          <TouchableOpacity
-            style={styles.cardWrapper}
-            onPress={() => handleServicePress('Otro Servicio Mecánico')}
-          >
-            <Card style={styles.card}>
-              <Card.Cover source={require('../assets/car_repair_2.png')} style={styles.cardImage} />
-              <Card.Content style={styles.cardContent}>
-                <Title style={styles.cardTitle}>Servicio Mecánico</Title>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
+          {services.map((service, idx) => (
+            <TouchableOpacity
+              key={service.name}
+              style={styles.cardWrapper}
+              onPress={() => handleServicePress(service.name)}
+              activeOpacity={0.85}
+            >
+              <View style={styles.card}>
+                <Image source={service.image} style={styles.cardImage} />
+                <View style={styles.cardContent}>
+                  <Icon name={service.icon} size={28} color={service.color} style={{ marginBottom: 6 }} />
+                  <Text style={styles.cardTitle}>{service.name}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
   },
   appBar: {
-    backgroundColor: '#FF6F00', // Naranja
+    backgroundColor: '#FF6F00',
     elevation: 0,
-    height: 100,
+    height: 90,
     justifyContent: 'flex-start',
     alignItems: 'center',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
   headerContentCentered: {
     flex: 1,
@@ -107,82 +107,86 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   serviceIconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
     borderWidth: 1,
     borderColor: 'white',
   },
-  serviceIcon: {
-    width: 40,
-    height: 40,
-    resizeMode: 'contain',
-  },
   scrollViewContent: {
     flexGrow: 1,
     paddingHorizontal: 10,
-    paddingVertical: 20,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -20,
-    overflow: 'hidden',
+    paddingVertical: 24,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FC5501',
+    marginBottom: 18,
+    marginTop: 8,
+    textAlign: 'center',
+    width: '100%',
   },
   cardsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
+    width: '100%',
   },
   cardWrapper: {
     width: cardWidth,
-    marginVertical: 10,
+    marginVertical: 12,
     marginHorizontal: 5,
-    borderRadius: 15,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderRadius: 20,
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
     backgroundColor: '#fff',
   },
   card: {
-    borderRadius: 15,
+    borderRadius: 20,
     overflow: 'hidden',
-    height: 220, // Altura fija para las tarjetas. Mantener si te funciona.
+    height: 210,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   cardImage: {
-    height: 140, // Altura de la imagen dentro de la tarjeta. Mantener si te funciona.
+    height: 110,
+    width: '100%',
     resizeMode: 'cover',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   cardContent: {
-    backgroundColor: 'black',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    paddingVertical: 10,
+    flex: 1,
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    paddingVertical: 12,
     paddingHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1, // Permite que ocupe el espacio restante
-    marginTop: 0,
-    minHeight: 60, // **NUEVO: Asegura una altura mínima para el contenido del título**
-    // overflow: 'visible', // **NUEVO: Intentar con 'visible' si el texto se recorta**
+    width: '100%',
   },
   cardTitle: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
-    color: 'white',
-    // lineHeight: 20, // Descomenta si sientes que el texto está muy pegado verticalmente o se corta
+    color: '#FC5501',
+    marginTop: 2,
   },
 });
 

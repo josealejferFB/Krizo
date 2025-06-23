@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Surface, Text, Divider } from 'react-native-paper'; 
@@ -76,6 +75,12 @@ export default function Layout({ children, navigation }) {
       >
         <MaterialCommunityIcons name="menu" size={32} color="white" />
       </TouchableOpacity>
+
+      {/* Logo pequeño y centrado arriba */}
+      <View style={styles.krizoTopLabel}>
+        <Logo width={36} height={36} />
+      </View>
+      
       {/* Overlay para detectar taps fuera del menú y cerrarlo */}
       {/* Solo se renderiza si el menú está visible */}
       {isMenuVisible && ( 
@@ -139,6 +144,21 @@ const styles = StyleSheet.create({
     top: 40,
     left: 20,
     zIndex: 100, 
+  },
+  krizoTopLabel: {
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 99,
+  },
+  krizoTopText: {
+    fontSize: 14,
+    color: 'white',
+    fontWeight: 'bold',
+    opacity: 0.7,
+    letterSpacing: 2,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

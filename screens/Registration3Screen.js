@@ -1,10 +1,18 @@
-import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Text, TextInput } from 'react-native';
 import { ThemedButton } from '../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Registration3Screen({ navigation }) {
+  const [code, setCode] = useState('');
+
+  // Permite solo 6 dígitos
+  const handleChange = (text) => {
+    const sanitized = text.replace(/[^0-9]/g, '').slice(0, 6);
+    setCode(sanitized);
+  };
+
   return (
     <LinearGradient
       colors={['#FC5501', '#C24100']}
@@ -16,14 +24,32 @@ export default function Registration3Screen({ navigation }) {
         <MaterialCommunityIcons name="email-check-outline" size={50} color="#FC5501" style={styles.icon} />
         <Text style={styles.title}>Confirma tu correo electrónico</Text>
         <Text style={styles.subtitle}>
-          Te hemos enviado un correo de confirmación. Por favor, revisa tu bandeja de entrada y sigue las instrucciones.
+          Ingresa el código de 6 dígitos que te enviamos por correo.
         </Text>
+        <View style={styles.codeInputContainer}>
+          <TextInput
+            style={styles.codeInput}
+            value={code}
+            onChangeText={handleChange}
+            keyboardType="numeric"
+            maxLength={6}
+            placeholder="______"
+            placeholderTextColor="#D1BFAF"
+            textAlign="center"
+            selectionColor="#FC5501"
+            autoFocus
+          />
+        </View>
         <ThemedButton
           onPress={() => navigation.navigate('Registration4')}
           style={styles.button}
+          disabled={code.length !== 6}
         >
           Siguiente
         </ThemedButton>
+        <Text style={styles.resendText}>
+          ¿No recibiste el código? <Text style={styles.resendLink}>Reenviar</Text>
+        </Text>
       </View>
     </LinearGradient>
   );
@@ -64,9 +90,39 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
   },
+  codeInputContainer: {
+    marginBottom: 24,
+    width: '100%',
+    alignItems: 'center',
+  },
+  codeInput: {
+    fontSize: 32,
+    letterSpacing: 16,
+    color: '#262525',
+    backgroundColor: '#F5F2F0',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#FC5501',
+    width: 220,
+    height: 60,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
   button: {
     width: 300,
     borderRadius: 20,
     backgroundColor: '#262525',
+    marginBottom: 10,
+  },
+  resendText: {
+    color: '#877063',
+    fontSize: 14,
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  resendLink: {
+    color: '#FC5501',
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
 });
