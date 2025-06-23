@@ -22,7 +22,7 @@ const RegistrationScreen = () => {
   const handleRegister = () => {
     if (firstName && lastName && email && password) {
       console.log('Datos de Registro:', { firstName, lastName, email, password });
-      alert('Registro en progreso... (funcionalidad de registro real aquí)');
+      navigation.navigate('Registration2'); // Cambia aquí para navegar a la siguiente pantalla
     } else {
       alert('Por favor, completa todos los campos.');
     }

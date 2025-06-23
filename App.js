@@ -12,7 +12,11 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
 import ServicesScreen from './screens/ServicesScreen'; 
-import RegistrationScreen from './screens/RegistrationScreen'; 
+import RegistrationScreen from './screens/RegistrationScreen';
+import Registration2Screen from './screens/Registration2Screen';
+import Registration3Screen from './screens/Registration3Screen';
+import Registration4Screen from './screens/Registration4Screen';
+import Registration5Screen from './screens/Registration5Screen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +38,26 @@ export default function App() {
           <Stack.Screen
             name="Registration"
             component={RegistrationScreen}
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
+            name="Registration2"
+            component={Registration2Screen}
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
+            name="Registration3"
+            component={Registration3Screen}
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
+            name="Registration4"
+            component={Registration4Screen}
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
+            name="Registration5"
+            component={Registration5Screen}
             options={{ headerShown: false }} // Oculta el encabezado
           />
           <Stack.Screen
