@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
-import { Appbar } from 'react-native-paper';
+import { View, Text, TouchableOpacity, Image, ScrollView, Dimensions, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width / 2) - 30;
+const CARD_SIZE = (width - 80) / 2;
 
 const services = [
   {
@@ -39,48 +38,67 @@ const ServicesScreen = () => {
   const navigation = useNavigation();
 
   const handleServicePress = (serviceName) => {
-    console.log(`Navegar a detalles de: ${serviceName}`);
     alert(`Has seleccionado: ${serviceName}. Próximamente se abrirá su detalle.`);
   };
 
   return (
     <LinearGradient
-      colors={['#fff7f0', '#ffe0c2', '#ffd6b8']}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.gradient}
+      colors={['#FC5501', '#C24100']}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 0 }}
+      style={StyleSheet.absoluteFillObject}
     >
-      <Appbar.Header style={styles.appBar}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
-        <Appbar.Content
-          title="Servicios"
-          titleStyle={styles.headerTitle}
-          style={styles.headerContentCentered}
-        />
-        <View style={styles.serviceIconContainer}>
-          <Icon name="tools" size={30} color="white" />
-        </View>
-      </Appbar.Header>
-
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Text style={styles.sectionTitle}>Elige un servicio de Krizo</Text>
-        <View style={styles.cardsContainer}>
-          {services.map((service, idx) => (
-            <TouchableOpacity
-              key={service.name}
-              style={styles.cardWrapper}
-              onPress={() => handleServicePress(service.name)}
-              activeOpacity={0.85}
-            >
-              <View style={styles.card}>
-                <Image source={service.image} style={styles.cardImage} />
-                <View style={styles.cardContent}>
-                  <Icon name={service.icon} size={28} color={service.color} style={{ marginBottom: 6 }} />
-                  <Text style={styles.cardTitle}>{service.name}</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <View style={styles.mainCard}>
+          {/* Header vistoso y creativo, ahora con fondo naranja */}
+          <View style={styles.headerOrangeContainer}>
+            <View style={styles.headerRow}>
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+                activeOpacity={0.7}
+              >
+                <Icon
+                  name="arrow-left-bold-circle"
+                  size={38}
+                  color="#FC5501"
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <View style={styles.headerTitleBox}>
+                <Text style={styles.headerTitleCustom}>Servicios</Text>
+                <Text style={styles.headerSubtitleCustom}>¡Todo lo que tu auto necesita!</Text>
+              </View>
+              <View style={styles.headerRightIcon}>
+                <View style={styles.iconCircle}>
+                  <Icon name="car-multiple" size={28} color="#fff" />
                 </View>
               </View>
-            </TouchableOpacity>
-          ))}
+            </View>
+            <View style={styles.headerDecor}>
+              <Icon name="star" size={18} color="#fff" style={{ marginHorizontal: 2, opacity: 0.7 }} />
+              <Icon name="star" size={14} color="#fff" style={{ marginHorizontal: 2, opacity: 0.5 }} />
+              <Icon name="star" size={10} color="#fff" style={{ marginHorizontal: 2, opacity: 0.3 }} />
+            </View>
+          </View>
+
+          <Text style={styles.sectionTitle}>Elige un servicio de Krizo</Text>
+          <View style={styles.gridContainer}>
+            {services.map((service, idx) => (
+              <TouchableOpacity
+                key={service.name}
+                style={styles.gridItem}
+                onPress={() => handleServicePress(service.name)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.cardContent}>
+                  <Image source={service.image} style={styles.cardImage} />
+                  <Icon name={service.icon} size={28} color={service.color} style={{ marginVertical: 8 }} />
+                  <Text style={styles.cardTitle}>{service.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </LinearGradient>
@@ -88,105 +106,155 @@ const ServicesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  appBar: {
-    backgroundColor: '#FF6F00',
-    elevation: 0,
-    height: 90,
-    justifyContent: 'flex-start',
+  scrollContainer: {
     alignItems: 'center',
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    paddingVertical: 30,
+    paddingHorizontal: 10,
+    minHeight: '100%',
   },
-  headerContentCentered: {
-    flex: 1,
-    alignItems: 'center',
-    marginLeft: -40,
-  },
-  headerTitle: {
-    color: 'white',
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  serviceIconContainer: {
-    width: 48,
-    height: 48,
+  mainCard: {
+    backgroundColor: '#fff',
     borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    padding: 24,
+    width: '99%',
+    maxWidth: 600,
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    marginBottom: 20,
+    position: 'relative',
+  },
+  headerOrangeContainer: {
+    width: '100%',
+    marginBottom: 18,
+    borderRadius: 22,
+    overflow: 'hidden',
+    elevation: 3,
+    backgroundColor: '#FC5501',
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  backButton: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 2,
+    elevation: 2,
+    marginRight: 8,
+    borderWidth: 2,
+    borderColor: '#FC5501',
+  },
+  backIcon: {
+    backgroundColor: '#fff',
+    borderRadius: 19,
+  },
+  shadowIcon: {
+    elevation: 3,
+  },
+  headerTitleBox: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 0,
+    marginRight: 0,
+  },
+  headerTitleCustom: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
+    fontFamily: 'System',
+    letterSpacing: 1,
+  },
+  headerSubtitleCustom: {
+    fontSize: 14,
+    color: '#FFD6B8',
+    fontFamily: 'System',
+    marginTop: 2,
+    fontStyle: 'italic',
+  },
+  headerRightIcon: {
+    backgroundColor: 'transparent',
+    borderRadius: 20,
+    padding: 0,
+    elevation: 0,
+    marginLeft: 8,
+  },
+  iconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#C24100',
+  },
+  headerDecor: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 15,
-    borderWidth: 1,
-    borderColor: 'white',
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 24,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FC5501',
+    marginLeft: 8,
     marginBottom: 18,
     marginTop: 8,
-    textAlign: 'center',
-    width: '100%',
+    alignSelf: 'flex-start',
+    fontFamily: 'System',
+    letterSpacing: 0.5,
   },
-  cardsContainer: {
+  gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     width: '100%',
+    marginTop: 10,
   },
-  cardWrapper: {
-    width: cardWidth,
-    marginVertical: 12,
-    marginHorizontal: 5,
-    borderRadius: 20,
-    elevation: 6,
+  gridItem: {
+    width: CARD_SIZE,
+    height: CARD_SIZE + 30,
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    marginBottom: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
     shadowColor: '#FC5501',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.13,
     shadowRadius: 8,
-    backgroundColor: '#fff',
-  },
-  card: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    height: 210,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  cardImage: {
-    height: 110,
-    width: '100%',
-    resizeMode: 'cover',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
   },
   cardContent: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 5,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    padding: 8,
+  },
+  cardImage: {
+    width: 70,
+    height: 70,
+    resizeMode: 'contain',
+    marginBottom: 4,
   },
   cardTitle: {
-    textAlign: 'center',
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#FC5501',
+    color: '#262525',
+    textAlign: 'center',
     marginTop: 2,
+    fontFamily: 'System',
+    letterSpacing: 0.5,
   },
 });
 
