@@ -61,22 +61,25 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <Layout navigation={navigation}>
+      {/* Fondo degradado igual que ThemedBackgroundGradient */}
       <LinearGradient
-        colors={['#fff7f0', '#ffe0c2', '#ffd6b8']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
-        {/* Botón de logout arriba a la derecha, fuera de la tarjeta */}
-        <TouchableOpacity
-          style={styles.logoutButton}
-          onPress={() => navigation.replace('Login')}
-          activeOpacity={0.7}
-        >
-          <MaterialCommunityIcons name="logout" size={22} color="#FC5501" />
-        </TouchableOpacity>
+        colors={['#FC5501', '#C24100']}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 0 }}
+        style={StyleSheet.absoluteFillObject}
+      />
 
-        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        {/* Contenedor blanco tipo "card" para todo el contenido principal */}
+        <View style={styles.mainCard}>
+          {/* Botón de logout arriba a la derecha, dentro del mainCard y con posición absoluta */}
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => navigation.replace('Login')}
+            activeOpacity={0.7}
+          >
+            <MaterialCommunityIcons name="logout" size={22} color="#FC5501" />
+          </TouchableOpacity>
           <View style={styles.headerCard}>
             <MaterialCommunityIcons name="account-circle" size={60} color="#FC5501" style={styles.headerIcon} />
             <View>
@@ -92,17 +95,34 @@ export default function HomeScreen({ navigation }) {
               <TouchableOpacity style={styles.arrowButton} onPress={() => carouselRef.current?.prev()}>
                 <MaterialCommunityIcons name="chevron-left" size={22} color="#FC5501" />
               </TouchableOpacity>
-              <Carousel
-                ref={carouselRef}
-                width={viewportWidth * 0.74}
-                height={viewportWidth * 0.55}
-                data={carouselData}
-                renderItem={renderItem}
-                scrollAnimationDuration={600}
-                onSnapToItem={setCurrentCarouselIndex}
-                style={styles.carousel}
-                loop
-              />
+              <View style={{
+                backgroundColor: '#fff',
+                borderRadius: 20,
+                elevation: 6,
+                shadowColor: '#FC5501',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.13,
+                shadowRadius: 8,
+                paddingVertical: 8,
+                paddingHorizontal: 0,
+                width: viewportWidth * 0.78,
+                height: viewportWidth * 0.55,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginHorizontal: 4,
+              }}>
+                <Carousel
+                  ref={carouselRef}
+                  width={viewportWidth * 0.78}
+                  height={viewportWidth * 0.55}
+                  data={carouselData}
+                  renderItem={renderItem}
+                  scrollAnimationDuration={600}
+                  onSnapToItem={setCurrentCarouselIndex}
+                  style={styles.carousel}
+                  loop
+                />
+              </View>
               <TouchableOpacity style={styles.arrowButton} onPress={() => carouselRef.current?.next()}>
                 <MaterialCommunityIcons name="chevron-right" size={22} color="#FC5501" />
               </TouchableOpacity>
@@ -164,8 +184,8 @@ export default function HomeScreen({ navigation }) {
               </Text>
             </View>
           </View>
-        </ScrollView>
-      </LinearGradient>
+        </View>
+      </ScrollView>
     </Layout>
   );
 }
@@ -174,36 +194,43 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
+  mainCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 32, // Más padding para separar el contenido del borde
+    width: '99%', // Más ancho
+    maxWidth: 600, // Más ancho para pantallas grandes
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    marginBottom: 20,
+    position: 'relative',
+  },
   logoutButton: {
     position: 'absolute',
-    top: 38,
-    right: 24,
+    top: 18,
+    right: 32, // Más separado del borde derecho
     zIndex: 10,
     backgroundColor: '#FFF7F0',
     borderRadius: 20,
     padding: 4,
     elevation: 2,
   },
-  scrollContainer: {
-    alignItems: 'center',
-    paddingVertical: 30,
-    paddingHorizontal: 10,
-    paddingTop: 60, // deja espacio para el botón de logout
-  },
   headerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     borderRadius: 24,
-    padding: 24,
-    width: '95%',
-    maxWidth: 420,
+    padding: 0,
+    width: '100%',
+    maxWidth: 520, // Más ancho para que el texto no se cruce con el botón
     marginBottom: 30,
-    elevation: 8,
-    shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
+    elevation: 0,
+    shadowColor: 'transparent',
+    marginRight: 48, // Deja espacio para el botón de logout
   },
   headerIcon: {
     marginRight: 18,
@@ -302,7 +329,7 @@ const styles = StyleSheet.create({
   },
   carousel: {
     flexGrow: 0,
-    width: viewportWidth * 0.74,
+    width: viewportWidth * 0.78, // Vuelve al tamaño original
     height: viewportWidth * 0.55,
     justifyContent: 'center',
     alignItems: 'center',
