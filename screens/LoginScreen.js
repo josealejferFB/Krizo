@@ -56,10 +56,9 @@ export default function LoginScreen({ navigation }) {
           <MaterialCommunityIcons name="tow-truck" size={38} color="#FC5501" style={styles.krizoWorkerIcon} />
           <ThemedButton
             onPress={() => {
-              console.log('Ingresando como KrizoWorker');
-              navigation.replace('Home');
+              navigation.navigate('KrizoWorkerLogin'); // <-- Cambia esto
             }}
-            style={styles.krizoWorkerButtonInner}
+            style={[styles.krizoWorkerButtonInner, { backgroundColor: '#262525' }]}
             labelStyle={styles.krizoWorkerButtonLabel}
             mode="contained"
             contentStyle={{ height: 70 }}
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
     marginTop: 18,
     width: '100%',
     height: 90,
-    backgroundColor: '#FFF7F0',
+    backgroundColor: '#262525', // <-- Cambiado a oscuro
     borderRadius: 16,
     position: 'relative',
     paddingBottom: 12, // Añade espacio abajo

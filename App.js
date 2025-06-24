@@ -17,10 +17,11 @@ import Registration2Screen from './screens/Registration2Screen';
 import Registration3Screen from './screens/Registration3Screen';
 import Registration4Screen from './screens/Registration4Screen';
 import Registration5Screen from './screens/Registration5Screen';
+import KrizoWorkerLoginScreen from './screens/KrizoWorkerLoginScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
@@ -75,8 +76,15 @@ export default function App() {
             component={ServicesScreen} 
             options={{ headerShown: false }} // Oculta el encabezado
           />
+          <Stack.Screen
+            name="KrizoWorkerLogin"
+            component={KrizoWorkerLoginScreen}
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );
 }
+
+export default App;
