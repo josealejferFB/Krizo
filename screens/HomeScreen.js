@@ -164,7 +164,7 @@ export default function HomeScreen({ navigation }) {
               <Text style={themedStyles.cardTitle}>Repuestos</Text>
               <Text style={themedStyles.cardDesc}>Pide repuestos originales</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('Details')}>
+            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('MyProfile')}>
               <MaterialCommunityIcons name="account" size={40} color="#FC5501" />
               <Text style={themedStyles.cardTitle}>Mi Perfil</Text>
               <Text style={themedStyles.cardDesc}>Gestiona tu información</Text>

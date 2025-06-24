@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   gridItem: {
     width: CARD_SIZE,
     height: CARD_SIZE + 30,
-    backgroundColor: '#fff',
+    backgroundColor: '#262525', // Color oscuro igual que en Home
     borderRadius: 18,
     marginBottom: 18,
     alignItems: 'center',
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#262525',
+    color: '#fff', // Texto blanco para contraste
     textAlign: 'center',
     marginTop: 2,
     fontFamily: 'System',
