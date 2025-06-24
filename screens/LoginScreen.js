@@ -1,14 +1,14 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
-import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { Text, TextInput } from "react-native-paper";
+import { ThemedInput, ThemedButton } from "../components/ThemedUIElements";
+import ThemedBackgroundGradient from "../components/ThemedBackgroundGradient";
 import Logo from "../assets/logo.svg";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LoginScreen({ navigation }) {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
 
   return (
@@ -43,8 +43,8 @@ export default function LoginScreen({ navigation }) {
 
         <ThemedButton
           onPress={() => {
-            console.log('Usuario:', username, 'Contraseña:', password);
-            navigation.replace('Home');
+            console.log("Usuario:", username, "Contraseña:", password);
+            navigation.replace("Home");
           }}
           icon="login"
           style={styles.loginButton}
@@ -53,12 +53,20 @@ export default function LoginScreen({ navigation }) {
         </ThemedButton>
 
         <View style={styles.krizoWorkerButton}>
-          <MaterialCommunityIcons name="tow-truck" size={38} color="#FC5501" style={styles.krizoWorkerIcon} />
+          <MaterialCommunityIcons
+            name="tow-truck"
+            size={38}
+            color="#FC5501"
+            style={styles.krizoWorkerIcon}
+          />
           <ThemedButton
             onPress={() => {
-              navigation.navigate('KrizoWorkerLogin'); // <-- Cambia esto
+              navigation.navigate("KrizoWorkerLogin"); // <-- Cambia esto
             }}
-            style={[styles.krizoWorkerButtonInner, { backgroundColor: '#262525' }]}
+            style={[
+              styles.krizoWorkerButtonInner,
+              { backgroundColor: "#262525" },
+            ]}
             labelStyle={styles.krizoWorkerButtonLabel}
             mode="contained"
             contentStyle={{ height: 70 }}
@@ -70,8 +78,8 @@ export default function LoginScreen({ navigation }) {
 
       <ThemedButton
         onPress={() => {
-          console.log('Navegando a Registro');
-          navigation.navigate('Registration');
+          console.log("Navegando a Registro");
+          navigation.navigate("Registration");
         }}
         style={styles.registerButton}
         labelStyle={styles.registerButtonLabel}
@@ -87,30 +95,30 @@ const styles = StyleSheet.create({
   logoContainer: {
     marginTop: 40,
     marginBottom: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 28,
     marginBottom: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#fff',
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#fff",
     letterSpacing: 1,
-    textShadowColor: '#FC5501',
+    textShadowColor: "#FC5501",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 8,
   },
   formCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 24,
     padding: 28,
-    width: '90%',
+    width: "90%",
     maxWidth: 400,
-    alignSelf: 'center',
-    alignItems: 'center',
+    alignSelf: "center",
+    alignItems: "center",
     elevation: 8,
-    shadowColor: '#FC5501',
+    shadowColor: "#FC5501",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
     shadowRadius: 12,
@@ -118,54 +126,58 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 10,
-    width: '100%',
+    width: "100%",
     borderRadius: 16,
-    backgroundColor: '#FC5501',
+    backgroundColor: "#FC5501",
   },
   krizoWorkerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 18,
-    width: '100%',
+    width: "100%",
     height: 90,
-    backgroundColor: '#262525', // <-- Cambiado a oscuro
+    backgroundColor: "#262525",
     borderRadius: 16,
-    position: 'relative',
-    paddingBottom: 12, // Añade espacio abajo
+    position: "relative",
+    paddingBottom: 12,
+    borderWidth: 2, // Borde naranja
+    borderColor: "#FC5501", // Borde naranja
   },
   krizoWorkerIcon: {
-    position: 'absolute',
-    left: '50%',
+    position: "absolute",
+    left: "50%",
     top: 10,
     marginLeft: -19,
     zIndex: 2,
   },
   krizoWorkerButtonInner: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     elevation: 0,
-    shadowColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
+    shadowColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 16,
     marginLeft: 0,
   },
   krizoWorkerButtonLabel: {
-    color: '#FC5501',
+    color: "#FC5501",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 0,
     marginTop: 24, // Subido un poco más respecto al icono
   },
   registerButton: {
     marginTop: 10,
-    alignSelf: 'center',
+    alignSelf: "center",
+    borderColor: "#FC5501",
+    borderWidth: 2,
   },
   registerButtonLabel: {
-    color: '#FC5501',
+    color: "#FC5501",
     fontSize: 16,
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-  }
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
 });

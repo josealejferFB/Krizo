@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { Appbar, TextInput, Button, useTheme } from 'react-native-paper';
+import { View, Text, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
+import { Appbar, TextInput, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Logo from '../assets/logo.svg';
 
+import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
 import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
 
 const { height } = Dimensions.get('window');
@@ -29,84 +30,111 @@ const RegistrationScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Appbar.Header style={styles.appBar}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
-        <Appbar.Content
-          title="Volver al Inicio de Sesión"
-          titleStyle={styles.appBarTitle}
-          style={styles.appBarContentCentered}
-        />
-      </Appbar.Header>
-
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Logo width={150} height={100} style={styles.logo} />
-
-        <ThemedInput
-          label="Primer Nombre"
-          value={firstName}
-          onChangeText={setFirstName}
-          style={styles.themedInputOverride}
-        />
-
-        <ThemedInput
-          label="Primer Apellido"
-          value={lastName}
-          onChangeText={setLastName}
-          style={styles.themedInputOverride}
-        />
-        <Text style={styles.helperText}>
-          Asegúrate de que tu nombre y apellido coincida con tu cédula de identidad.
-        </Text>
-
-        <ThemedInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          style={styles.themedInputOverride}
-        />
-        <Text style={styles.helperText}>
-          Te mandaremos un Email para completar tu registro.
-        </Text>
-
-        <ThemedInput
-          label="Contraseña"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!showPassword}
-          right={
-            <TextInput.Icon
-              icon={showPassword ? 'eye-off' : 'eye'}
-              onPress={() => setShowPassword(!showPassword)}
-              color={theme.colors.onSurfaceVariant}
-            />
-          }
-        />
-
-        <Text style={styles.termsText}>
-          Al presionar "Continuar Registro" te comprometes a haber leído los{' '}
-          <Text style={styles.linkText}>Términos de Servicio</Text>,{' '}
-          <Text style={styles.linkText}>Términos de Pago</Text> y las{' '}
-          <Text style={styles.linkText}>Políticas de Privacidad</Text>.
-        </Text>
-
-        <ThemedButton
-          onPress={handleRegister}
-          style={styles.themedButtonOverride}
+    <ThemedBackgroundGradient>
+      <View style={styles.container}>
+        {/* Botón volver igual que en KrizoWorkerLoginScreen */}
+        <TouchableOpacity
+          style={styles.backButton}
+          activeOpacity={0.8}
+          onPress={() => navigation.goBack()}
         >
-          Continuar Registro
-        </ThemedButton>
-      </ScrollView>
-    </View>
+          <MaterialCommunityIcons name="arrow-left" size={26} color="#FC5501" style={styles.backIcon} />
+          <Text style={styles.backButtonText}>Volver</Text>
+        </TouchableOpacity>
+
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <Logo width={150} height={100} style={styles.logo} />
+
+          <ThemedInput
+            label="Primer Nombre"
+            value={firstName}
+            onChangeText={setFirstName}
+            style={styles.themedInputOverride}
+          />
+
+          <ThemedInput
+            label="Primer Apellido"
+            value={lastName}
+            onChangeText={setLastName}
+            style={styles.themedInputOverride}
+          />
+          <Text style={styles.helperText}>
+            Asegúrate de que tu nombre y apellido coincida con tu cédula de identidad.
+          </Text>
+
+          <ThemedInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            style={styles.themedInputOverride}
+          />
+          <Text style={styles.helperText}>
+            Te mandaremos un Email para completar tu registro.
+          </Text>
+
+          <ThemedInput
+            label="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            style={styles.themedInputOverride} // <-- Asegura que este style esté aquí
+            right={
+              <TextInput.Icon
+                icon={showPassword ? 'eye-off' : 'eye'}
+                onPress={() => setShowPassword(!showPassword)}
+                color={theme.colors.onSurfaceVariant}
+              />
+            }
+          />
+
+          <Text style={styles.termsText}>
+            Al presionar "Continuar Registro" te comprometes a haber leído los{' '}
+            <Text style={styles.linkText}>Términos de Servicio</Text>,{' '}
+            <Text style={styles.linkText}>Términos de Pago</Text> y las{' '}
+            <Text style={styles.linkText}>Políticas de Privacidad</Text>.
+          </Text>
+
+          <ThemedButton
+            onPress={handleRegister}
+            style={styles.themedButtonOverride}
+          >
+            Continuar Registro
+          </ThemedButton>
+        </ScrollView>
+      </View>
+    </ThemedBackgroundGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FF6F00',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#262525',
+    borderRadius: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    marginTop: 28,
+    marginLeft: 18,
+    marginBottom: 8,
+    elevation: 4,
+    borderWidth: 1.5,
+    borderColor: '#FC5501',
+  },
+  backIcon: {
+    marginRight: 8,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   appBar: {
     backgroundColor: '#FF6F00',
