@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
+
+const { width: viewportWidth } = Dimensions.get('window');
 
 export const ThemedInput = ({ label, value, onChangeText, secureTextEntry, style, ...rest }) => {
   const defaultInputStyle = {
@@ -74,3 +76,198 @@ export const ThemedButton = ({ children, onPress, mode = "contained", icon, styl
     </Button>
   );
 };
+
+export const themedStyles = StyleSheet.create({
+  mainCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 32,
+    width: '99%',
+    maxWidth: 600,
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    marginBottom: 20,
+    position: 'relative',
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 18,
+    right: 32,
+    zIndex: 10,
+    backgroundColor: '#FFF7F0',
+    borderRadius: 20,
+    padding: 4,
+    elevation: 2,
+  },
+  headerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: 24,
+    padding: 0,
+    width: '100%',
+    maxWidth: 520,
+    marginBottom: 30,
+    elevation: 0,
+    shadowColor: 'transparent',
+    marginRight: 48,
+  },
+  headerIcon: {
+    marginRight: 18,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FC5501',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#877063',
+  },
+  sectionTitleContainer: {
+    width: '95%',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FC5501',
+    marginLeft: 8,
+    marginBottom: 6,
+  },
+  cardsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '95%',
+    marginBottom: 18,
+  },
+  serviceCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '48%',
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#262525',
+    marginTop: 10,
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  cardDesc: {
+    fontSize: 13,
+    color: '#877063',
+    textAlign: 'center',
+  },
+  vehicleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 18,
+    width: '95%',
+    maxWidth: 420,
+    marginTop: 10,
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+  },
+  vehicleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#262525',
+  },
+  vehicleTextSmall: {
+    fontSize: 13,
+    color: '#877063',
+    marginTop: 2,
+  },
+  carouselSection: {
+    alignItems: 'center',
+    marginBottom: 28,
+    width: '100%',
+  },
+  carouselWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 10,
+  },
+  carousel: {
+    flexGrow: 0,
+    width: viewportWidth * 0.78,
+    height: viewportWidth * 0.55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  arrowButton: {
+    paddingHorizontal: 2,
+    paddingVertical: 8,
+  },
+  carouselCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    overflow: 'hidden',
+    elevation: 6,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+  },
+  cardImage: {
+    width: '100%',
+    height: '55%',
+    resizeMode: 'cover',
+  },
+  carouselCardContent: {
+    padding: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    flex: 1,
+  },
+  carouselCardTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#FC5501',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  carouselCardDescription: {
+    fontSize: 14,
+    color: '#877063',
+    textAlign: 'center',
+  },
+  paginationDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 3,
+  },
+});
