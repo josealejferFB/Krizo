@@ -80,25 +80,25 @@ export const ThemedButton = ({ children, onPress, mode = "contained", icon, styl
 export const themedStyles = StyleSheet.create({
   mainCard: {
     backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 32,
-    width: '99%',
-    maxWidth: 600,
-    alignItems: 'center',
-    elevation: 8,
+    borderRadius: 28,
+    padding: 18,
+    width: '100%', // Antes probablemente era 90% o 92%
+    maxWidth: 480, // Puedes aumentar este valor si quieres más ancho en tablets
+    alignSelf: 'center',
+    marginTop: 24,
+    marginBottom: 32,
+    elevation: 10,
     shadowColor: '#FC5501',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
     shadowRadius: 12,
-    marginBottom: 20,
-    position: 'relative',
   },
   logoutButton: {
     position: 'absolute',
     top: 18,
-    right: 32,
+    right: 16, // Antes: 32. Ahora más a la derecha
     zIndex: 10,
-    backgroundColor: '#262525', // Fondo oscuro
+    backgroundColor: '#262525',
     borderRadius: 20,
     padding: 4,
     elevation: 2,
