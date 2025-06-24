@@ -4,7 +4,7 @@ import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Carousel from 'react-native-reanimated-carousel';
 import { LinearGradient } from 'expo-linear-gradient';
-import Layout from '../components/Layout.js';
+import Layout from '../components/Layout';
 import { themedStyles } from '../components/ThemedUIElements';
 
 const { width: viewportWidth } = Dimensions.get('window');
@@ -62,7 +62,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <Layout navigation={navigation}>
-      {/* Fondo degradado igual que ThemedBackgroundGradient */}
+      {/* Fondo degradado como antes */}
       <LinearGradient
         colors={['#FC5501', '#C24100']}
         start={{ x: 0, y: 1 }}

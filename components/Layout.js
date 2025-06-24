@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Surface, Text, Divider } from 'react-native-paper'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,25 +9,19 @@ import Animated, {
   withTiming,
   Easing
 } from 'react-native-reanimated';
-
-// ¡IMPORTANTE! Importa GestureHandlerRootView, Gesture y GestureDetector
 import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler'; 
-
-// Asegúrate de que esta ruta sea correcta y que el SVG esté configurado en metro.config.js
 import Logo from "../assets/logo.svg"; 
 
 export default function Layout({ children, navigation }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const menuPosition = useSharedValue(-300); // Posición inicial del menú (oculto a la izquierda)
+  const menuPosition = useSharedValue(-300);
 
-  // Estilo animado para el menú lateral
   const menuAnimation = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: menuPosition.value }],
     };
   });
 
-  // Función para abrir y cerrar el menú
   const toggleMenu = () => {
     setIsMenuVisible(prev => {
       menuPosition.value = withTiming(
@@ -37,14 +31,14 @@ export default function Layout({ children, navigation }) {
       return !prev;
     });
   };
-  // Define el gesto de tap para cerrar el menú al tocar fuera
+
   const tapGesture = Gesture.Tap()
     .onStart(() => {
       if (isMenuVisible) {
         toggleMenu();
       }
     });
-  // Ahora define el array de opciones del menú
+
   const menuOptions = [
     { title: 'Inicio', icon: 'home', screen: 'Home' },
     { title: 'Servicios', icon: 'tools', screen: 'Services' },
@@ -60,9 +54,8 @@ export default function Layout({ children, navigation }) {
   ];
 
   return (
-    // GestureHandlerRootView DEBE envolver todo el contenido que usa gestos
-    <GestureHandlerRootView style={{ flex: 1 }}> 
-      {/* Gradiente de fondo que cubre toda la pantalla */}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* Fondo degradado fijo */}
       <LinearGradient
         colors={['#FC5501', '#C24100']}
         style={StyleSheet.absoluteFillObject}
@@ -82,24 +75,21 @@ export default function Layout({ children, navigation }) {
       </View>
       
       {/* Overlay para detectar taps fuera del menú y cerrarlo */}
-      {/* Solo se renderiza si el menú está visible */}
       {isMenuVisible && (
         <GestureDetector gesture={tapGesture}>
           <View style={styles.overlay} pointerEvents="auto" />
         </GestureDetector>
       )}
+
       {/* Menú lateral animado */}
       <Animated.View style={[styles.menuContainer, menuAnimation]}>
         <Surface style={styles.menuSurface} elevation={5}>
-          {/* Encabezado del menú con el logo */}
           <View style={styles.drawerHeader}>
             <Logo width={100} height={100} />
             <Text style={styles.drawerHeaderText}>Menú Krizo</Text>
           </View>
           <Divider style={styles.divider} />
-          {/* Renderizado de las opciones del menú */}
           {menuOptions.map((item, index) => (
-            // IMPORTANTE: Usamos el 'index' como key para asegurar unicidad
             <React.Fragment key={index}> 
               <TouchableOpacity 
                 style={styles.menuItem}
@@ -121,19 +111,19 @@ export default function Layout({ children, navigation }) {
                   {item.title}
                 </Text>
               </TouchableOpacity>
-              {/* Agrega un divisor después de "Ajustes" */}
               {item.title === 'Ajustes' && <Divider style={styles.divider} />}
             </React.Fragment>
           ))}
         </Surface>
       </Animated.View>
-      {/* Contenido principal de la pantalla, que son los 'children' pasados al Layout */}
+      {/* Contenido principal */}
       <View style={styles.content}>
-        {children} 
+        {children}
       </View>
-    </GestureHandlerRootView> 
+    </GestureHandlerRootView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -161,8 +151,8 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'transparent', // Puedes cambiar a 'rgba(0,0,0,0.5)' para un efecto de sombra al abrir el menú
-    zIndex: 80, // Debe ser menor que el zIndex del menú (90)
+    backgroundColor: 'transparent',
+    zIndex: 80,
   },
   menuContainer: {
     position: 'absolute',
@@ -174,7 +164,7 @@ const styles = StyleSheet.create({
   },
   menuSurface: {
     flex: 1,
-    backgroundColor: '#C24100', 
+    backgroundColor: '#C24100', // Se sobreescribe en darkMode
     padding: 20,
     paddingTop: 80, 
   },
@@ -191,7 +181,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    // Este paddingTop es importante para que el contenido no se superponga con el botón del menú
     paddingTop: 80, 
     paddingHorizontal: 20, 
   },
@@ -212,5 +201,17 @@ const styles = StyleSheet.create({
     height: 1,
     marginVertical: 10,
     marginLeft: 46, 
+  },
+  themeToggleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingLeft: 10,
+    marginBottom: 5,
+  },
+  themeToggleText: {
+    fontSize: 16,
+    marginLeft: 12,
+    fontWeight: 'bold',
   },
 });

@@ -98,7 +98,7 @@ export const themedStyles = StyleSheet.create({
     top: 18,
     right: 32,
     zIndex: 10,
-    backgroundColor: '#FFF7F0',
+    backgroundColor: '#262525', // Fondo oscuro
     borderRadius: 20,
     padding: 4,
     elevation: 2,
@@ -118,6 +118,9 @@ export const themedStyles = StyleSheet.create({
   },
   headerIcon: {
     marginRight: 18,
+    backgroundColor: '#262525', // Fondo oscuro para el icono de usuario
+    borderRadius: 30,
+    padding: 4,
   },
   headerTitle: {
     fontSize: 22,
@@ -148,7 +151,7 @@ export const themedStyles = StyleSheet.create({
     marginBottom: 18,
   },
   serviceCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#262525', // Cambiado a color oscuro
     borderRadius: 20,
     padding: 18,
     alignItems: 'center',
@@ -163,20 +166,20 @@ export const themedStyles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#262525',
+    color: '#fff', // Texto blanco para contraste
     marginTop: 10,
     marginBottom: 2,
     textAlign: 'center',
   },
   cardDesc: {
     fontSize: 13,
-    color: '#877063',
+    color: '#FFD6B8', // Texto más claro para contraste
     textAlign: 'center',
   },
   vehicleCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#262525', // Cambiado a color oscuro
     borderRadius: 20,
     padding: 18,
     width: '95%',
@@ -191,11 +194,11 @@ export const themedStyles = StyleSheet.create({
   vehicleText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#262525',
+    color: '#fff', // Texto blanco para contraste
   },
   vehicleTextSmall: {
     fontSize: 13,
-    color: '#877063',
+    color: '#FFD6B8', // Texto más claro para contraste
     marginTop: 2,
   },
   carouselSection: {
@@ -222,7 +225,7 @@ export const themedStyles = StyleSheet.create({
     paddingVertical: 8,
   },
   carouselCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#262525', // Cambiado a color oscuro
     borderRadius: 20,
     overflow: 'hidden',
     elevation: 6,
@@ -249,13 +252,13 @@ export const themedStyles = StyleSheet.create({
   carouselCardTitle: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: '#FC5501',
+    color: '#fff', // Texto blanco para contraste
     marginBottom: 6,
     textAlign: 'center',
   },
   carouselCardDescription: {
     fontSize: 14,
-    color: '#877063',
+    color: '#FFD6B8', // Texto más claro para contraste
     textAlign: 'center',
   },
   paginationDots: {
