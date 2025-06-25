@@ -20,11 +20,43 @@ export default function Registration5Screen({ navigation }) {
         </Text>
         {/* Aquí irá el componente para subir la foto */}
         <ThemedButton
-          onPress={() => navigation.replace('Home')}
+          onPress={() => {/* lógica para subir foto */}}
           style={styles.button}
         >
-          Finalizar
+          Subir foto
         </ThemedButton>
+      </View>
+
+      {/* Nuevo apartado para elegir tipo de registro */}
+      <View style={styles.optionCard}>
+        <Text style={styles.optionTitle}>¿Cómo deseas continuar?</Text>
+        <Text style={styles.optionSubtitle}>
+          Puedes terminar tu registro como usuario o continuar para registrarte como trabajador.
+        </Text>
+        <View style={styles.optionsRow}>
+          <ThemedButton
+            style={[
+              styles.optionButton,
+              { backgroundColor: '#FC5501', flexDirection: 'row', alignItems: 'center' }
+            ]}
+            onPress={() => navigation.replace('WorkerRegistration')}
+            contentStyle={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingHorizontal: 12 }}
+            labelStyle={{ fontSize: 15, fontWeight: 'bold', color: '#fff', marginLeft: 10, flexShrink: 1, textAlign: 'left' }}
+            icon={({ color, size }) => (
+              <MaterialCommunityIcons name="tow-truck" color="#fff" size={22} style={{ marginRight: 10, marginLeft: 0 }} />
+            )}
+          >
+            Continuar como trabajador
+          </ThemedButton>
+          <ThemedButton
+            style={[styles.optionButton, { backgroundColor: '#262525' }]}
+            onPress={() => navigation.replace('Home')}
+            labelStyle={{ fontSize: 15, fontWeight: 'bold', color: '#fff', flexShrink: 1, textAlign: 'center' }}
+            contentStyle={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 12 }}
+          >
+            Terminar registro
+          </ThemedButton>
+        </View>
       </View>
     </LinearGradient>
   );
@@ -69,5 +101,47 @@ const styles = StyleSheet.create({
     width: 300,
     borderRadius: 20,
     backgroundColor: '#262525',
+  },
+  optionCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 20,
+    width: '90%',
+    maxWidth: 400,
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    marginTop: 20,
+  },
+  optionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FC5501',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  optionSubtitle: {
+    fontSize: 14,
+    color: '#877063',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  optionsRow: {
+    flexDirection: 'column', // Cambia a columna para que los botones sean más anchos
+    width: '100%',
+    gap: 14,
+  },
+  optionButton: {
+    width: '100%',
+    borderRadius: 20,
+    minHeight: 56, // Más alto para asegurar visibilidad del texto
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+    paddingVertical: 10,
+    paddingHorizontal: 0,
   },
 });
