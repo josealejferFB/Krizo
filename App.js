@@ -19,6 +19,7 @@ import Registration4Screen from './screens/Registration4Screen';
 import Registration5Screen from './screens/Registration5Screen';
 import KrizoWorkerLoginScreen from './screens/KrizoWorkerLoginScreen';
 import MyProfileScreen from './screens/MyProfileScreen';
+import WalletScreen from './screens/WalletScreen'; // Agrega esta línea
 
 const Stack = createNativeStackNavigator();
 
@@ -86,6 +87,11 @@ function App() {
             name="MyProfile"
             component={MyProfileScreen}
             options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
+            name="Wallet"
+            component={WalletScreen}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

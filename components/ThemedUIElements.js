@@ -225,7 +225,7 @@ export const themedStyles = StyleSheet.create({
     paddingVertical: 8,
   },
   carouselCard: {
-    backgroundColor: '#262525', // Cambiado a color oscuro
+    backgroundColor: '#FC5501', // Cambiado a color oscuro
     borderRadius: 20,
     overflow: 'hidden',
     elevation: 6,

@@ -42,8 +42,8 @@ export default function Layout({ children, navigation }) {
   const menuOptions = [
     { title: 'Inicio', icon: 'home', screen: 'Home' },
     { title: 'Servicios', icon: 'tools', screen: 'Services' },
-    { title: 'Mi Perfil', icon: 'account', screen: 'Details' },
-    { title: 'Billetera', icon: 'wallet', screen: 'Details' },
+    { title: 'Mi Perfil', icon: 'account', screen: 'MyProfile' },
+    { title: 'Billetera', icon: 'wallet', screen: 'Wallet' }, // Cambia 'Details' por 'Wallet'
     { title: 'Promociones', icon: 'tag', screen: 'Details' },
     { title: 'Ajustes', icon: 'cog', screen: 'Details' },
     { title: 'Cerrar Sesión', icon: 'logout', action: () => {
