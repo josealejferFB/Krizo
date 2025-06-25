@@ -70,17 +70,18 @@ export default function HomeScreen({ navigation }) {
         style={StyleSheet.absoluteFillObject}
       />
 
-      <ScrollView contentContainerStyle={themedStyles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {/* Contenedor blanco tipo "card" para todo el contenido principal */}
-        <View style={themedStyles.mainCard}>
-          {/* Botón de logout arriba a la derecha, dentro del mainCard y con posición absoluta */}
           <TouchableOpacity
             style={themedStyles.logoutButton}
             onPress={() => navigation.replace('Login')}
             activeOpacity={0.7}
           >
-            <MaterialCommunityIcons name="logout" size={22} color="#FC5501" />
+            <MaterialCommunityIcons name="logout" size={22} color="#fff" />
           </TouchableOpacity>
+      <ScrollView contentContainerStyle={themedStyles.scrollContainer} showsVerticalScrollIndicator={false}>
+        {/* Contenedor blanco tipo "card" para todo el contenido principal */}
+        <View style={themedStyles.mainCard}>
+          {/* Botón de logout arriba a la derecha, dentro del mainCard y con posición absoluta */}
+          
           <View style={themedStyles.headerCard}>
             <MaterialCommunityIcons name="account-circle" size={60} color="#FC5501" style={themedStyles.headerIcon} />
             <View>

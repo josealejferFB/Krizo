@@ -95,10 +95,10 @@ export const themedStyles = StyleSheet.create({
   },
   logoutButton: {
     position: 'absolute',
-    top: 18,
+    top: '10%',
     right: 16, // Antes: 32. Ahora más a la derecha
-    zIndex: 10,
-    backgroundColor: '#262525',
+    zIndex: 999,
+    backgroundColor: '#FC5501',
     borderRadius: 20,
     padding: 4,
     elevation: 2,

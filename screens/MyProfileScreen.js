@@ -73,7 +73,7 @@ export default function MyProfileScreen({ navigation }) {
                   {profileImage ? (
                     <Image source={{ uri: profileImage }} style={styles.avatar} />
                   ) : (
-                    <MaterialCommunityIcons name="account-circle" size={110} color="#FC5501" />
+                    <MaterialCommunityIcons name="account-circle" size={105} color="#FC5501" />
                   )}
                   {editing && (
                     <View style={styles.editAvatarIcon}>
@@ -387,7 +387,6 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     elevation: 10,
     shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
     shadowRadius: 16,
     alignItems: 'center',
@@ -416,7 +415,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     elevation: 2,
     shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     marginLeft: 8,
@@ -438,13 +436,16 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   avatarContainer: {
+    position: 'relative',
     alignItems: 'center',
     marginBottom: 24,
     width: '100%',
+    zIndex: 1, // <-- Añade esto para traer al frente
+    elevation: 1, // <-- Añade esto para Android
   },
   avatarShadow: {
+    position: 'relative',
     shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
     shadowRadius: 12,
     borderRadius: 60,
@@ -462,13 +463,11 @@ const styles = StyleSheet.create({
     borderRadius: 55,
     borderWidth: 3,
     borderColor: '#FC5501',
-    overflow: 'hidden',
-    zIndex: 11, // <-- Añade esto para asegurar que esté al frente
-    elevation: 11, // <-- Añade esto para Android
+    zIndex: 11, 
+    elevation: 11, 
   },
   avatar: {
-    width: 110,
-    height: 110,
+    position: 'relative',
     borderRadius: 55,
     backgroundColor: '#fff',
   },
@@ -477,24 +476,23 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     backgroundColor: '#262525',
-    borderRadius: 16,
-    padding: 4,
+    borderRadius: 20,
+    padding: 3,
     borderWidth: 2,
     borderColor: '#fff',
-    zIndex: 12, // <-- Añade esto para que el icono esté encima de la imagen
-    elevation: 12, // <-- Añade esto para Android
+    zIndex: 999, 
+    elevation: 999,
   },
   infoCard: {
     width: '100%',
     backgroundColor: '#FC5501', // Naranja principal
     borderRadius: 18,
-    paddingVertical: 18,
+    paddingVertical: 16,
     paddingHorizontal: 16,
     marginBottom: 18,
     marginTop: 8,
     elevation: 2,
     shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
@@ -507,17 +505,16 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     elevation: 2,
     shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#FFD6B8',
-    paddingBottom: 8,
+    paddingBottom: 10,
   },
   infoIcon: {
     marginRight: 14,
@@ -538,10 +535,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.3,
   },
-  input: {
-    width: '100%',
-    marginBottom: 18,
-  },
   editButton: {
     marginTop: 12,
     width: '100%',
@@ -556,14 +549,17 @@ const styles = StyleSheet.create({
     borderColor: '#FC5501', // Borde naranja
   },
   editInput: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#fff', // Fondo blanco para los inputs al editar
     color: '#262525',        // Texto oscuro para contraste
     fontSize: 17,
     fontWeight: 'bold',
     paddingHorizontal: 0,
-    marginLeft: -4,
-    marginTop: -8,
+    paddingVertical: 0,
     borderRadius: 8,
+    height: 30,
   },
   sectionTitle: {
     width: '100%',
