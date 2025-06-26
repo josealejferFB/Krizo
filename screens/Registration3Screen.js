@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ThemedButton } from '../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,6 +20,15 @@ export default function Registration3Screen({ navigation }) {
       end={{ x: 1, y: 0 }}
       style={styles.gradient}
     >
+      {/* Botón volver al login */}
+      <TouchableOpacity
+        style={styles.backButton}
+        activeOpacity={0.8}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <MaterialCommunityIcons name="arrow-left" size={26} color="#FC5501" style={styles.backIcon} />
+        <Text style={styles.backButtonText}>Volver</Text>
+      </TouchableOpacity>
       <View style={styles.card}>
         <MaterialCommunityIcons name="email-check-outline" size={50} color="#FC5501" style={styles.icon} />
         <Text style={styles.title}>Confirma tu correo electrónico</Text>
@@ -60,6 +69,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#262525',
+    borderRadius: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    marginTop: 28,
+    marginLeft: 18,
+    marginBottom: 8,
+    elevation: 4,
+    borderWidth: 1.5,
+    borderColor: '#FC5501',
+  },
+  backIcon: {
+    marginRight: 8,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   card: {
     backgroundColor: '#fff',
