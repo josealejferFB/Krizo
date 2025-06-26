@@ -10,26 +10,23 @@ const CARD_SIZE = (width - 80) / 2;
 const services = [
   {
     name: 'Servicio Mecánico',
+    subtitle: 'Reparación y mantenimiento vehicular',
     image: require('../assets/car_repair.png'),
     icon: 'tools',
     color: '#FC5501',
   },
   {
     name: 'Solicitar Grúa',
+    subtitle: 'Asistencia de remolque 24/7',
     image: require('../assets/tow_truck.png'),
     icon: 'tow-truck',
     color: '#FC5501',
   },
   {
     name: 'Solicitar Repuesto',
+    subtitle: 'Compra de repuestos y accesorios',
     image: require('../assets/car_parts.png'),
-    icon: 'car-cog',
-    color: '#FC5501',
-  },
-  {
-    name: 'Otro Servicio Mecánico',
-    image: require('../assets/car_repair_2.png'),
-    icon: 'car-wrench',
+    icon: 'store',
     color: '#FC5501',
   },
 ];
@@ -82,22 +79,51 @@ const ServicesScreen = () => {
             </View>
           </View>
 
-          <Text style={styles.sectionTitle}>Elige un servicio de Krizo</Text>
+          <Text style={styles.sectionTitle}>Servicios Disponibles</Text>
           <View style={styles.gridContainer}>
-            {services.map((service, idx) => (
+            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
               <TouchableOpacity
-                key={service.name}
-                style={styles.gridItem}
-                onPress={() => handleServicePress(service.name)}
+                key={services[0].name}
+                style={[styles.gridItem, { marginRight: 12 }]}
+                onPress={() => handleServicePress(services[0].name)}
                 activeOpacity={0.85}
               >
                 <View style={styles.cardContent}>
-                  <Image source={service.image} style={styles.cardImage} />
-                  <Icon name={service.icon} size={28} color={service.color} style={{ marginVertical: 8 }} />
-                  <Text style={styles.cardTitle}>{service.name}</Text>
+                  <Image source={services[0].image} style={styles.cardImage} />
+                  <Icon name="tools" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
+                  <Text style={styles.cardTitle}>{services[0].name}</Text>
+                  <Text style={styles.cardSubtitle}>{services[0].subtitle}</Text>
                 </View>
               </TouchableOpacity>
-            ))}
+              <TouchableOpacity
+                key={services[1].name}
+                style={styles.gridItem}
+                onPress={() => handleServicePress(services[1].name)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.cardContent}>
+                  <Image source={services[1].image} style={styles.cardImage} />
+                  <Icon name="tow-truck" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
+                  <Text style={styles.cardTitle}>{services[1].name}</Text>
+                  <Text style={styles.cardSubtitle}>{services[1].subtitle}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+              <TouchableOpacity
+                key={services[2].name}
+                style={styles.gridItem}
+                onPress={() => handleServicePress(services[2].name)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.cardContent}>
+                  <Image source={services[2].image} style={styles.cardImage} />
+                  <Icon name="store" size={32} color="#FC5501" style={{ marginVertical: 8 }} /> {/* Icono de tienda/repuestos */}
+                  <Text style={styles.cardTitle}>{services[2].name}</Text>
+                  <Text style={styles.cardSubtitle}>{services[2].subtitle}</Text> {/* Subtítulo del servicio */}
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -217,14 +243,14 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'center', // Cambia de 'space-between' a 'center' para centrar el botón si queda solo
     width: '100%',
     marginTop: 10,
   },
   gridItem: {
     width: CARD_SIZE,
     height: CARD_SIZE + 30,
-    backgroundColor: '#262525', // Color oscuro igual que en Home
+    backgroundColor: '#262525',
     borderRadius: 18,
     marginBottom: 18,
     alignItems: 'center',
@@ -234,6 +260,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.13,
     shadowRadius: 8,
+    marginRight: 12, // Agrega espacio horizontal entre los botones
   },
   cardContent: {
     alignItems: 'center',
@@ -255,6 +282,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontFamily: 'System',
     letterSpacing: 0.5,
+  },
+  cardSubtitle: {
+    fontSize: 13,
+    color: '#FFD6B8',
+    textAlign: 'center',
+    marginTop: 2,
+    fontStyle: 'italic',
+    fontFamily: 'System',
+    letterSpacing: 0.3,
   },
 });
 

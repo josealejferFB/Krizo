@@ -215,8 +215,8 @@ export const themedStyles = StyleSheet.create({
   },
   carousel: {
     flexGrow: 0,
-    width: viewportWidth * 0.78,
-    height: viewportWidth * 0.55,
+    width: viewportWidth * 0.88,
+    height: (viewportWidth * 0.88) / 1.1, // Más alto (relación 1.1)
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -225,7 +225,7 @@ export const themedStyles = StyleSheet.create({
     paddingVertical: 8,
   },
   carouselCard: {
-    backgroundColor: '#FC5501', // Cambiado a color oscuro
+    backgroundColor: '#FC5501',
     borderRadius: 20,
     overflow: 'hidden',
     elevation: 6,
@@ -239,8 +239,8 @@ export const themedStyles = StyleSheet.create({
   },
   cardImage: {
     width: '100%',
-    height: '55%',
-    resizeMode: 'cover',
+    height: '80%', // Aumenta el alto de la imagen
+    resizeMode: 'contain', // Cambia a 'contain' para que no se corte
   },
   carouselCardContent: {
     padding: 14,

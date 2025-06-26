@@ -13,15 +13,15 @@ const { width: viewportWidth } = Dimensions.get('window');
 const carouselData = [
   {
     id: '1',
-    image: require('../assets/card_image_4.png'),
-    title: 'Reparaciones del Hogar',
-    description: 'Soluciones rápidas para el mantenimiento de tu casa.',
+    image: require('../assets/card_image_1.png'),
+    title: 'Redes Sociales',
+    description: 'Entérate de nuestras últimas novedades y promociones.',
   },
   {
     id: '2',
-    image: require('../assets/card_image_4.png'),
-    title: 'Mantenimiento de Jardines',
-    description: 'Servicios de jardinería profesional a tu alcance.',
+    image: require('../assets/card_image_2.png'),
+    title: 'Trabaja con Nosotros',
+    description: 'Únete a nuestro equipo y crece con nosotros.',
   },
   {
     id: '3',
@@ -107,16 +107,16 @@ export default function HomeScreen({ navigation }) {
                 shadowRadius: 8,
                 paddingVertical: 8,
                 paddingHorizontal: 0,
-                width: viewportWidth * 0.78,
-                height: viewportWidth * 0.55,
+                width: viewportWidth * 0.88,
+                height: (viewportWidth * 0.88) / 1.1, // Más alto
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginHorizontal: 4,
               }}>
                 <Carousel
                   ref={carouselRef}
-                  width={viewportWidth * 0.78}
-                  height={viewportWidth * 0.55}
+                  width={viewportWidth * 0.88}
+                  height={(viewportWidth * 0.88) / 1.1}
                   data={carouselData}
                   renderItem={renderItem}
                   scrollAnimationDuration={600}
@@ -143,7 +143,7 @@ export default function HomeScreen({ navigation }) {
           </View>
 
           <View style={themedStyles.sectionTitleContainer}>
-            <Text style={themedStyles.sectionTitle}>Servicios Destacados</Text>
+            <Text style={themedStyles.sectionTitle}>Acceso Rápido</Text>
           </View>
 
           <View style={themedStyles.cardsRow}>
