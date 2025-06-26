@@ -189,9 +189,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.5,
     textAlign: 'center',
-    marginLeft: 14,
+    marginRight: '20%',
   },
   lockIcon: {
+    marginLeft: '15%',
     marginRight: 0,
   },
 });

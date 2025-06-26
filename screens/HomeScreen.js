@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { View, Dimensions, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -49,6 +49,26 @@ const vehicleInfo = {
 export default function HomeScreen({ navigation }) {
   const carouselRef = useRef(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
+
+useEffect(() => {
+    let interval;
+    // Función para avanzar al siguiente slide
+    const goToNextSlide = () => {
+      if (carouselRef.current) {
+        carouselRef.current.next(); // Método para ir al siguiente slide
+      }
+    };
+
+    // Configurar el intervalo para el autoplay
+    interval = setInterval(goToNextSlide, 6000); // Cambia el slide cada 3 segundos (3000 ms)
+
+    // Limpiar el intervalo cuando el componente se desmonte o el efecto se re-ejecute
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []);
 
   const renderItem = ({ item }) => (
     <View style={themedStyles.carouselCard}>
@@ -105,18 +125,16 @@ export default function HomeScreen({ navigation }) {
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.13,
                 shadowRadius: 8,
-                paddingVertical: 8,
-                paddingHorizontal: 0,
-                width: viewportWidth * 0.88,
-                height: (viewportWidth * 0.88) / 1.1, // Más alto
+                width: 'auto',
+                height: viewportWidth * 0.9,
+                display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginHorizontal: 4,
               }}>
                 <Carousel
                   ref={carouselRef}
                   width={viewportWidth * 0.88}
-                  height={(viewportWidth * 0.88) / 1.1}
+                  height={viewportWidth * 0.9}
                   data={carouselData}
                   renderItem={renderItem}
                   scrollAnimationDuration={600}

@@ -215,8 +215,6 @@ export const themedStyles = StyleSheet.create({
   },
   carousel: {
     flexGrow: 0,
-    width: viewportWidth * 0.88,
-    height: (viewportWidth * 0.88) / 1.1, // Más alto (relación 1.1)
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -234,20 +232,21 @@ export const themedStyles = StyleSheet.create({
     shadowOpacity: 0.13,
     shadowRadius: 8,
     width: '100%',
-    height: '100%',
+    height: viewportWidth * 0.9,
     alignItems: 'center',
   },
   cardImage: {
     width: '100%',
-    height: '80%', // Aumenta el alto de la imagen
-    resizeMode: 'contain', // Cambia a 'contain' para que no se corte
+    height: '67%',
+    padding: 0,
+    margin: 0,
   },
   carouselCardContent: {
     padding: 14,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    flex: 1,
+    height: '30%',
   },
   carouselCardTitle: {
     fontSize: 17,

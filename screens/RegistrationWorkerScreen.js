@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ThemedButton, ThemedInput } from '../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
+
+const { width: viewportWidth } = Dimensions.get('window');
 
 export default function RegistrationWorkerScreen({ navigation }) {
   const [clave, setClave] = useState('');
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.13,
     shadowRadius: 8,
     position: 'absolute',
-    bottom: 64,
+    bottom: viewportWidth - 357,
     left: 0,
   },
   exclusiveBannerText: {
