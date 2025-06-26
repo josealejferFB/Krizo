@@ -118,9 +118,9 @@ const ServicesScreen = () => {
               >
                 <View style={styles.cardContent}>
                   <Image source={services[2].image} style={styles.cardImage} />
-                  <Icon name="store" size={32} color="#FC5501" style={{ marginVertical: 8 }} /> {/* Icono de tienda/repuestos */}
+                  <Icon name="store" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
                   <Text style={styles.cardTitle}>{services[2].name}</Text>
-                  <Text style={styles.cardSubtitle}>{services[2].subtitle}</Text> {/* Subtítulo del servicio */}
+                  <Text style={styles.cardSubtitle}>{services[2].subtitle}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center', // Cambia de 'space-between' a 'center' para centrar el botón si queda solo
+    justifyContent: 'center',
     width: '100%',
     marginTop: 10,
   },
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.13,
     shadowRadius: 8,
-    marginRight: 12, // Agrega espacio horizontal entre los botones
+    marginRight: 12,
   },
   cardContent: {
     alignItems: 'center',
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#fff', // Texto blanco para contraste
+    color: '#fff',
     textAlign: 'center',
     marginTop: 2,
     fontFamily: 'System',
