@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { ThemedButton } from '../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
@@ -19,6 +19,7 @@ export default function RegistrationWorkerScreen2({ navigation }) {
 
   // Simulación de función para subir imagen
   const pickImage = async () => {
+
     // Aquí deberías usar expo-image-picker o similar
     // setRifImage(uri);
   };
@@ -26,6 +27,13 @@ export default function RegistrationWorkerScreen2({ navigation }) {
   const handleServiceChange = (key) => {
     setServices((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const { width, height } = useWindowDimensions();
+
+  // Define un breakpoint para considerar una pantalla "grande"
+  const isLargeScreen = width > 768; // Puedes ajustar este valor según tus necesidades
+
+  const bottomPosition = isLargeScreen ? 64 : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
 
   return (
     <ThemedBackgroundGradient>
@@ -103,13 +111,32 @@ export default function RegistrationWorkerScreen2({ navigation }) {
           </ThemedButton>
         </View>
       </View>
-      <View style={styles.exclusiveBanner}>
+      <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: 0,
+          paddingVertical: 14,
+          paddingHorizontal: 18,
+          width: '100%',
+          justifyContent: 'center',
+          elevation: 8,
+          shadowColor: '#FC5501',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.13,
+          shadowRadius: 8,
+          position: 'absolute',
+          left: 0,
+            bottom: bottomPosition,
+            backgroundColor: '#C24100',
+          }}>
         <MaterialCommunityIcons name="lock" size={60} color="#262525" style={styles.lockIcon} />
         <Text style={styles.exclusiveBannerText}>Te estás registrando como trabajador</Text>
       </View>
     </ThemedBackgroundGradient>
   );
 }
+
+  
 
 const styles = StyleSheet.create({
   container: {
@@ -211,24 +238,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     letterSpacing: 0.5,
-  },
-  exclusiveBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#C24100',
-    borderRadius: 0,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    width: '100%',
-    justifyContent: 'center',
-    elevation: 8,
-    shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.13,
-    shadowRadius: 8,
-    position: 'absolute',
-    bottom: 64,
-    left: 0,
   },
   exclusiveBannerText: {
     color: '#fff',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ThemedButton, ThemedInput } from '../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,6 +13,15 @@ export default function RegistrationWorkerScreen({ navigation }) {
   const [empresa, setEmpresa] = useState('');
   const [direccion, setDireccion] = useState('');
 
+  const { width, height } = useWindowDimensions();
+
+  // Define un breakpoint para considerar una pantalla "grande"
+  const isLargeScreen = width > 768; // Puedes ajustar este valor según tus necesidades
+
+  const bottomPosition = isLargeScreen ? 64 : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
+  const paddingAmount = isLargeScreen ? 24 : 14;
+
+
   return (
     <ThemedBackgroundGradient>
       {/* Botón volver al login */}
@@ -24,7 +33,12 @@ export default function RegistrationWorkerScreen({ navigation }) {
         <MaterialCommunityIcons name="arrow-left" size={26} color="#FC5501" style={styles.backIcon} />
         <Text style={styles.backButtonText}>Volver</Text>
       </TouchableOpacity>
-      <View style={styles.container}>
+      <View style={{
+        flex: 1,
+    alignItems: 'center',
+    paddingTop: paddingAmount, // Antes: 48. Reduce el padding para subir el contenedor blanco
+    justifyContent: 'flex-start',
+      }}>
         <Text style={styles.headerTitle}>Registro de KrizoWorker</Text>
         <View style={styles.card}>
           <ThemedInput
@@ -74,7 +88,25 @@ export default function RegistrationWorkerScreen({ navigation }) {
         </View>
       </View>
       {/* Aviso de acceso exclusivo para trabajadores */}
-      <View style={styles.exclusiveBanner}>
+      <View style={{
+flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#C24100',
+    borderRadius: 0,
+    paddingVertical: 14, // Antes: 30. Menos alto
+    paddingHorizontal: 18,
+    width: '100%',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+    position: 'absolute',
+    bottom: bottomPosition,
+    left: 0,
+
+      }}>
         <MaterialCommunityIcons name="lock" size={60} color="#262525" style={styles.lockIcon} />
         <Text style={styles.exclusiveBannerText}>Te estás regristrando como trabajador</Text>
       </View>
@@ -106,12 +138,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     letterSpacing: 0.5,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    paddingTop: 24, // Antes: 48. Reduce el padding para subir el contenedor blanco
-    justifyContent: 'flex-start', // Asegura que el contenido se mantenga arriba
   },
   headerTitle: {
     fontSize: 22,
@@ -161,24 +187,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 6,
     marginTop: 10,
-  },
-  exclusiveBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#C24100',
-    borderRadius: 0,
-    paddingVertical: 14, // Antes: 30. Menos alto
-    paddingHorizontal: 18,
-    width: '100%',
-    justifyContent: 'center',
-    elevation: 8,
-    shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.13,
-    shadowRadius: 8,
-    position: 'absolute',
-    bottom: viewportWidth - 357,
-    left: 0,
   },
   exclusiveBannerText: {
     color: '#fff',

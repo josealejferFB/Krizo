@@ -18,11 +18,16 @@ const RegistrationScreen = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = () => {
-    if (firstName && lastName && email && password) {
+    if (firstName && lastName && email && password && confirmPassword) {
       console.log('Datos de Registro:', { firstName, lastName, email, password });
+      if (password !== confirmPassword) {
+      return alert('Verificar que su contraseña coincida');
+    }
       navigation.navigate('Registration2'); // Cambia aquí para navegar a la siguiente pantalla
     } else {
       alert('Por favor, completa todos los campos.');
@@ -88,7 +93,20 @@ const RegistrationScreen = () => {
               />
             }
           />
-
+          <ThemedInput
+            label="Confirmar Contraseña"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
+            style={styles.themedInputOverride} // <-- Asegura que este style esté aquí
+            right={
+              <TextInput.Icon
+                icon={showConfirmPassword ? 'eye-off' : 'eye'}
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}c
+                color={theme.colors.onSurfaceVariant}
+              />
+            }
+          />
           <Text style={styles.termsText}>
             Al presionar "Continuar Registro" te comprometes a haber leído los{' '}
             <Text style={styles.linkText}>Términos de Servicio</Text>,{' '}

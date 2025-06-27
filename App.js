@@ -19,6 +19,11 @@ import Registration4Screen from './screens/Registration4Screen';
 import Registration5Screen from './screens/Registration5Screen';
 import KrizoWorkerLoginScreen from './screens/KrizoWorkerLoginScreen';
 import MyProfileScreen from './screens/MyProfileScreen';
+import CraneConfigScreen from './screens/CraneConfigScreen';
+import CraneClientScreen from './screens/CraneClientScreen';
+import ShopConfigScreen from './screens/ShopConfigScreen';
+import ShopClientScreen from './screens/ShopClientScreen';
+import ProductScreen from './screens/ProductScreen';
 import WalletScreen from './screens/WalletScreen'; // Agrega esta línea
 import RegistrationWorkerScreen from './screens/RegistrationWorkerScreen';
 import RegistrationWorkerScreen2 from './screens/RegistrationWorkerScreen2';
