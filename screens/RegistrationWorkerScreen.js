@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 28,
     width: '98%',
-    maxWidth: 500,
+    maxWidth: 400,
     alignItems: 'stretch',
     elevation: 8,
     shadowColor: '#FC5501',

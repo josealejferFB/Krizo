@@ -25,9 +25,9 @@ const carouselData = [
   },
   {
     id: '3',
-    image: require('../assets/card_image_4.png'),
-    title: 'Servicios de Limpieza',
-    description: 'Limpieza profunda para tu hogar u oficina.',
+    image: require('../assets/card_image_3.png'),
+    title: 'Tienda de Repuestos',
+    description: 'Encuentra las mejores piezas y accesorios para tu vehículo.',
   },
   {
     id: '4',
