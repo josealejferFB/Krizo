@@ -16,9 +16,10 @@ export default function RegistrationWorkerScreen({ navigation }) {
   const { width, height } = useWindowDimensions();
 
   // Define un breakpoint para considerar una pantalla "grande"
-  const isLargeScreen = width > 768; // Puedes ajustar este valor según tus necesidades
+  const isSmallScreen = height > 800;
+  const isLargeScreen = height > 850
 
-  const bottomPosition = isLargeScreen ? 64 : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
+  const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
   const paddingAmount = isLargeScreen ? 24 : 14;
 
 
@@ -102,7 +103,7 @@ flexDirection: 'row',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.13,
     shadowRadius: 8,
-    position: 'absolute',
+    position: 'fixed',
     bottom: bottomPosition,
     left: 0,
 

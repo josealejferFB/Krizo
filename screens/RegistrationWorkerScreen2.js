@@ -31,10 +31,9 @@ export default function RegistrationWorkerScreen2({ navigation }) {
   const { width, height } = useWindowDimensions();
 
   // Define un breakpoint para considerar una pantalla "grande"
-  const isLargeScreen = width > 768; // Puedes ajustar este valor según tus necesidades
-
-  const bottomPosition = isLargeScreen ? 64 : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
-
+  const isSmallScreen = height > 812;
+  const isLargeScreen = height > 855
+  const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
   return (
     <ThemedBackgroundGradient>
       {/* Botón volver al login */}

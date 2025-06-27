@@ -10,6 +10,9 @@ export default function KrizoWorkerLoginScreen({ navigation }) {
   const [user, setUser] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
+const isSmallScreen = height > 800;
+  const isLargeScreen = height > 850
+  const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
 
   return (
     <ThemedBackgroundGradient>
@@ -79,7 +82,24 @@ export default function KrizoWorkerLoginScreen({ navigation }) {
         </ScrollView>
 
         {/* Aviso de acceso exclusivo para trabajadores, fijo abajo */}
-        <View style={styles.exclusiveBanner}>
+        <View style={{
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#C24100',
+    borderRadius: 0,
+    paddingVertical: 30,
+    paddingHorizontal: 18,
+    width: '100%',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#FC5501',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.13,
+    shadowRadius: 8,
+    position: 'absolute',
+    bottom: bottomPosition, // <-- Antes: bottom: 32. Ahora sube el aviso aún más
+    left: 0,
+        }}>
           <MaterialCommunityIcons name="lock" size={60} color="#262525" style={styles.lockIcon} />
           <Text style={styles.exclusiveBannerText}>Acceso exclusivo para trabajadores</Text>
         </View>
@@ -164,24 +184,6 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 16,
     backgroundColor: '#FC5501',
-  },
-  exclusiveBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#C24100',
-    borderRadius: 0,
-    paddingVertical: 30,
-    paddingHorizontal: 18,
-    width: '100%',
-    justifyContent: 'center',
-    elevation: 8,
-    shadowColor: '#FC5501',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.13,
-    shadowRadius: 8,
-    position: 'absolute',
-    bottom: 64, // <-- Antes: bottom: 32. Ahora sube el aviso aún más
-    left: 0,
   },
   exclusiveBannerText: {
     color: '#fff',
