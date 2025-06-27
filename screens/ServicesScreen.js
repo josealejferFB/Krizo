@@ -11,6 +11,7 @@ const services = [
   {
     name: 'Servicio Mecánico',
     subtitle: 'Reparación y mantenimiento vehicular',
+    link: 'MechanicClient',
     image: require('../assets/car_repair.png'),
     icon: 'tools',
     color: '#FC5501',
@@ -18,6 +19,7 @@ const services = [
   {
     name: 'Solicitar Grúa',
     subtitle: 'Asistencia de remolque 24/7',
+    link: 'MechanicClientScreen',
     image: require('../assets/tow_truck.png'),
     icon: 'tow-truck',
     color: '#FC5501',
@@ -25,6 +27,7 @@ const services = [
   {
     name: 'Solicitar Repuesto',
     subtitle: 'Compra de repuestos y accesorios',
+    link: 'MechanicClientScreen',
     image: require('../assets/car_parts.png'),
     icon: 'store',
     color: '#FC5501',
@@ -35,7 +38,7 @@ const ServicesScreen = () => {
   const navigation = useNavigation();
 
   const handleServicePress = (serviceName) => {
-    alert(`Has seleccionado: ${serviceName}. Próximamente se abrirá su detalle.`);
+    navigation.navigate(serviceName)
   };
 
   return (
@@ -83,26 +86,24 @@ const ServicesScreen = () => {
           <View style={styles.gridContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
               <TouchableOpacity
-                key={services[0].name}
+                key={services[0].link}
                 style={[styles.gridItem, { marginRight: 12 }]}
-                onPress={() => handleServicePress(services[0].name)}
+                onPress={() => handleServicePress(services[0].link)}
                 activeOpacity={0.85}
               >
                 <View style={styles.cardContent}>
-                  <Image source={services[0].image} style={styles.cardImage} />
                   <Icon name="tools" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
                   <Text style={styles.cardTitle}>{services[0].name}</Text>
                   <Text style={styles.cardSubtitle}>{services[0].subtitle}</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
-                key={services[1].name}
+                key={services[1].link}
                 style={styles.gridItem}
-                onPress={() => handleServicePress(services[1].name)}
+                onPress={() => handleServicePress(services[1].link)}
                 activeOpacity={0.85}
               >
                 <View style={styles.cardContent}>
-                  <Image source={services[1].image} style={styles.cardImage} />
                   <Icon name="tow-truck" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
                   <Text style={styles.cardTitle}>{services[1].name}</Text>
                   <Text style={styles.cardSubtitle}>{services[1].subtitle}</Text>
@@ -111,13 +112,12 @@ const ServicesScreen = () => {
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
               <TouchableOpacity
-                key={services[2].name}
+                key={services[2].link}
                 style={styles.gridItem}
-                onPress={() => handleServicePress(services[2].name)}
+                onPress={() => handleServicePress(services[2].link)}
                 activeOpacity={0.85}
               >
                 <View style={styles.cardContent}>
-                  <Image source={services[2].image} style={styles.cardImage} />
                   <Icon name="store" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
                   <Text style={styles.cardTitle}>{services[2].name}</Text>
                   <Text style={styles.cardSubtitle}>{services[2].subtitle}</Text>

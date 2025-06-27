@@ -21,6 +21,7 @@ import KrizoWorkerLoginScreen from './screens/KrizoWorkerLoginScreen';
 import MyProfileScreen from './screens/MyProfileScreen';
 import CraneConfigScreen from './screens/CraneConfigScreen';
 import CraneClientScreen from './screens/CraneClientScreen';
+import MechanicClientScreen from './screens/MechanicClientScreen';
 import ShopConfigScreen from './screens/ShopConfigScreen';
 import ShopClientScreen from './screens/ShopClientScreen';
 import ProductScreen from './screens/ProductScreen';
@@ -83,6 +84,11 @@ function App() {
           <Stack.Screen
             name="Services"
             component={ServicesScreen} 
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
+            name="MechanicClient"
+            component={MechanicClientScreen} 
             options={{ headerShown: false }} // Oculta el encabezado
           />
           <Stack.Screen
