@@ -19,7 +19,7 @@ const services = [
   {
     name: 'Solicitar Grúa',
     subtitle: 'Asistencia de remolque 24/7',
-    link: 'MechanicClientScreen',
+    link: 'CraneClient',
     image: require('../assets/tow_truck.png'),
     icon: 'tow-truck',
     color: '#FC5501',

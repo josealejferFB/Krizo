@@ -51,7 +51,7 @@ const MechanicServiceRN = () => {
   };
 
   return (
-    <LinearGradient // CORRECTED: Wrapped everything in LinearGradient
+    <LinearGradient 
         colors={['#FC5501', '#C24100']}
       style={styles.container}
     >

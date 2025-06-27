@@ -92,6 +92,11 @@ function App() {
             options={{ headerShown: false }} // Oculta el encabezado
           />
           <Stack.Screen
+            name="CraneClient"
+            component={CraneClientScreen} 
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
             name="KrizoWorkerLogin"
             component={KrizoWorkerLoginScreen}
             options={{ headerShown: false }} // Oculta el encabezado
