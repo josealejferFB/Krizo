@@ -37,7 +37,7 @@ const MechanicServiceRN = () => {
 
   const renderStars = (rating) => {
     return (
-      <View style={styles.starsContainer}> {/* CORRECTED: Added wrapping View */}
+      <View style={styles.starsContainer}>
         {[...Array(5)].map((_, i) => (
           <Icon
             key={i}
@@ -51,31 +51,30 @@ const MechanicServiceRN = () => {
   };
 
   return (
-    <LinearGradient 
-        colors={['#FC5501', '#C24100']}
+    <LinearGradient
+      colors={['#FC5501', '#C24100']}
       style={styles.container}
     >
-    <View style={styles.headerOrangeContainer}>
-            <View style={styles.headerRow}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-              >
-                <Icon
-                  name="arrow-left-bold-circle"
-                  size={38}
-                  color="#FC5501"
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
-            </View>
-
-                <View style={styles.headerTitleBox}>
-                              <Text style={styles.appBarTitle}>Mecánico a Domicilio</Text>
-                </View>
-              <Icon style={{ marginLeft: 30 }} name="tools" size={24} color="white" />
-            </View>
+      <View style={styles.headerOrangeContainer}>
+        <View style={styles.headerRow}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Icon
+              name="arrow-left-bold-circle"
+              size={38}
+              color="#FC5501"
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <View style={styles.headerTitleBox}>
+            <Text style={styles.appBarTitle}>Mecánico a Domicilio</Text>
+          </View>
+          <Icon style={{ marginLeft: 30 }} name="tools" size={24} color="white" />
+        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.mechanicsList}>
         {mechanics.map((mechanic) => (
           <Card key={mechanic.id} style={styles.mechanicCard}>
@@ -111,14 +110,13 @@ const MechanicServiceRN = () => {
           </Card>
         ))}
       </ScrollView>
-    </LinearGradient> // Close LinearGradient
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Background color removed here as LinearGradient handles it
   },
   headerOrangeContainer: {
     width: '100%',
@@ -134,30 +132,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
+    justifyContent: 'space-between',
   },
-backButton: {
+  backButton: {
     backgroundColor: '#fff',
     borderRadius: 20,
     padding: 2,
     elevation: 3,
     borderWidth: 2,
     top: 5,
-    position: 'absolute',
+    position: 'relative',
     borderColor: '#FC5501',
   },
   backIcon: {
     backgroundColor: '#fff',
     borderRadius: 19,
   },
-  appBarTitleContent: {
-    flexDirection: 'row',
+  headerTitleBox: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-  },
-  appBarTitleWrapper: {
-    alignSelf: 'center',
-    marginLeft: -40,
   },
   appBarTitle: {
     color: 'white',

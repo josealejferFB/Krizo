@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 28,
     padding: 0,
-    width: '92%',
-    maxWidth: 400,
+    width: '90%', // Reducido para mejor visualización en móvil
+    maxWidth: 370, // Más acorde a pantallas de teléfono
     alignItems: 'center',
     elevation: 10,
     shadowColor: '#FC5501',
@@ -107,14 +107,15 @@ const styles = StyleSheet.create({
   },
   headerOrangeContainer: {
     width: '100%',
+    maxWidth: '100%',
     backgroundColor: '#FC5501',
-    paddingVertical: 24, // Más padding arriba y abajo
+    paddingVertical: 24,
     paddingHorizontal: 18,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 36, // Más separación con el balance
+    marginBottom: 36,
   },
   headerRow: {
     flexDirection: 'row',
@@ -172,7 +173,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#C24100',
   },
   balanceContainer: {
-    width: '90%',
+    width: '100%', // Antes: '90%'. Ahora ocupa todo el ancho del topCard
+    maxWidth: '100%',
     backgroundColor: '#C24100',
     borderRadius: 20,
     alignItems: 'center',
@@ -223,8 +225,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 28,
     padding: 32,
-    width: '92%',
-    maxWidth: 400,
+    width: '90%', // Igual que topCard
+    maxWidth: 370,
     alignItems: 'center',
     elevation: 8,
     shadowColor: '#FC5501',
