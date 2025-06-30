@@ -35,321 +35,335 @@ export default function MyProfileScreen({ navigation }) {
 
   return (
     <ThemedBackgroundGradient>
-      <View style={styles.container}>
-        <View style={styles.mainCard}>
-          <ScrollView contentContainerStyle={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
-            {/* Encabezado */}
-            <View style={styles.headerRow}>
+      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.mainCard}>
+            <ScrollView
+              contentContainerStyle={styles.scrollViewContent}
+              showsVerticalScrollIndicator={false}
+              nestedScrollEnabled={true} // Permite scroll anidado si es necesario
+            >
+              {/* Encabezado */}
+              <View style={styles.headerRow}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  activeOpacity={0.7}
+                  onPress={() => navigation.goBack()}
+                >
+                  <MaterialCommunityIcons
+                    name="arrow-left-bold-circle"
+                    size={38}
+                    color="#FC5501"
+                    style={styles.backIcon}
+                  />
+                  <Text style={styles.backButtonText}>Volver</Text>
+                </TouchableOpacity>
+                <View style={styles.profileTitleBox}>
+                  <MaterialCommunityIcons name="account-star" size={32} color="#fff" style={{ marginRight: 6 }} />
+                  <View>
+                    <Text style={styles.profileTitle}>Mi Perfil</Text>
+                    <Text style={styles.profileSubtitle}>Tu información</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Foto de perfil */}
               <TouchableOpacity
-                style={styles.backButton}
-                activeOpacity={0.7}
-                onPress={() => navigation.goBack()}
+                style={styles.avatarContainer}
+                onPress={editing ? pickImage : undefined}
+                activeOpacity={editing ? 0.7 : 1}
               >
-                <MaterialCommunityIcons
-                  name="arrow-left-bold-circle"
-                  size={38}
-                  color="#FC5501"
-                  style={styles.backIcon}
-                />
-                <Text style={styles.backButtonText}>Volver</Text>
+                <View style={styles.avatarShadow}>
+                  <View style={styles.avatarWrapper}>
+                    {profileImage ? (
+                      <Image source={{ uri: profileImage }} style={styles.avatar} />
+                    ) : (
+                      <MaterialCommunityIcons name="account-circle" size={105} color="#FC5501" />
+                    )}
+                    {editing && (
+                      <View style={styles.editAvatarIcon}>
+                        <MaterialCommunityIcons name="camera" size={28} color="#fff" />
+                      </View>
+                    )}
+                  </View>
+                </View>
               </TouchableOpacity>
-              <View style={styles.profileTitleBox}>
-                <MaterialCommunityIcons name="account-star" size={32} color="#fff" style={{ marginRight: 6 }} />
-                <View>
-                  <Text style={styles.profileTitle}>Mi Perfil</Text>
-                  <Text style={styles.profileSubtitle}>Tu información</Text>
-                </View>
-              </View>
-            </View>
 
-            {/* Foto de perfil */}
-            <TouchableOpacity
-              style={styles.avatarContainer}
-              onPress={editing ? pickImage : undefined}
-              activeOpacity={editing ? 0.7 : 1}
-            >
-              <View style={styles.avatarShadow}>
-                <View style={styles.avatarWrapper}>
-                  {profileImage ? (
-                    <Image source={{ uri: profileImage }} style={styles.avatar} />
-                  ) : (
-                    <MaterialCommunityIcons name="account-circle" size={105} color="#FC5501" />
-                  )}
-                  {editing && (
-                    <View style={styles.editAvatarIcon}>
-                      <MaterialCommunityIcons name="camera" size={28} color="#fff" />
-                    </View>
-                  )}
+              {/* Información de usuario */}
+              <Text style={styles.sectionTitle}>Tus datos</Text>
+              <View style={styles.infoCard}>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="account" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Nombre</Text>
+                    {editing ? (
+                      <TextInput
+                        value={firstName}
+                        onChangeText={setFirstName}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{firstName}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="account-outline" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Apellido</Text>
+                    {editing ? (
+                      <TextInput
+                        value={lastName}
+                        onChangeText={setLastName}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{lastName}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="email" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Correo electrónico</Text>
+                    {editing ? (
+                      <TextInput
+                        value={email}
+                        onChangeText={setEmail}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{email}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="calendar" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Fecha de nacimiento</Text>
+                    {editing ? (
+                      <TextInput
+                        value={birthDate}
+                        onChangeText={setBirthDate}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{birthDate}</Text>
+                    )}
+                  </View>
                 </View>
               </View>
-            </TouchableOpacity>
 
-            {/* Información de usuario */}
-            <Text style={styles.sectionTitle}>Tus datos</Text>
-            <View style={styles.infoCard}>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="account" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Nombre</Text>
-                  {editing ? (
-                    <TextInput
-                      value={firstName}
-                      onChangeText={setFirstName}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{firstName}</Text>
-                  )}
+              {/* Ficha de información del vehículo */}
+              <Text style={styles.sectionTitle}>Tu vehículo</Text>
+              <View style={styles.vehicleCard}>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="car" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Marca</Text>
+                    {editing ? (
+                      <TextInput
+                        value={carBrand}
+                        onChangeText={setCarBrand}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{carBrand}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="car-cog" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Modelo</Text>
+                    {editing ? (
+                      <TextInput
+                        value={carModel}
+                        onChangeText={setCarModel}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{carModel}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="calendar-range" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Año</Text>
+                    {editing ? (
+                      <TextInput
+                        value={carYear}
+                        onChangeText={setCarYear}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                        keyboardType="numeric"
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{carYear}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="card-text" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Placa</Text>
+                    {editing ? (
+                      <TextInput
+                        value={carPlate}
+                        onChangeText={setCarPlate}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                        autoCapitalize="characters"
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{carPlate}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="palette" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Color</Text>
+                    {editing ? (
+                      <TextInput
+                        value={carColor}
+                        onChangeText={setCarColor}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{carColor}</Text>
+                    )}
+                  </View>
                 </View>
               </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="account-outline" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Apellido</Text>
-                  {editing ? (
-                    <TextInput
-                      value={lastName}
-                      onChangeText={setLastName}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{lastName}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="email" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Correo electrónico</Text>
-                  {editing ? (
-                    <TextInput
-                      value={email}
-                      onChangeText={setEmail}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{email}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="calendar" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Fecha de nacimiento</Text>
-                  {editing ? (
-                    <TextInput
-                      value={birthDate}
-                      onChangeText={setBirthDate}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{birthDate}</Text>
-                  )}
-                </View>
-              </View>
-            </View>
 
-            {/* Ficha de información del vehículo */}
-            <Text style={styles.sectionTitle}>Tu vehículo</Text>
-            <View style={styles.vehicleCard}>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="car" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Marca</Text>
-                  {editing ? (
-                    <TextInput
-                      value={carBrand}
-                      onChangeText={setCarBrand}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{carBrand}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="car-cog" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Modelo</Text>
-                  {editing ? (
-                    <TextInput
-                      value={carModel}
-                      onChangeText={setCarModel}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{carModel}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="calendar-range" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Año</Text>
-                  {editing ? (
-                    <TextInput
-                      value={carYear}
-                      onChangeText={setCarYear}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                      keyboardType="numeric"
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{carYear}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="card-text" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Placa</Text>
-                  {editing ? (
-                    <TextInput
-                      value={carPlate}
-                      onChangeText={setCarPlate}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                      autoCapitalize="characters"
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{carPlate}</Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.infoRow}>
-                <MaterialCommunityIcons name="palette" size={26} color="#FC5501" style={styles.infoIcon} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.infoLabel}>Color</Text>
-                  {editing ? (
-                    <TextInput
-                      value={carColor}
-                      onChangeText={setCarColor}
-                      style={styles.editInput}
-                      mode="flat"
-                      underlineColor="#FC5501"
-                      activeUnderlineColor="#FC5501"
-                      theme={{
-                        colors: {
-                          background: '#fff',
-                          text: '#262525', // Color de texto oscuro
-                          primary: '#FC5501',
-                          placeholder: '#C24100',
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Text style={styles.infoValue}>{carColor}</Text>
-                  )}
-                </View>
-              </View>
-            </View>
-
-            {/* Botón para editar */}
-            <ThemedButton
-              style={styles.editButton}
-              icon={editing ? 'content-save' : 'pencil'}
-              onPress={() => setEditing(!editing)}
-            >
-              {editing ? 'Guardar cambios' : 'Editar perfil'}
-            </ThemedButton>
-          </ScrollView>
+              {/* Botón para editar */}
+              <ThemedButton
+                style={styles.editButton}
+                icon={editing ? 'content-save' : 'pencil'}
+                onPress={() => setEditing(!editing)}
+              >
+                {editing ? 'Guardar cambios' : 'Editar perfil'}
+              </ThemedButton>
+            </ScrollView>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </ThemedBackgroundGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingVertical: 24,
+    paddingBottom: 40, // Espacio extra para ver el final
+  },
   container: {
     flex: 1,
+    width: '100%',
+    alignItems: 'center',
   },
   backButton: {
     flexDirection: 'row', // Para que el icono y el texto estén en línea
@@ -380,10 +394,10 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     paddingVertical: 24,
     paddingHorizontal: 16,
-    width: '92%',
-    maxWidth: 370,
+    width: '96%', // Más ancho que antes
+    maxWidth: 420, // Más ancho que antes
     alignSelf: 'center',
-    marginTop: 38, // Antes: 18. Ahora más abajo, igual que ServicesScreen
+    marginTop: 38,
     marginBottom: 18,
     elevation: 10,
     shadowColor: '#FC5501',
