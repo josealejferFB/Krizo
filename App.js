@@ -102,6 +102,11 @@ function App() {
             options={{ headerShown: false }} // Oculta el encabezado
           />
           <Stack.Screen
+            name="CraneConfig"
+            component={CraneConfigScreen} 
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
             name="ShopConfig"
             component={ShopConfigScreen} 
             options={{ headerShown: false }} // Oculta el encabezado

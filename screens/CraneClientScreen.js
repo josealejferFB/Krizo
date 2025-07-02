@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const CraneServiceRN = () => {
+const CraneClientScreen = () => {
   const navigation = useNavigation();
   const mechanics = [
     {
@@ -291,4 +291,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CraneServiceRN;
+export default CraneClientScreen;

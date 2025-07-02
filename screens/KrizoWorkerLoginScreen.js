@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
@@ -10,8 +10,10 @@ export default function KrizoWorkerLoginScreen({ navigation }) {
   const [user, setUser] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
+
+  const { width, height } = useWindowDimensions();
 const isSmallScreen = height > 800;
-  const isLargeScreen = height > 850
+  const isLargeScreen = height > 850;
   const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
 
   return (

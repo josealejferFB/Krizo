@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const CompanyStoreScreen = () => {
+const ShopClientScreen = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState([
@@ -14,7 +14,7 @@ const CompanyStoreScreen = () => {
       name: 'Filtro de aceite Corolla 2000',
       quantity: 10,
       price: '1.000Bs',
-      image: 'https://http2.mlstatic.com/D_NQ_NP_689607-MLV69641010806_052023-O.webp', // Placeholder image
+      image: 'https://http2.mlstatic.com/D_NQ_NP_689607-MLV69641010806_052023-O.webp',
       available: true,
     },
     {
@@ -22,10 +22,9 @@ const CompanyStoreScreen = () => {
       name: 'Pastillas de freno',
       quantity: 5,
       price: '700Bs',
-      image: 'https://www.ro-des.com/wp-content/uploads/2014/04/Pastillas-de-freno.jpg', // Placeholder image
-      available: false, // Example of a product that might be unavailable
+      image: 'https://www.ro-des.com/wp-content/uploads/2014/04/Pastillas-de-freno.jpg',
+      available: false,
     },
-    // Add more products as needed
     {
       id: 3,
       name: 'Bujías Iridium',
@@ -56,8 +55,6 @@ const CompanyStoreScreen = () => {
 
   const handleEditProduct = (product) => {
     console.log('Edit product:', product.name);
-    // You would typically navigate to an edit screen here:
-    // navigation.navigate('EditProductScreen', { productData: product });
   };
 
 const handleBuyProduct = (product) => {
@@ -100,7 +97,7 @@ const handleBuyProduct = (product) => {
           <View style={styles.appBarTitleContent}>
             <Text style={styles.appBarTitle}>Empresa/</Text>
             <Text style={styles.appBarTitle}>Tienda </Text>
-            <Icon name="storefront" size={24} color="white" /> {/* Store icon */}
+            <Icon name="storefront" size={24} color="white" /> 
           </View>
         </View>
       </View>
@@ -114,7 +111,7 @@ const handleBuyProduct = (product) => {
           value={searchQuery}
           style={styles.searchBar}
           inputStyle={styles.searchBarInput}
-          iconColor="#FC5501" // Magnifying glass icon color
+          iconColor="#FC5501" 
           placeholderTextColor="#999"
         />
 
@@ -141,7 +138,7 @@ const handleBuyProduct = (product) => {
                 onPress={() => handleBuyProduct(product)}
                 style={styles.buyButton}
                 labelStyle={styles.buyButtonLabel}
-                disabled={!product.available} // Disable if not available
+                disabled={!product.available} 
               >
                 Comprar
               </Button>
@@ -311,4 +308,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CompanyStoreScreen;
+export default ShopClientScreen;

@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // If not using Expo, you'd use a different library like react-native-image-picker
 // For this example, we'll just simulate the image pick.
 
-const AddProductScreen = () => {
+const ShopConfigScreen = () => {
   const navigation = useNavigation();
 
   const [productName, setProductName] = useState('');
@@ -34,7 +34,6 @@ const AddProductScreen = () => {
       setProductImageUri(result.assets[0].uri);
     }
     */
-    // For demonstration, let's just set a placeholder image
     Alert.alert(
       "Subir Imagen",
       "Esto simularía la apertura de la galería/cámara. Selecciona una imagen de prueba.",
@@ -49,7 +48,6 @@ const AddProductScreen = () => {
   };
 
   const handleSaveChanges = () => {
-    // Basic validation
     if (!productName || !productBrand || !productQuantity || !productPrice || !productImageUri) {
       Alert.alert('Campos Incompletos', 'Por favor, rellena todos los campos y selecciona una imagen.');
       return;
@@ -75,7 +73,7 @@ const AddProductScreen = () => {
     setProductPrice('');
     setProductImageUri(null);
 
-    // You might also navigate back or to a product list screen
+    // You might also nigate back or to a product list screen
     // navigation.goBack();
   };
 
@@ -132,7 +130,7 @@ const AddProductScreen = () => {
           label="Cantidad del producto"
           value={productQuantity}
           onChangeText={setProductQuantity}
-          keyboardType="numeric" // Only allows numbers
+          keyboardType="numeric" 
           mode="outlined"
           style={styles.textInput}
           outlineColor="#ccc"
@@ -144,7 +142,7 @@ const AddProductScreen = () => {
           label="Precio del producto (bs)"
           value={productPrice}
           onChangeText={setProductPrice}
-          keyboardType="numeric" // Only allows numbers and decimal point
+          keyboardType="numeric" 
           mode="outlined"
           style={styles.textInput}
           outlineColor="#ccc"
@@ -152,7 +150,6 @@ const AddProductScreen = () => {
           theme={{ colors: { text: '#333', primary: '#FC5501', placeholder: '#666' } }}
         />
 
-        {/* NEW: Image Upload Section */}
         <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
           <Icon name="camera-plus" size={24} color="#FC5501" />
           <Text style={styles.imagePickerButtonText}>
@@ -276,4 +273,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddProductScreen;
+export default ShopConfigScreen;

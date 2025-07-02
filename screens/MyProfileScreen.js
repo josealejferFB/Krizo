@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
@@ -20,6 +20,13 @@ export default function MyProfileScreen({ navigation }) {
   const [carYear, setCarYear] = useState('2020');
   const [carPlate, setCarPlate] = useState('ABC-1234');
   const [carColor, setCarColor] = useState('Rojo');
+const { width, height } = useWindowDimensions();
+const isSmallScreen = height > 800;
+  const isLargeScreen = height > 850;
+  const isShortScreen = width > 600;
+  const isLongScreen = width > 760;
+  const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
+  const responsiveWidth = isLongScreen ? '96%' : isShortScreen ? '80%' : 350;
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -37,7 +44,25 @@ export default function MyProfileScreen({ navigation }) {
     <ThemedBackgroundGradient>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <View style={styles.mainCard}>
+          <View style={{
+    backgroundColor: '#fff',
+    borderRadius: 28,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    width: responsiveWidth, // Más ancho que antes
+    maxWidth: 420, // Más ancho que antes
+    alignSelf: 'center',
+    marginTop: 38,
+    marginBottom: 18,
+    elevation: 10,
+    shadowColor: '#FC5501',
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'start',
+    overflow: 'hidden',
+    display: 'flex',
+  }}>
             <ScrollView
               contentContainerStyle={styles.scrollViewContent}
               showsVerticalScrollIndicator={false}
@@ -355,6 +380,7 @@ export default function MyProfileScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   scrollContainer: {
+  display: 'flex',
     flexGrow: 1,
     alignItems: 'center',
     paddingVertical: 24,
@@ -389,23 +415,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     marginLeft: 2,
   },
-  mainCard: {
-    backgroundColor: '#fff',
-    borderRadius: 28,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    width: '96%', // Más ancho que antes
-    maxWidth: 420, // Más ancho que antes
-    alignSelf: 'center',
-    marginTop: 38,
-    marginBottom: 18,
-    elevation: 10,
-    shadowColor: '#FC5501',
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
+
   scrollViewContent: {
     flexGrow: 1,
     alignItems: 'center',
