@@ -32,6 +32,7 @@ import RegistrationWorkerScreen2 from './screens/RegistrationWorkerScreen2';
 import KrizoWorkerRequestsScreen from './screens/KrizoWorkerRequestsScreen';
 import KrizoWorkerPaymentsScreen from './screens/KrizoWorkerPaymentsScreen';
 import KrizoWorkerProfileScreen from './screens/KrizoWorkerProfileScreen';
+import KrizoWorkerServiceConfigScreen from './screens/KrizoWorkerServiceConfigScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -158,6 +159,11 @@ function App() {
           <Stack.Screen
             name="KrizoWorkerProfile"
             component={KrizoWorkerProfileScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="KrizoWorkerServiceConfig"
+            component={KrizoWorkerServiceConfigScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
