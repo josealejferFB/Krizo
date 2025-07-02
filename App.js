@@ -33,9 +33,14 @@ import MechanicClientScreen from './screens/MechanicClientScreen';
 import ShopClientScreen from './screens/ShopClientScreen';
 import ProductScreen from './screens/ProductScreen';
 import WalletScreen from './screens/WalletScreen'; // Agrega esta línea
+import RegistrationWorkerScreen from './screens/RegistrationWorkerScreen';
+import RegistrationWorkerScreen2 from './screens/RegistrationWorkerScreen2';
+import KrizoWorkerRequestsScreen from './screens/KrizoWorkerRequestsScreen';
+import KrizoWorkerPaymentsScreen from './screens/KrizoWorkerPaymentsScreen';
+import KrizoWorkerProfileScreen from './screens/KrizoWorkerProfileScreen';
+import KrizoWorkerServiceConfigScreen from './screens/KrizoWorkerServiceConfigScreen';
 
-  const Stack = createNativeStackNavigator();
-  
+const Stack = createNativeStackNavigator();
 function App() {
   const { width, height } = useWindowDimensions();
   const isLowerHeight = height > 800;
@@ -170,6 +175,11 @@ function App() {
           <Stack.Screen
             name="KrizoWorkerProfile"
             component={KrizoWorkerProfileScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="KrizoWorkerServiceConfig"
+            component={KrizoWorkerServiceConfigScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

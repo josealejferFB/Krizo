@@ -61,6 +61,20 @@ export default function KrizoWorkerHomeScreen({ navigation }) {
               </View>
               <MaterialCommunityIcons name="chevron-right" size={28} color="#FFD6B8" />
             </TouchableOpacity>
+            {/* Nuevo botón: Configurar servicios */}
+            <TouchableOpacity
+              style={[styles.optionCard, styles.optionCardBlack]}
+              onPress={() => navigation.navigate('KrizoWorkerServiceConfig')}
+            >
+              <View style={[styles.optionIconCircle, styles.optionIconCircleBlack]}>
+                <MaterialCommunityIcons name="tune" size={28} color="#FFD6B8" />
+              </View>
+              <View style={styles.optionTextBox}>
+                <Text style={[styles.optionTitle, styles.optionTitleBlack]}>Configurar servicios</Text>
+                <Text style={[styles.optionSubtitle, styles.optionSubtitleBlack]}>Activa o desactiva los servicios que ofreces</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={28} color="#FFD6B8" />
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
