@@ -72,8 +72,7 @@ const isSmallScreen = height > 800;
 
             <ThemedButton
               onPress={() => {
-                // Aquí iría la lógica de login de KrizoWorker
-                navigation.replace('Home');
+                navigation.replace('KrizoWorkerHome');
               }}
               icon="login"
               style={styles.loginButton}
@@ -83,7 +82,7 @@ const isSmallScreen = height > 800;
           </View>
         </ScrollView>
 
-        {/* Aviso de acceso exclusivo para trabajadores, fijo abajo */}
+
         <View style={{
     flexDirection: 'row',
     alignItems: 'center',

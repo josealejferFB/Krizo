@@ -18,6 +18,7 @@ import Registration3Screen from './screens/Registration3Screen';
 import Registration4Screen from './screens/Registration4Screen';
 import Registration5Screen from './screens/Registration5Screen';
 import KrizoWorkerLoginScreen from './screens/KrizoWorkerLoginScreen';
+import KrizoWorkerHomeScreen from './screens/KrizoWorkerHomeScreen'; // Asegúrate de tener este archivo creado
 import MyProfileScreen from './screens/MyProfileScreen';
 import CraneConfigScreen from './screens/CraneConfigScreen';
 import CraneClientScreen from './screens/CraneClientScreen';
@@ -28,6 +29,9 @@ import ProductScreen from './screens/ProductScreen';
 import WalletScreen from './screens/WalletScreen'; // Agrega esta línea
 import RegistrationWorkerScreen from './screens/RegistrationWorkerScreen';
 import RegistrationWorkerScreen2 from './screens/RegistrationWorkerScreen2';
+import KrizoWorkerRequestsScreen from './screens/KrizoWorkerRequestsScreen';
+import KrizoWorkerPaymentsScreen from './screens/KrizoWorkerPaymentsScreen';
+import KrizoWorkerProfileScreen from './screens/KrizoWorkerProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -117,6 +121,11 @@ function App() {
             options={{ headerShown: false }} // Oculta el encabezado
           />
           <Stack.Screen
+            name="KrizoWorkerHome"
+            component={KrizoWorkerHomeScreen}
+            options={{ headerShown: false }} // Oculta el encabezado
+          />
+          <Stack.Screen
             name="MyProfile"
             component={MyProfileScreen}
             options={{ headerShown: false }}
@@ -134,6 +143,21 @@ function App() {
           <Stack.Screen
             name="RegistrationWorkerScreen2"
             component={RegistrationWorkerScreen2}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="KrizoWorkerRequests"
+            component={KrizoWorkerRequestsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="KrizoWorkerPayments"
+            component={KrizoWorkerPaymentsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="KrizoWorkerProfile"
+            component={KrizoWorkerProfileScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
