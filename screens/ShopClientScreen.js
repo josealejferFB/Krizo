@@ -131,18 +131,10 @@ const handleBuyProduct = (product) => {
               <Text style={styles.productPrice}>{product.price}</Text>
               <View style={styles.cardActions}>
                 <View style={styles.switchContainer}>
-                  <Switch
-                    value={product.available}
-                    onValueChange={() => toggleProductAvailability(product.id)}
-                    color="#FC5501" // Orange color for active switch
-                  />
                   <Text style={styles.switchText}>
                     {product.available ? 'Disponible' : 'Agotado'}
                   </Text>
                 </View>
-                <TouchableOpacity onPress={() => handleEditProduct(product)} style={styles.editButton}>
-                  <Icon name="pencil" size={20} color="#666" />
-                </TouchableOpacity>
               </View>
               <Button
                 mode="contained"
