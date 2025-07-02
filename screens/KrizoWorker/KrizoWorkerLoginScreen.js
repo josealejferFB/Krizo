@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Text, TextInput } from 'react-native-paper';
-import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
-import Logo from "../assets/logo.svg";
+import { ThemedInput, ThemedButton } from '../../components/ThemedUIElements';
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
+import Logo from "../../assets/logo.svg";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function KrizoWorkerLoginScreen({ navigation }) {

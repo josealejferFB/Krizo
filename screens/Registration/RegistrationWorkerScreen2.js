@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { ThemedButton } from '../components/ThemedUIElements';
+import { ThemedButton } from '../../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
 
 // Importa CheckBox de react-native-paper o react-native-elements según tu stack
 import { Checkbox } from 'react-native-paper';

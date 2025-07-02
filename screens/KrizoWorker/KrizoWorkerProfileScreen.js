@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
 
 export default function KrizoWorkerProfileScreen() {
   return (

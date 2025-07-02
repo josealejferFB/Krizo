@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
+import { useResponsiveDimensions } from '../context/DimensionsContext'; // Ajusta la ruta si es diferente
 import { Text, TextInput } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
@@ -20,14 +21,7 @@ export default function MyProfileScreen({ navigation }) {
   const [carYear, setCarYear] = useState('2020');
   const [carPlate, setCarPlate] = useState('ABC-1234');
   const [carColor, setCarColor] = useState('Rojo');
-const { width, height } = useWindowDimensions();
-const isSmallScreen = height > 800;
-  const isLargeScreen = height > 850;
-  const isShortScreen = width > 600;
-  const isLongScreen = width > 760;
-  const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
-  const responsiveWidth = isLongScreen ? '96%' : isShortScreen ? '80%' : 350;
-
+  const { paddingAmount, bottomPosition, responsiveWidth, width, height } = useResponsiveDimensions();
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

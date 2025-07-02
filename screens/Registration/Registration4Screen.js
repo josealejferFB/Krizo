@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
-import { ThemedButton } from '../components/ThemedUIElements';
+import React from 'react';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ThemedButton } from '../../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function Registration3Screen({ navigation }) {
-  const [code, setCode] = useState('');
-
-  // Permite solo 6 dígitos
-  const handleChange = (text) => {
-    const sanitized = text.replace(/[^0-9]/g, '').slice(0, 6);
-    setCode(sanitized);
-  };
-
+export default function Registration4Screen({ navigation }) {
   return (
     <LinearGradient
       colors={['#FC5501', '#C24100']}
@@ -30,35 +22,18 @@ export default function Registration3Screen({ navigation }) {
         <Text style={styles.backButtonText}>Volver</Text>
       </TouchableOpacity>
       <View style={styles.card}>
-        <MaterialCommunityIcons name="email-check-outline" size={50} color="#FC5501" style={styles.icon} />
-        <Text style={styles.title}>Confirma tu correo electrónico</Text>
+        <MaterialCommunityIcons name="face-recognition" size={50} color="#FC5501" style={styles.icon} />
+        <Text style={styles.title}>Sube una foto de tu cara</Text>
         <Text style={styles.subtitle}>
-          Ingresa el código de 6 dígitos que te enviamos por correo.
+          Tómate una selfie en un lugar bien iluminado. Esta foto servirá para validar tu identidad.
         </Text>
-        <View style={styles.codeInputContainer}>
-          <TextInput
-            style={styles.codeInput}
-            value={code}
-            onChangeText={handleChange}
-            keyboardType="numeric"
-            maxLength={6}
-            placeholder="______"
-            placeholderTextColor="#D1BFAF"
-            textAlign="center"
-            selectionColor="#FC5501"
-            autoFocus
-          />
-        </View>
+        {/* Aquí irá el componente para subir la foto */}
         <ThemedButton
-          onPress={() => navigation.navigate('Registration4')}
+          onPress={() => navigation.navigate('Registration5')}
           style={styles.button}
-          disabled={code.length !== 6}
         >
           Siguiente
         </ThemedButton>
-        <Text style={styles.resendText}>
-          ¿No recibiste el código? <Text style={styles.resendLink}>Reenviar</Text>
-        </Text>
       </View>
     </LinearGradient>
   );
@@ -123,39 +98,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
   },
-  codeInputContainer: {
-    marginBottom: 24,
-    width: '100%',
-    alignItems: 'center',
-  },
-  codeInput: {
-    fontSize: 32,
-    letterSpacing: 16,
-    color: '#262525',
-    backgroundColor: '#F5F2F0',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#FC5501',
-    width: 220,
-    height: 60,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
   button: {
     width: 300,
     borderRadius: 20,
     backgroundColor: '#262525',
-    marginBottom: 10,
-  },
-  resendText: {
-    color: '#877063',
-    fontSize: 14,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  resendLink: {
-    color: '#FC5501',
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
   },
 });

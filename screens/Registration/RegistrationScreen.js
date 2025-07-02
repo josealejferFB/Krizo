@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, ScrollView, Dimensions, TouchableOpacity } from
 import { Appbar, TextInput, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Logo from '../assets/logo.svg';
+import Logo from '../../assets/logo.svg';
 
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
-import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
+import { ThemedInput, ThemedButton } from '../../components/ThemedUIElements';
 
 const { height } = Dimensions.get('window');
 

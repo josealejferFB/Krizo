@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Platform, TouchableOpacity, Modal } from 'react-native';
-import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
+import { ThemedInput, ThemedButton } from '../../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';

@@ -1,27 +1,15 @@
 import React, { useState } from 'react';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { ThemedButton, ThemedInput } from '../components/ThemedUIElements';
+import { ThemedButton, ThemedInput } from '../../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
-
-const { width: viewportWidth } = Dimensions.get('window');
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
 
 export default function RegistrationWorkerScreen({ navigation }) {
   const [clave, setClave] = useState('');
   const [confirmClave, setConfirmClave] = useState('');
   const [empresa, setEmpresa] = useState('');
   const [direccion, setDireccion] = useState('');
-
-  const { width, height } = useWindowDimensions();
-
-  // Define un breakpoint para considerar una pantalla "grande"
-  const isSmallScreen = height > 800;
-  const isLargeScreen = height > 850
-
-  const bottomPosition = isLargeScreen ? '4%' : isSmallScreen ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
-  const paddingAmount = isLargeScreen ? 24 : 14;
-
 
   return (
     <ThemedBackgroundGradient>

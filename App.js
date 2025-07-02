@@ -1,10 +1,11 @@
 // App.js
 import React from 'react';
+import { useWindowDimensions } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { PaperProvider } from 'react-native-paper'; 
+import { DimensionsProvider } from './context/DimensionsContext'; // Ajusta la ruta si es diferente
 import 'react-native-gesture-handler'; // ¡IMPORTANTE! Esta línea debe ser la PRIMERA
-
 
 // Importa tus pantallas
 import SplashScreen from './screens/SplashScreen';
@@ -12,32 +13,43 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import DetailScreen from './screens/DetailScreen';
 import ServicesScreen from './screens/ServicesScreen'; 
-import RegistrationScreen from './screens/RegistrationScreen';
-import Registration2Screen from './screens/Registration2Screen';
-import Registration3Screen from './screens/Registration3Screen';
-import Registration4Screen from './screens/Registration4Screen';
-import Registration5Screen from './screens/Registration5Screen';
-import KrizoWorkerLoginScreen from './screens/KrizoWorkerLoginScreen';
-import KrizoWorkerHomeScreen from './screens/KrizoWorkerHomeScreen'; // Asegúrate de tener este archivo creado
+import RegistrationScreen from './screens/Registration/RegistrationScreen';
+import Registration2Screen from './screens/Registration/Registration2Screen';
+import Registration3Screen from './screens/Registration/Registration3Screen';
+import Registration4Screen from './screens/Registration/Registration4Screen';
+import Registration5Screen from './screens/Registration/Registration5Screen';
+import RegistrationWorkerScreen from './screens/Registration/RegistrationWorkerScreen';
+import RegistrationWorkerScreen2 from './screens/Registration/RegistrationWorkerScreen2';
+import KrizoWorkerLoginScreen from './screens/KrizoWorker/KrizoWorkerLoginScreen';
+import KrizoWorkerHomeScreen from './screens/KrizoWorker/KrizoWorkerHomeScreen'; // Asegúrate de tener este archivo creado
+import KrizoWorkerRequestsScreen from './screens/KrizoWorker/KrizoWorkerRequestsScreen';
+import KrizoWorkerPaymentsScreen from './screens/KrizoWorker/KrizoWorkerPaymentsScreen';
+import KrizoWorkerProfileScreen from './screens/KrizoWorker/KrizoWorkerProfileScreen';
+import CraneConfigScreen from './screens/KrizoWorker/CraneConfigScreen';
+import ShopConfigScreen from './screens/KrizoWorker/ShopConfigScreen';
 import MyProfileScreen from './screens/MyProfileScreen';
-import CraneConfigScreen from './screens/CraneConfigScreen';
 import CraneClientScreen from './screens/CraneClientScreen';
 import MechanicClientScreen from './screens/MechanicClientScreen';
-import ShopConfigScreen from './screens/ShopConfigScreen';
 import ShopClientScreen from './screens/ShopClientScreen';
 import ProductScreen from './screens/ProductScreen';
 import WalletScreen from './screens/WalletScreen'; // Agrega esta línea
-import RegistrationWorkerScreen from './screens/RegistrationWorkerScreen';
-import RegistrationWorkerScreen2 from './screens/RegistrationWorkerScreen2';
-import KrizoWorkerRequestsScreen from './screens/KrizoWorkerRequestsScreen';
-import KrizoWorkerPaymentsScreen from './screens/KrizoWorkerPaymentsScreen';
-import KrizoWorkerProfileScreen from './screens/KrizoWorkerProfileScreen';
 
-const Stack = createNativeStackNavigator();
-
+  const Stack = createNativeStackNavigator();
+  
 function App() {
+  const { width, height } = useWindowDimensions();
+  const isLowerHeight = height > 800;
+  const isLargerHeight = height > 850;
+  const isLowerWidth = width > 600;
+  const isLargerWidth = width > 760;
+  const bottomPosition = isLargerHeight ? '4%' : isLowerHeight ? '2%' : '1%'; // Más arriba en pantallas grandes, más abajo en pequeñas
+  const responsiveWidth = isLargerWidth ? '96%' : isLowerWidth ? '80%' : 350;
+  const paddingAmount = isLargerHeight ? 24 : 14;
+
+
   return (
-    <PaperProvider>
+    <PaperProvider>      
+    <DimensionsProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen
@@ -162,6 +174,7 @@ function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      </DimensionsProvider>
     </PaperProvider>
   );
 }

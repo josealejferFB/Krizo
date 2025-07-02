@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Badge } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
 
 export default function KrizoWorkerRequestsScreen({ navigation }) {
   // Números simulados de solicitudes pendientes
