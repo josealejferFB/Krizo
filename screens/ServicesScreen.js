@@ -27,7 +27,7 @@ const services = [
   {
     name: 'Solicitar Repuesto',
     subtitle: 'Compra de repuestos y accesorios',
-    link: 'MechanicClientScreen',
+    link: 'ShopClient',
     image: require('../assets/car_parts.png'),
     icon: 'store',
     color: '#FC5501',
