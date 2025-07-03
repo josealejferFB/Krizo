@@ -66,17 +66,18 @@ const CraneConfigScreen = () => {
               </TouchableOpacity>
 
           <View style={styles.appBarTitleContent}>
-            <Text style={styles.appBarTitle}>Servicio de</Text>
-            <Text style={styles.appBarTitle}>Grúa</Text>
-            <Icon name="tow-truck" size={24} color="white" /> 
+            <Text style={styles.appBarTitle}>Mecánico a</Text>
+            <Text style={styles.appBarTitle}>Domicilio</Text>
+            <Icon name="tools" size={24} color="white" /> 
           </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Text style={styles.sectionTitle}>Configuración de</Text>
-        <Text style={styles.sectionTitle}>Servicio de Grúa</Text>
-        <Text style={styles.inputLabel}>Precio por Kilómetro (bs)</Text>
+        <Text style={styles.sectionTitle}>Servicio de Mecánica</Text>
+        {/* Price per Kilometer */}
+        <Text style={styles.inputLabel}>Precio por Visita a Domicilio (bs)</Text>
         <TextInput
           value={pricePerKm}
           onChangeText={setPricePerKm}
@@ -106,7 +107,6 @@ const CraneConfigScreen = () => {
           Este es un cobro único solo por el hecho de trasladarse a la ubicación del cliente.
         </Text>
 
-        {/* Suggestion Radius Slider */}
         <Text style={styles.inputLabel}>Radio límite de sugerencia (km)</Text>
         <View style={styles.sliderContainer}>
           <Slider

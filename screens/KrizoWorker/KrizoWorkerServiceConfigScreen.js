@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
+import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
 
 export default function KrizoWorkerServiceConfigScreen({ navigation }) {
   // Estados simulados para switches (puedes conectar con backend en el futuro)
@@ -54,7 +54,9 @@ export default function KrizoWorkerServiceConfigScreen({ navigation }) {
               thumbColor={mechanicEnabled ? "#FC5501" : "#FFD6B8"}
               trackColor={{ false: "#FFD6B8", true: "#FC5501" }}
             />
-            <TouchableOpacity style={styles.configButton} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.configButton} 
+            onPress={() => navigation.replace('MechanicConfig')}
+            activeOpacity={0.7}>
               <MaterialCommunityIcons name="cog" size={24} color="#FC5501" />
             </TouchableOpacity>
           </View>
@@ -82,7 +84,9 @@ export default function KrizoWorkerServiceConfigScreen({ navigation }) {
               thumbColor={craneEnabled ? "#FC5501" : "#FFD6B8"}
               trackColor={{ false: "#FFD6B8", true: "#FC5501" }}
             />
-            <TouchableOpacity style={styles.configButton} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.configButton}
+            onPress={() => navigation.replace('CraneConfig')}
+            activeOpacity={0.7}>
               <MaterialCommunityIcons name="cog" size={24} color="#FC5501" />
             </TouchableOpacity>
           </View>
@@ -110,7 +114,9 @@ export default function KrizoWorkerServiceConfigScreen({ navigation }) {
               thumbColor={storeEnabled ? "#FC5501" : "#FFD6B8"}
               trackColor={{ false: "#FFD6B8", true: "#FC5501" }}
             />
-            <TouchableOpacity style={styles.configButton} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.configButton}
+            onPress={() => navigation.replace('ShopConfig')}
+            activeOpacity={0.7}>
               <MaterialCommunityIcons name="cog" size={24} color="#FC5501" />
             </TouchableOpacity>
           </View>
