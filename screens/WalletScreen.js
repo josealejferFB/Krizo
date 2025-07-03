@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import DepositMethodModal from '../components/DepositMethodModal'; // Importa el modal
 
 export default function WalletScreen({ navigation }) {
   // Simulación de balance
   const balance = 1250.75;
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleDepositPress = () => setModalVisible(true);
+  const handleCloseModal = () => setModalVisible(false);
+
+  const handleSelectMethod = (method) => {
+    setModalVisible(false);
+    // Aquí puedes navegar o mostrar otro modal según el método
+    // Por ejemplo: navigation.navigate('DepositPayPal') o similar
+    alert(`Seleccionaste: ${method}`);
+  };
 
   return (
     <ThemedBackgroundGradient>
@@ -60,7 +72,7 @@ export default function WalletScreen({ navigation }) {
           <Text style={styles.depositSubtitle}>
             Selecciona cómo deseas añadir fondos a tu billetera
           </Text>
-          <TouchableOpacity style={styles.depositButton}>
+          <TouchableOpacity style={styles.depositButton} onPress={handleDepositPress}>
             <MaterialCommunityIcons name="credit-card-outline" size={22} color="#fff" style={{ marginRight: 8 }} />
             <Text style={styles.depositButtonText}>Depositar con pasarela de pago</Text>
           </TouchableOpacity>
@@ -75,6 +87,12 @@ export default function WalletScreen({ navigation }) {
             </Text>
           </View>
         </View>
+        {/* Modal de métodos de depósito */}
+        <DepositMethodModal
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          onSelectMethod={handleSelectMethod}
+        />
       </View>
     </ThemedBackgroundGradient>
   );
