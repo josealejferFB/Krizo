@@ -1,15 +1,68 @@
 import React, { useState } from 'react';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ThemedButton, ThemedInput } from '../../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
+import { useResponsiveDimensions } from '../../context/DimensionsContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function RegistrationWorkerScreen({ navigation }) {
-  const [clave, setClave] = useState('');
-  const [confirmClave, setConfirmClave] = useState('');
-  const [empresa, setEmpresa] = useState('');
-  const [direccion, setDireccion] = useState('');
+  const [nombres, setNombres] = useState('');
+  const [apellidos, setApellidos] = useState('');
+  const [cedula, setCedula] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { paddingAmount, bottomPosition } = useResponsiveDimensions();
+  const { register } = useAuth();
+
+  const handleRegister = async () => {
+    // Validaciones
+    if (!nombres.trim() || !apellidos.trim() || !cedula.trim() || !email.trim() || !telefono.trim() || !password.trim() || !confirmPassword.trim()) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Las contraseñas no coinciden');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await register({
+        nombres: nombres.trim(),
+        apellidos: apellidos.trim(),
+        cedula: cedula.trim(),
+        email: email.trim(),
+        telefono: telefono.trim(),
+        password: password,
+        tipo: 'krizoworker'
+      });
+
+      if (result.success) {
+        Alert.alert('Éxito', 'Registro exitoso. Revisa tu email para verificar tu cuenta.', [
+          { text: 'OK', onPress: () => navigation.navigate('KrizoWorkerLogin') }
+        ]);
+      } else {
+        Alert.alert('Error', result.error || 'Error en el registro');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Error de conexión. Verifica tu conexión a internet.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <ThemedBackgroundGradient>
@@ -31,48 +84,80 @@ export default function RegistrationWorkerScreen({ navigation }) {
         <Text style={styles.headerTitle}>Registro de KrizoWorker</Text>
         <View style={styles.card}>
           <ThemedInput
-            label="Clave segura (8 dígitos)"
-            value={clave}
-            onChangeText={setClave}
-            placeholder="Clave segura"
-            secureTextEntry
-            maxLength={8}
+            label="Nombres"
+            value={nombres}
+            onChangeText={setNombres}
+            placeholder="Ingresa tus nombres"
+            left={<TextInput.Icon icon="account" color="#262525" />}
+          />
+          <ThemedInput
+            label="Apellidos"
+            value={apellidos}
+            onChangeText={setApellidos}
+            placeholder="Ingresa tus apellidos"
+            left={<TextInput.Icon icon="account" color="#262525" />}
+          />
+          <ThemedInput
+            label="Cédula"
+            value={cedula}
+            onChangeText={setCedula}
+            placeholder="Ingresa tu cédula"
             keyboardType="numeric"
+            left={<TextInput.Icon icon="card-account-details" color="#262525" />}
+          />
+          <ThemedInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Ingresa tu email"
+            keyboardType="email-address"
+            left={<TextInput.Icon icon="email" color="#262525" />}
+          />
+          <ThemedInput
+            label="Teléfono"
+            value={telefono}
+            onChangeText={setTelefono}
+            placeholder="Ingresa tu teléfono"
+            keyboardType="phone-pad"
+            left={<TextInput.Icon icon="phone" color="#262525" />}
+          />
+          <ThemedInput
+            label="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Ingresa tu contraseña"
+            secureTextEntry={!showPassword}
             left={<TextInput.Icon icon="lock" color="#262525" />}
+            right={
+              <TextInput.Icon
+                icon={showPassword ? "eye-off" : "eye"}
+                color="#262525"
+                onPress={() => setShowPassword(!showPassword)}
+              />
+            }
           />
           <ThemedInput
-            label="Confirmar clave segura"
-            value={confirmClave}
-            onChangeText={setConfirmClave}
-            placeholder="Confirmar clave"
-            secureTextEntry
-            maxLength={8}
-            keyboardType="numeric"
+            label="Confirmar contraseña"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirma tu contraseña"
+            secureTextEntry={!showConfirmPassword}
             left={<TextInput.Icon icon="lock-check" color="#262525" />}
-          />
-          <ThemedInput
-            label="Nombre de la empresa"
-            value={empresa}
-            onChangeText={setEmpresa}
-            placeholder="Nombre de la empresa"
-            left={<TextInput.Icon icon="office-building" color="#FC5501" />}
-          />
-          <Text style={styles.label}>Dirección del local</Text>
-          <ThemedInput
-            label="Dirección de la empresa"
-            value={direccion}
-            onChangeText={setDireccion}
-            placeholder="Dirección de la empresa"
-            multiline
-            numberOfLines={6}
-            left={<TextInput.Icon icon="map-marker" color="#FC5501" />}
-            style={{ minHeight: 110, textAlignVertical: 'top' }}
+            right={
+              <TextInput.Icon
+                icon={showConfirmPassword ? "eye-off" : "eye"}
+                color="#262525"
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+              />
+            }
           />
           <ThemedButton
             style={styles.button}
-            onPress={() => navigation.navigate('RegistrationWorkerScreen2')}
+            onPress={handleRegister}
+            disabled={isLoading}
+            loading={isLoading}
           >
-            Continuar
+            {isLoading ? 'Registrando...' : 'Registrarse'}
           </ThemedButton>
         </View>
       </View>
@@ -97,7 +182,7 @@ flexDirection: 'row',
 
       }}>
         <MaterialCommunityIcons name="lock" size={60} color="#262525" style={styles.lockIcon} />
-        <Text style={styles.exclusiveBannerText}>Te estás regristrando como trabajador</Text>
+        <Text style={styles.exclusiveBannerText}>Registro exclusivo para trabajadores</Text>
       </View>
     </ThemedBackgroundGradient>
   );

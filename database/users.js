@@ -33,25 +33,46 @@ const initUsersTable = () => {
       } else {
         console.log('✅ Tabla users creada/verificada correctamente');
         
-        // Crear índices para mejorar el rendimiento de búsquedas únicas
-        const createIndexesSQL = [
-          'CREATE INDEX IF NOT EXISTS idx_users_cedula ON users(cedula)',
-          'CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)',
-          'CREATE INDEX IF NOT EXISTS idx_users_telefono ON users(telefono)',
-          'CREATE INDEX IF NOT EXISTS idx_users_tipo ON users(tipo)'
+        // Agregar columnas si no existen (para tablas existentes)
+        const addColumnsSQL = [
+          'ALTER TABLE users ADD COLUMN verification_code TEXT',
+          'ALTER TABLE users ADD COLUMN verification_code_expires DATETIME',
+          'ALTER TABLE users ADD COLUMN is_email_verified INTEGER DEFAULT 0'
         ];
 
-        let completedIndexes = 0;
-        createIndexesSQL.forEach((indexSQL, index) => {
-          db.run(indexSQL, (err) => {
-            if (err) {
-              console.error(`❌ Error creando índice ${index}:`, err.message);
-            } else {
-              console.log(`✅ Índice ${index + 1} creado/verificado`);
+        let completedColumns = 0;
+        addColumnsSQL.forEach((columnSQL, index) => {
+          db.run(columnSQL, (err) => {
+            // Ignorar errores si la columna ya existe
+            if (err && !err.message.includes('duplicate column name')) {
+              console.error(`❌ Error agregando columna ${index}:`, err.message);
+            } else if (!err) {
+              console.log(`✅ Columna ${index + 1} agregada/verificada`);
             }
-            completedIndexes++;
-            if (completedIndexes === createIndexesSQL.length) {
-              resolve();
+            completedColumns++;
+            if (completedColumns === addColumnsSQL.length) {
+              // Crear índices para mejorar el rendimiento de búsquedas únicas
+              const createIndexesSQL = [
+                'CREATE INDEX IF NOT EXISTS idx_users_cedula ON users(cedula)',
+                'CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)',
+                'CREATE INDEX IF NOT EXISTS idx_users_telefono ON users(telefono)',
+                'CREATE INDEX IF NOT EXISTS idx_users_tipo ON users(tipo)'
+              ];
+
+              let completedIndexes = 0;
+              createIndexesSQL.forEach((indexSQL, index) => {
+                db.run(indexSQL, (err) => {
+                  if (err) {
+                    console.error(`❌ Error creando índice ${index}:`, err.message);
+                  } else {
+                    console.log(`✅ Índice ${index + 1} creado/verificado`);
+                  }
+                  completedIndexes++;
+                  if (completedIndexes === createIndexesSQL.length) {
+                    resolve();
+                  }
+                });
+              });
             }
           });
         });

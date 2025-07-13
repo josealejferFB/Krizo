@@ -103,6 +103,14 @@ export default function KrizoWorkerLoginScreen({ navigation }) {
             >
               {isLoading ? 'Ingresando...' : 'Ingresar'}
             </ThemedButton>
+
+            {/* Enlace de registro */}
+            <View style={styles.registerLinkContainer}>
+              <Text style={styles.registerText}>¿No tienes cuenta? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('RegistrationWorker')}>
+                <Text style={styles.registerLink}>Regístrate</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
 
@@ -221,5 +229,23 @@ const styles = StyleSheet.create({
   lockIcon: {
     marginLeft: '15%',
     marginRight: 0,
+  },
+  registerLinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    paddingHorizontal: 10,
+  },
+  registerText: {
+    color: '#666',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  registerLink: {
+    color: '#FC5501',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
 });
