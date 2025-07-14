@@ -1,39 +1,64 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Appbar, Text, Card, Button, Avatar, Chip } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Linking from 'expo-linking';
+import LocationRequestModal from './LocationRequestModal';
+import ChatModal from '../components/ChatModal';
+import ServiceRequestModal from '../components/ServiceRequestModal';
+import { useAuth } from '../context/AuthContext';
 
 const MechanicServiceRN = () => {
   const navigation = useNavigation();
-  const mechanics = [
-    {
-      id: 1,
-      name: 'Juan Pérez',
-      specialty: 'Identificación de fallas',
-      rating: 3,
-      price: '100Bs/hora',
-      featured: false,
-    },
-    {
-      id: 2,
-      name: 'Luis Gomez',
-      specialty: 'Reparación de motores',
-      rating: 4,
-      price: '200Bs/hora',
-      featured: false,
-    },
-    {
-      id: 3,
-      name: 'Carlos Luis',
-      specialty: 'Reparación de sistemas',
-      rating: 5,
-      price: '300Bs/hora',
-      featured: true,
-      experience: 'más de 2 meses',
-    },
-  ];
+  const route = useRoute();
+  const { token, user } = useAuth();
+  const [mechanics, setMechanics] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [chatModalVisible, setChatModalVisible] = useState(false);
+  const [serviceRequestModalVisible, setServiceRequestModalVisible] = useState(false);
+  const [selectedMechanic, setSelectedMechanic] = useState(null);
+  const [serviceDetails, setServiceDetails] = useState(null);
+  const [currentRequestId, setCurrentRequestId] = useState(null);
+  
+  // Obtener trabajadores de la ruta o cargar desde API
+  useEffect(() => {
+    if (route.params?.workers) {
+      // Filtrar solo mecánicos
+      const mechanicWorkers = route.params.workers.filter(
+        worker => worker.services.includes('mecanico')
+      );
+      setMechanics(mechanicWorkers);
+      setLoading(false);
+    } else {
+      loadMechanics();
+    }
+  }, [route.params]);
+
+  const loadMechanics = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://192.168.1.14:5000/api/users/workers');
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Filtrar solo mecánicos
+          const mechanicWorkers = result.data.filter(
+            worker => worker.services.includes('mecanico')
+          );
+          setMechanics(mechanicWorkers);
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando mecánicos:', error);
+      Alert.alert('Error', 'No se pudieron cargar los mecánicos');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderStars = (rating) => {
     return (
@@ -47,6 +72,115 @@ const MechanicServiceRN = () => {
           />
         ))}
       </View>
+    );
+  };
+
+  const handleRequestService = (mechanic) => {
+    setSelectedMechanic(mechanic);
+    setServiceRequestModalVisible(true);
+  };
+
+  const handleServiceRequestSent = (requestData) => {
+    setServiceRequestModalVisible(false);
+    setCurrentRequestId(requestData.id);
+    
+    // Mostrar mensaje de confirmación
+    Alert.alert(
+      'Solicitud Enviada',
+      'Tu solicitud ha sido enviada al mecánico. Te notificaremos cuando responda.',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            // Opcional: abrir chat directamente
+            setChatModalVisible(true);
+          }
+        }
+      ]
+    );
+  };
+
+  const handleChatConfirm = (agreedPrice) => {
+    setChatModalVisible(false);
+    // Abrir modal de ubicación después del chat
+    setLocationModalVisible(true);
+    // Guardar el precio acordado
+    setServiceDetails(prev => ({
+      ...prev,
+      agreedPrice: agreedPrice
+    }));
+  };
+
+  const handleLocationConfirm = async (locationData) => {
+    try {
+      setLocationModalVisible(false);
+      
+      // Combinar datos de ubicación con precio acordado
+      const finalServiceDetails = {
+        ...locationData,
+        agreedPrice: serviceDetails?.agreedPrice
+      };
+
+      // Crear la solicitud con el precio acordado
+      const requestData = {
+        client_id: 4, // ID del cliente Santo Delgado
+        worker_id: selectedMechanic.id,
+        service_type: 'mecanico',
+        description: locationData.description || 'Solicitud de servicio mecánico',
+        client_location: locationData.address,
+        client_phone: '04243031238',
+        client_name: 'Santo Delgado',
+        worker_name: selectedMechanic.name,
+        coordinates: locationData.coordinates,
+        agreed_price: finalServiceDetails.agreedPrice
+      };
+
+      const response = await fetch('http://192.168.1.14:5000/api/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Navegar a la pantalla de pago con el precio acordado
+        navigation.navigate('PaymentScreen', {
+          mechanic: selectedMechanic,
+          serviceDetails: finalServiceDetails
+        });
+      } else {
+        Alert.alert('Error', result.error || 'No se pudo crear la solicitud');
+      }
+    } catch (error) {
+      console.error('Error procesando ubicación:', error);
+      Alert.alert('Error', 'No se pudo procesar la ubicación. Inténtalo de nuevo.');
+    }
+  };
+
+  const handleCallMechanic = (phoneNumber) => {
+    if (!phoneNumber) {
+      Alert.alert('Error', 'No hay número de teléfono disponible');
+      return;
+    }
+
+    Alert.alert(
+      'Llamar al Mecánico',
+      `¿Deseas llamar a ${phoneNumber}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { 
+          text: 'Llamar', 
+          onPress: () => {
+            const phoneUrl = `tel:${phoneNumber}`;
+            Linking.openURL(phoneUrl).catch(() => {
+              Alert.alert('Error', 'No se pudo realizar la llamada');
+            });
+          }
+        }
+      ]
     );
   };
 
@@ -76,40 +210,87 @@ const MechanicServiceRN = () => {
         </View>
       </View>
       <ScrollView contentContainerStyle={styles.mechanicsList}>
-        {mechanics.map((mechanic) => (
-          <Card key={mechanic.id} style={styles.mechanicCard}>
-            <View style={styles.cardContent}>
-              <Avatar.Icon size={60} icon="account" style={styles.avatar} color="white" />
-              <View style={styles.mechanicInfo}>
-                <View style={styles.nameAndFeatured}>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#FC5501" />
+            <Text style={styles.loadingText}>Cargando mecánicos...</Text>
+          </View>
+        ) : mechanics.length > 0 ? (
+          mechanics.map((mechanic) => (
+            <Card key={mechanic.id} style={styles.mechanicCard}>
+              <View style={styles.cardContent}>
+                <Avatar.Icon size={60} icon="account" style={styles.avatar} color="white" />
+                <View style={styles.mechanicInfo}>
                   <Text style={styles.mechanicName}>{mechanic.name}</Text>
-                  {mechanic.featured && (
-                    <Chip style={styles.featuredChip} textStyle={styles.featuredChipText}>
-                      Destacado
-                    </Chip>
-                  )}
+                  <Text style={styles.mechanicSpecialty}>Mecánico Profesional</Text>
+                  {renderStars(mechanic.rating || 4)}
+                  <View style={styles.mechanicStats}>
+                    <Text style={styles.mechanicStat}>⭐ {mechanic.rating || 4.5}</Text>
+                    <Text style={styles.mechanicStat}>🔧 {mechanic.completedServices || 150} servicios</Text>
+                  </View>
                 </View>
-                <Text style={styles.mechanicSpecialty}>{mechanic.specialty}</Text>
-                <View style={styles.ratingAndPrice}>
-                  {renderStars(mechanic.rating)}
-                  <Text style={styles.mechanicPrice}>{mechanic.price}</Text>
+                <View style={styles.mechanicActions}>
+                  <TouchableOpacity
+                    style={styles.chatButton}
+                    onPress={() => {
+                      setSelectedMechanic(mechanic);
+                      setChatModalVisible(true);
+                    }}
+                  >
+                    <Icon name="chat" size={20} color="white" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.callButton}
+                    onPress={() => handleCallMechanic(mechanic.telefono)}
+                  >
+                    <Icon name="phone" size={20} color="white" />
+                  </TouchableOpacity>
                 </View>
-                {mechanic.experience && (
-                  <Text style={styles.mechanicExperience}>{mechanic.experience}</Text>
-                )}
               </View>
-            </View>
-            <Button
-              mode="contained"
-              onPress={() => console.log(`Solicitar a ${mechanic.name}`)}
-              style={styles.requestButton}
-              labelStyle={styles.requestButtonLabel}
-            >
-              Solicitar
-            </Button>
-          </Card>
-        ))}
+              <View style={styles.cardActions}>
+                <Button
+                  mode="contained"
+                  onPress={() => handleRequestService(mechanic)}
+                  style={styles.requestButton}
+                  labelStyle={styles.requestButtonText}
+                >
+                  Solicitar Servicio
+                </Button>
+              </View>
+            </Card>
+          ))
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Icon name="tools" size={64} color="#ccc" />
+            <Text style={styles.emptyText}>No hay mecánicos disponibles</Text>
+            <Text style={styles.emptySubtext}>Intenta más tarde</Text>
+          </View>
+        )}
       </ScrollView>
+
+      {/* Modal de Solicitud de Servicio */}
+      <ServiceRequestModal
+        visible={serviceRequestModalVisible}
+        onClose={() => setServiceRequestModalVisible(false)}
+        mechanic={selectedMechanic}
+        onRequestSent={handleServiceRequestSent}
+      />
+
+      {/* Modal de Chat */}
+      <ChatModal
+        visible={chatModalVisible}
+        onClose={() => setChatModalVisible(false)}
+        mechanic={selectedMechanic}
+        onConfirmService={handleChatConfirm}
+        userType="client"
+      />
+
+      {/* Modal de Ubicación */}
+      <LocationRequestModal
+        visible={locationModalVisible}
+        onClose={() => setLocationModalVisible(false)}
+        onConfirm={handleLocationConfirm}
+      />
     </LinearGradient>
   );
 };
@@ -240,6 +421,100 @@ const styles = StyleSheet.create({
   requestButtonLabel: {
     color: 'white',
     fontSize: 16,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FC5501',
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#666',
+    fontWeight: 'bold',
+    marginTop: 16,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+  },
+  availableChip: {
+    backgroundColor: '#4CAF50',
+    height: 30,
+  },
+  availableChipText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  mechanicLocation: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 3,
+  },
+  mechanicAvailability: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+  },
+  mechanicPhone: {
+    fontSize: 13,
+    color: '#4CAF50',
+    fontWeight: '600',
+    marginTop: 3,
+  },
+  mechanicActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  chatButton: {
+    backgroundColor: '#007bff',
+    borderRadius: 20,
+    padding: 10,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  callButton: {
+    backgroundColor: '#28a745',
+    borderRadius: 20,
+    padding: 10,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  cardActions: {
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  requestButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  mechanicStats: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  mechanicStat: {
+    fontSize: 12,
+    color: '#666',
+    marginRight: 10,
   },
 });
 

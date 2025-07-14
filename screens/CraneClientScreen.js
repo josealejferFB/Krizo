@@ -1,41 +1,52 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
 import { Text, Card, Button, Avatar, Chip } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const CraneClientScreen = () => {
   const navigation = useNavigation();
-  const mechanics = [
-    {
-      id: 1,
-      name: 'Manuel Sanchez',
-      specialty: 'Grúas de plataforma (o camillas)',
-      rating: 4,
-      price: '500Bs por km',
-      featured: false,
-      image: 'https://placehold.co/150x100/A0A0A0/FFFFFF?text=Plataforma',
-    },
-    {
-      id: 2,
-      name: 'Alejandro Martin',
-      specialty: 'Grúas con pluma o brazo articulado',
-      rating: 3,
-      price: '500Bs por km',
-      featured: false,
-      image: 'https://placehold.co/150x100/A0A0A0/FFFFFF?text=Pluma',
-    },
-    {
-      id: 3,
-      name: 'Carlos López',
-      specialty: 'Grúas con gancho o remolque',
-      rating: 5,
-      price: '500Bs por km',
-      featured: true,
-      image: 'https://placehold.co/150x100/A0A0A0/FFFFFF?text=Gancho',
-    },
-  ];
+  const route = useRoute();
+  const [cranes, setCranes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Obtener trabajadores de la ruta o cargar desde API
+  useEffect(() => {
+    if (route.params?.workers) {
+      // Filtrar solo grúas
+      const craneWorkers = route.params.workers.filter(
+        worker => worker.services.includes('grua')
+      );
+      setCranes(craneWorkers);
+      setLoading(false);
+    } else {
+      loadCranes();
+    }
+  }, [route.params]);
+
+  const loadCranes = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://192.168.1.14:5000/api/users/workers');
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Filtrar solo grúas
+          const craneWorkers = result.data.filter(
+            worker => worker.services.includes('grua')
+          );
+          setCranes(craneWorkers);
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando grúas:', error);
+      Alert.alert('Error', 'No se pudieron cargar las grúas');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderStars = (rating) => (
     <View style={styles.starsContainer}>
@@ -50,9 +61,21 @@ const CraneClientScreen = () => {
     </View>
   );
 
-  const handleRequestService = (mechanic) => {
-    // navigation.navigate('ServiceRequestScreen', { mechanicData: mechanic });
-    console.log(`Solicitar a ${mechanic.name}`);
+  const handleRequestService = (crane) => {
+    Alert.alert(
+      'Solicitar Grúa',
+      `¿Deseas solicitar el servicio de grúa de ${crane.name}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { 
+          text: 'Solicitar', 
+          onPress: () => {
+            // Aquí se implementaría la lógica para crear la solicitud
+            Alert.alert('Éxito', 'Solicitud de grúa enviada correctamente');
+          }
+        }
+      ]
+    );
   };
 
   return (
@@ -76,43 +99,47 @@ const CraneClientScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.mechanicsList}>
-        {mechanics.map((mechanic) => (
-          <Card key={mechanic.id} style={styles.mechanicCard}>
-            {/* Destacado arriba a la derecha de la tarjeta */}
-            {mechanic.featured && (
-              <View style={styles.featuredChipContainer}>
-                <Chip style={styles.featuredChip} textStyle={styles.featuredChipText}>
-                  Destacado
-                </Chip>
-              </View>
-            )}
-            <View style={styles.cardContent}>
-              <View style={styles.mechanicAvatarContainer}>
-                <Avatar.Icon size={60} icon="truck" style={styles.avatar} color="white" />
-              </View>
-              <View style={styles.mechanicInfo}>
-                <Text style={styles.mechanicName}>{mechanic.name}</Text>
-                <Text style={styles.mechanicSpecialty}>{mechanic.specialty}</Text>
-                <Image
-                  source={{ uri: mechanic.image || 'https://placehold.co/120x80/FC5501/FFFFFF?text=Grúa' }}
-                  style={styles.mechanicImage}
-                />
-                <View style={styles.ratingAndPrice}>
-                  {renderStars(mechanic.rating)}
-                  <Text style={styles.mechanicPrice}>{mechanic.price}</Text>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#FC5501" />
+            <Text style={styles.loadingText}>Cargando grúas...</Text>
+          </View>
+        ) : cranes.length > 0 ? (
+          cranes.map((crane) => (
+            <Card key={crane.id} style={styles.mechanicCard}>
+              <View style={styles.cardContent}>
+                <View style={styles.mechanicAvatarContainer}>
+                  <Avatar.Icon size={60} icon="truck" style={styles.avatar} color="white" />
+                </View>
+                <View style={styles.mechanicInfo}>
+                  <View style={styles.nameAndFeatured}>
+                    <Text style={styles.mechanicName}>{crane.name}</Text>
+                    <Chip style={styles.availableChip} textStyle={styles.availableChipText}>
+                      Disponible
+                    </Chip>
+                  </View>
+                  <Text style={styles.mechanicSpecialty}>{crane.descripcion}</Text>
+                  <Text style={styles.mechanicLocation}>{crane.ciudad} - {crane.zona}</Text>
+                  <Text style={styles.mechanicAvailability}>Disponibilidad: {crane.disponibilidad}</Text>
                 </View>
               </View>
-            </View>
-            <Button
-              mode="contained"
-              onPress={() => handleRequestService(mechanic)}
-              style={styles.requestButton}
-              labelStyle={styles.requestButtonLabel}
-            >
-              Solicitar
-            </Button>
-          </Card>
-        ))}
+              <Button
+                mode="contained"
+                onPress={() => handleRequestService(crane)}
+                style={styles.requestButton}
+                labelStyle={styles.requestButtonLabel}
+              >
+                Solicitar
+              </Button>
+            </Card>
+          ))
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Icon name="tow-truck" size={64} color="#ccc" />
+            <Text style={styles.emptyText}>No hay grúas disponibles</Text>
+            <Text style={styles.emptySubtext}>Intenta más tarde</Text>
+          </View>
+        )}
       </ScrollView>
     </LinearGradient>
   );
@@ -288,6 +315,57 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     color: '#333',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FC5501',
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#666',
+    fontWeight: 'bold',
+    marginTop: 16,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+  },
+  availableChip: {
+    backgroundColor: '#4CAF50',
+    height: 30,
+  },
+  availableChipText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  nameAndFeatured: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  mechanicLocation: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 3,
+  },
+  mechanicAvailability: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
   },
 });
 

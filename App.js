@@ -21,6 +21,7 @@ import Registration4Screen from './screens/Registration/Registration4Screen';
 import Registration5Screen from './screens/Registration/Registration5Screen';
 import RegistrationWorkerScreen from './screens/Registration/RegistrationWorkerScreen';
 import RegistrationWorkerScreen2 from './screens/Registration/RegistrationWorkerScreen2';
+import EmailVerificationScreen from './screens/EmailVerificationScreen';
 
 import KrizoWorkerLoginScreen from './screens/KrizoWorker/KrizoWorkerLoginScreen';
 import KrizoWorkerHomeScreen from './screens/KrizoWorker/KrizoWorkerHomeScreen';
@@ -28,9 +29,17 @@ import KrizoWorkerRequestsScreen from './screens/KrizoWorker/KrizoWorkerRequests
 import KrizoWorkerPaymentsScreen from './screens/KrizoWorker/KrizoWorkerPaymentsScreen';
 import KrizoWorkerProfileScreen from './screens/KrizoWorker/KrizoWorkerProfileScreen';
 import KrizoWorkerServiceConfigScreen from './screens/KrizoWorker/KrizoWorkerServiceConfigScreen';
+import KrizoWorkerServiceProfileScreen from './screens/KrizoWorker/KrizoWorkerServiceProfileScreen';
+import KrizoWorkerPaymentMethodsScreen from './screens/KrizoWorker/KrizoWorkerPaymentMethodsScreen';
+import MechanicRequestsScreen from './screens/KrizoWorker/MechanicRequestsScreen';
+import ChatScreen from './screens/KrizoWorker/ChatScreen';
 import MechanicConfigScreen from './screens/KrizoWorker/MechanicConfigScreen';
 import CraneConfigScreen from './screens/KrizoWorker/CraneConfigScreen';
 import ShopConfigScreen from './screens/KrizoWorker/ShopConfigScreen';
+import KrizoWorkerChatListScreen from './screens/KrizoWorker/KrizoWorkerChatListScreen';
+import KrizoWorkerChatScreen from './screens/KrizoWorker/KrizoWorkerChatScreen';
+import KrizoWorkerPaymentsReceivedScreen from './screens/KrizoWorker/KrizoWorkerPaymentsReceivedScreen';
+import KrizoWorkerCompletedOrdersScreen from './screens/KrizoWorker/KrizoWorkerCompletedOrdersScreen';
 
 import MyProfileScreen from './screens/MyProfileScreen';
 import CraneClientScreen from './screens/CraneClientScreen';
@@ -38,6 +47,9 @@ import MechanicClientScreen from './screens/MechanicClientScreen';
 import ShopClientScreen from './screens/ShopClientScreen';
 import ProductScreen from './screens/ProductScreen';
 import WalletScreen from './screens/WalletScreen';
+import PaymentScreen from './screens/PaymentScreen';
+import ClientQuotesScreen from './screens/ClientQuotesScreen';
+import EnhancedPaymentScreen from './screens/EnhancedPaymentScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -100,6 +112,11 @@ function App() {
             <Stack.Screen
               name="RegistrationWorkerScreen2"
               component={RegistrationWorkerScreen2}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="EmailVerification"
+              component={EmailVerificationScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -178,6 +195,56 @@ function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
+              name="KrizoWorkerServiceProfile"
+              component={KrizoWorkerServiceProfileScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="KrizoWorkerPaymentMethods"
+              component={KrizoWorkerPaymentMethodsScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="KrizoWorkerChatList"
+              component={KrizoWorkerChatListScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="KrizoWorkerChat"
+              component={KrizoWorkerChatScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="KrizoWorkerPaymentsReceived"
+              component={KrizoWorkerPaymentsReceivedScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="KrizoWorkerCompletedOrders"
+              component={KrizoWorkerCompletedOrdersScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="MechanicRequests"
+              component={MechanicRequestsScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="PaymentScreen"
+              component={PaymentScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="EnhancedPaymentScreen"
+              component={EnhancedPaymentScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ChatScreen"
+              component={ChatScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
               name="MyProfile"
               component={MyProfileScreen}
               options={{ headerShown: false }}
@@ -190,6 +257,11 @@ function App() {
             <Stack.Screen
               name="Product"
               component={ProductScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ClientQuotes"
+              component={ClientQuotesScreen}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

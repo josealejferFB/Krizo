@@ -3,8 +3,26 @@ import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, Avatar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
+import { useAuth } from '../../context/AuthContext';
 
 export default function KrizoWorkerHomeScreen({ navigation }) {
+  const { user } = useAuth();
+
+  // Obtener el nombre del usuario para el mensaje de bienvenida
+  const getUserName = () => {
+    if (user) {
+      // Si tenemos firstName, usarlo
+      if (user.firstName) {
+        return user.firstName;
+      }
+      // Si tenemos nombres (formato antiguo)
+      if (user.nombres) {
+        return user.nombres;
+      }
+    }
+    return 'Trabajador';
+  };
+
   return (
     <ThemedBackgroundGradient>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -14,7 +32,7 @@ export default function KrizoWorkerHomeScreen({ navigation }) {
               <Avatar.Icon size={64} icon="account-hard-hat" style={styles.avatar} color="#fff" />
             </View>
             <View style={styles.headerTextBox}>
-              <Text style={styles.title}>¡Bienvenido!</Text>
+              <Text style={styles.title}>¡Bienvenido, {getUserName()}!</Text>
               <Text style={styles.subtitle}>Panel de trabajador</Text>
             </View>
           </View>
@@ -72,6 +90,34 @@ export default function KrizoWorkerHomeScreen({ navigation }) {
               <View style={styles.optionTextBox}>
                 <Text style={[styles.optionTitle, styles.optionTitleBlack]}>Configurar servicios</Text>
                 <Text style={[styles.optionSubtitle, styles.optionSubtitleBlack]}>Activa o desactiva los servicios que ofreces</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={28} color="#FFD6B8" />
+            </TouchableOpacity>
+            {/* Nuevo botón: Chat */}
+            <TouchableOpacity
+              style={[styles.optionCard, styles.optionCardBlack]}
+              onPress={() => navigation.navigate('KrizoWorkerChatList')}
+            >
+              <View style={[styles.optionIconCircle, styles.optionIconCircleBlack]}>
+                <MaterialCommunityIcons name="chat" size={28} color="#FFD6B8" />
+              </View>
+              <View style={styles.optionTextBox}>
+                <Text style={[styles.optionTitle, styles.optionTitleBlack]}>Chat</Text>
+                <Text style={[styles.optionSubtitle, styles.optionSubtitleBlack]}>Conversaciones con clientes</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={28} color="#FFD6B8" />
+            </TouchableOpacity>
+            {/* Nuevo botón: Órdenes Finalizadas */}
+            <TouchableOpacity
+              style={[styles.optionCard, styles.optionCardBlack]}
+              onPress={() => navigation.navigate('KrizoWorkerCompletedOrders')}
+            >
+              <View style={[styles.optionIconCircle, styles.optionIconCircleBlack]}>
+                <MaterialCommunityIcons name="check-circle" size={28} color="#FFD6B8" />
+              </View>
+              <View style={styles.optionTextBox}>
+                <Text style={[styles.optionTitle, styles.optionTitleBlack]}>Órdenes Finalizadas</Text>
+                <Text style={[styles.optionSubtitle, styles.optionSubtitleBlack]}>Pagos aceptados y solicitudes completadas</Text>
               </View>
               <MaterialCommunityIcons name="chevron-right" size={28} color="#FFD6B8" />
             </TouchableOpacity>

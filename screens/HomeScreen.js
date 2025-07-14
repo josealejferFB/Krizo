@@ -6,6 +6,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import { LinearGradient } from 'expo-linear-gradient';
 import Layout from '../components/Layout';
 import { themedStyles } from '../components/ThemedUIElements';
+import { useAuth } from '../context/AuthContext';
 
 const { width: viewportWidth } = Dimensions.get('window');
 
@@ -49,6 +50,22 @@ const vehicleInfo = {
 export default function HomeScreen({ navigation }) {
   const carouselRef = useRef(null);
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
+  const { user } = useAuth();
+
+  // Obtener el nombre del usuario para el mensaje de bienvenida
+  const getUserName = () => {
+    if (user) {
+      // Si tenemos firstName, usarlo
+      if (user.firstName) {
+        return user.firstName;
+      }
+      // Si tenemos nombres (formato antiguo)
+      if (user.nombres) {
+        return user.nombres;
+      }
+    }
+    return 'Usuario';
+  };
 
 useEffect(() => {
     let interval;
@@ -105,7 +122,7 @@ useEffect(() => {
           <View style={themedStyles.headerCard}>
             <MaterialCommunityIcons name="account-circle" size={60} color="#FC5501" style={themedStyles.headerIcon} />
             <View>
-              <Text style={themedStyles.headerTitle}>¡Bienvenido, Usuario!</Text>
+              <Text style={themedStyles.headerTitle}>¡Bienvenido, {getUserName()}!</Text>
               <Text style={themedStyles.headerSubtitle}>¿Qué necesitas hoy?</Text>
             </View>
           </View>

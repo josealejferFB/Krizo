@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, Dimensions, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Image, ScrollView, Dimensions, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -36,9 +36,47 @@ const services = [
 
 const ServicesScreen = () => {
   const navigation = useNavigation();
+  const [workers, setWorkers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    mecanicos: 0,
+    gruas: 0,
+    repuestos: 0
+  });
+
+  // Cargar datos de trabajadores al montar el componente
+  useEffect(() => {
+    loadWorkers();
+  }, []);
+
+  const loadWorkers = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://192.168.1.14:5000/api/users/workers');
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setWorkers(result.data);
+          
+          // Calcular estadísticas
+          const stats = {
+            mecanicos: result.data.filter(w => w.services.includes('mecanico')).length,
+            gruas: result.data.filter(w => w.services.includes('grua')).length,
+            repuestos: result.data.filter(w => w.services.includes('repuestos')).length
+          };
+          setStats(stats);
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando trabajadores:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleServicePress = (serviceName) => {
-    navigation.navigate(serviceName)
+    navigation.navigate(serviceName, { workers, serviceType: serviceName.toLowerCase() });
   };
 
   return (
@@ -83,48 +121,65 @@ const ServicesScreen = () => {
           </View>
 
           <Text style={styles.sectionTitle}>Servicios Disponibles</Text>
-          <View style={styles.gridContainer}>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-              <TouchableOpacity
-                key={services[0].link}
-                style={[styles.gridItem, { marginRight: 12 }]}
-                onPress={() => handleServicePress(services[0].link)}
-                activeOpacity={0.85}
-              >
-                <View style={styles.cardContent}>
-                  <Icon name="tools" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
-                  <Text style={styles.cardTitle}>{services[0].name}</Text>
-                  <Text style={styles.cardSubtitle}>{services[0].subtitle}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                key={services[1].link}
-                style={styles.gridItem}
-                onPress={() => handleServicePress(services[1].link)}
-                activeOpacity={0.85}
-              >
-                <View style={styles.cardContent}>
-                  <Icon name="tow-truck" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
-                  <Text style={styles.cardTitle}>{services[1].name}</Text>
-                  <Text style={styles.cardSubtitle}>{services[1].subtitle}</Text>
-                </View>
-              </TouchableOpacity>
+          
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FC5501" />
+              <Text style={styles.loadingText}>Cargando servicios...</Text>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-              <TouchableOpacity
-                key={services[2].link}
-                style={styles.gridItem}
-                onPress={() => handleServicePress(services[2].link)}
-                activeOpacity={0.85}
-              >
-                <View style={styles.cardContent}>
-                  <Icon name="store" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
-                  <Text style={styles.cardTitle}>{services[2].name}</Text>
-                  <Text style={styles.cardSubtitle}>{services[2].subtitle}</Text>
-                </View>
-              </TouchableOpacity>
+          ) : (
+            <View style={styles.gridContainer}>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+                <TouchableOpacity
+                  key={services[0].link}
+                  style={[styles.gridItem, { marginRight: 12 }]}
+                  onPress={() => handleServicePress(services[0].link)}
+                  activeOpacity={0.85}
+                >
+                  <View style={styles.cardContent}>
+                    <Icon name="tools" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
+                    <Text style={styles.cardTitle}>{services[0].name}</Text>
+                    <Text style={styles.cardSubtitle}>{services[0].subtitle}</Text>
+                    <View style={styles.statsContainer}>
+                      <Text style={styles.statsText}>{stats.mecanicos} disponibles</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  key={services[1].link}
+                  style={styles.gridItem}
+                  onPress={() => handleServicePress(services[1].link)}
+                  activeOpacity={0.85}
+                >
+                  <View style={styles.cardContent}>
+                    <Icon name="tow-truck" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
+                    <Text style={styles.cardTitle}>{services[1].name}</Text>
+                    <Text style={styles.cardSubtitle}>{services[1].subtitle}</Text>
+                    <View style={styles.statsContainer}>
+                      <Text style={styles.statsText}>{stats.gruas} disponibles</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+                <TouchableOpacity
+                  key={services[2].link}
+                  style={styles.gridItem}
+                  onPress={() => handleServicePress(services[2].link)}
+                  activeOpacity={0.85}
+                >
+                  <View style={styles.cardContent}>
+                    <Icon name="store" size={32} color="#FC5501" style={{ marginVertical: 8 }} />
+                    <Text style={styles.cardTitle}>{services[2].name}</Text>
+                    <Text style={styles.cardSubtitle}>{services[2].subtitle}</Text>
+                    <View style={styles.statsContainer}>
+                      <Text style={styles.statsText}>{stats.repuestos} disponibles</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
         </View>
       </ScrollView>
     </LinearGradient>
@@ -291,6 +346,29 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontFamily: 'System',
     letterSpacing: 0.3,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FC5501',
+    fontWeight: '500',
+  },
+  statsContainer: {
+    backgroundColor: '#FC5501',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  statsText: {
+    fontSize: 12,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 

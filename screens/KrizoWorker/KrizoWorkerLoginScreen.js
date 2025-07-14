@@ -29,11 +29,15 @@ export default function KrizoWorkerLoginScreen({ navigation }) {
     try {
       const result = await workerLogin(user.trim(), password);
       if (result.success) {
+        // Limpiar campos antes de navegar
+        setUser('');
+        setPassword('');
         navigation.replace('KrizoWorkerHome');
       } else {
         Alert.alert('Error', result.error || 'Credenciales incorrectas');
       }
     } catch (error) {
+      console.error('Error en login:', error);
       Alert.alert('Error', 'Error de conexión. Verifica tu conexión a internet.');
     } finally {
       setIsLoading(false);

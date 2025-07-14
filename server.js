@@ -9,6 +9,12 @@ const socketIo = require('socket.io');
 // Importar rutas SQLite3
 const authRoutes = require('./routes/auth-sqlite');
 const userRoutes = require('./routes/users-sqlite');
+const requestRoutes = require('./routes/requests-sqlite');
+const chatRoutes = require('./routes/chat');
+const notificationRoutes = require('./routes/notifications');
+const serviceRequestRoutes = require('./routes/requests');
+const quoteRoutes = require('./routes/quotes');
+const paymentRoutes = require('./routes/payments');
 
 // Comentar rutas del sistema anterior
 // const serviceRoutes = require('./routes/services');
@@ -30,9 +36,22 @@ const io = socketIo(server, {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:19006',
+    'https://krizo-app.onrender.com',
+    'https://krizo-backend.onrender.com',
+    'exp://192.168.1.14:19000',
+    'exp://localhost:19000'
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Servir archivos estáticos de la carpeta uploads
+app.use('/uploads', express.static('uploads'));
 
 // Configurar Socket.IO
 io.on('connection', (socket) => {
@@ -59,6 +78,12 @@ app.set('io', io);
 // Rutas SQLite3
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/requests', serviceRequestRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/service-requests', serviceRequestRoutes);
+app.use('/api/quotes', quoteRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Comentar rutas del sistema anterior
 // app.use('/api/services', serviceRoutes);
@@ -75,7 +100,10 @@ app.get('/', (req, res) => {
     database: 'SQLite3 puro',
     endpoints: {
       auth: '/api/auth',
-      users: '/api/users'
+      users: '/api/users',
+      requests: '/api/requests',
+      serviceRequests: '/api/service-requests',
+      quotes: '/api/quotes'
     }
   });
 });
@@ -98,8 +126,9 @@ app.use((err, req, res, next) => {
 // Inicializar el nuevo sistema SQLite3 puro
 const initializeDatabase = async () => {
   try {
-    const { initUsersTable } = require('./database/users');
+    const { initUsersTable, initRequestsTable } = require('./database/users');
     await initUsersTable();
+    await initRequestsTable();
     console.log('✅ Sistema SQLite3 puro inicializado correctamente');
   } catch (err) {
     console.error('Error inicializando la base de datos SQLite3:', err);

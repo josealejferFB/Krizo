@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Dimensions, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Dimensions, StyleSheet, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ThemedButton, ThemedInput } from '../../components/ThemedUIElements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -52,7 +52,7 @@ export default function RegistrationWorkerScreen({ navigation }) {
 
       if (result.success) {
         Alert.alert('Éxito', 'Registro exitoso. Revisa tu email para verificar tu cuenta.', [
-          { text: 'OK', onPress: () => navigation.navigate('KrizoWorkerLogin') }
+          { text: 'OK', onPress: () => navigation.navigate('EmailVerification', { email: email }) }
         ]);
       } else {
         Alert.alert('Error', result.error || 'Error en el registro');
@@ -66,23 +66,24 @@ export default function RegistrationWorkerScreen({ navigation }) {
 
   return (
     <ThemedBackgroundGradient>
-      {/* Botón volver al login */}
-      <TouchableOpacity
-        style={styles.backButton}
-        activeOpacity={0.8}
-        onPress={() => navigation.navigate('Login')}
-      >
-        <MaterialCommunityIcons name="arrow-left" size={26} color="#FC5501" style={styles.backIcon} />
-        <Text style={styles.backButtonText}>Volver</Text>
-      </TouchableOpacity>
-      <View style={{
-        flex: 1,
-    alignItems: 'center',
-    paddingTop: paddingAmount, // Antes: 48. Reduce el padding para subir el contenedor blanco
-    justifyContent: 'flex-start',
-      }}>
-        <Text style={styles.headerTitle}>Registro de KrizoWorker</Text>
-        <View style={styles.card}>
+      <View style={styles.container}>
+        {/* Botón volver al login */}
+        <TouchableOpacity
+          style={styles.backButton}
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('Login')}
+        >
+          <MaterialCommunityIcons name="arrow-left" size={26} color="#FC5501" style={styles.backIcon} />
+          <Text style={styles.backButtonText}>Volver</Text>
+        </TouchableOpacity>
+        
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.headerTitle}>Registro de KrizoWorker</Text>
+          <View style={styles.card}>
           <ThemedInput
             label="Nombres"
             value={nombres}
@@ -151,6 +152,7 @@ export default function RegistrationWorkerScreen({ navigation }) {
               />
             }
           />
+
           <ThemedButton
             style={styles.button}
             onPress={handleRegister}
@@ -160,14 +162,36 @@ export default function RegistrationWorkerScreen({ navigation }) {
             {isLoading ? 'Registrando...' : 'Registrarse'}
           </ThemedButton>
         </View>
+        </ScrollView>
+        
+        {/* Aviso de acceso exclusivo para trabajadores */}
+        <View style={styles.exclusiveBanner}>
+          <MaterialCommunityIcons name="lock" size={60} color="#262525" style={styles.lockIcon} />
+          <Text style={styles.exclusiveBannerText}>Registro exclusivo para trabajadores</Text>
+        </View>
       </View>
-      {/* Aviso de acceso exclusivo para trabajadores */}
-      <View style={{
-flexDirection: 'row',
+    </ThemedBackgroundGradient>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    alignItems: 'center',
+    paddingTop: 20,
+    paddingBottom: 100, // Espacio para el banner inferior
+  },
+  exclusiveBanner: {
+    flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#C24100',
     borderRadius: 0,
-    paddingVertical: 14, // Antes: 30. Menos alto
+    paddingVertical: 14,
     paddingHorizontal: 18,
     width: '100%',
     justifyContent: 'center',
@@ -176,19 +200,10 @@ flexDirection: 'row',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.13,
     shadowRadius: 8,
-    position: 'fixed',
-    bottom: bottomPosition,
+    position: 'absolute',
+    bottom: 0,
     left: 0,
-
-      }}>
-        <MaterialCommunityIcons name="lock" size={60} color="#262525" style={styles.lockIcon} />
-        <Text style={styles.exclusiveBannerText}>Registro exclusivo para trabajadores</Text>
-      </View>
-    </ThemedBackgroundGradient>
-  );
-}
-
-const styles = StyleSheet.create({
+  },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',

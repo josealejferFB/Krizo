@@ -86,7 +86,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en login:', error);
-      Alert.alert('Error', error.message);
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
@@ -136,7 +135,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en worker login:', error);
-      Alert.alert('Error', error.message);
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
@@ -149,14 +147,19 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       
       console.log('📝 Intentando registro con:', userData);
+      
+      // Preparar datos para el registro (sin la imagen si existe)
+      const { documentImage, ...registrationData } = userData;
+      
       console.log('🌐 URL:', `${API_BASE_URL}/auth/register`);
+      console.log('📦 Datos finales:', registrationData);
       
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(registrationData),
       });
 
       console.log('📥 Status:', response.status);
@@ -186,7 +189,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error en registro:', error);
-      Alert.alert('Error', error.message);
       return { success: false, error: error.message };
     } finally {
       setLoading(false);
@@ -298,6 +300,65 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Verificar email con código (usando email)
+  const verifyEmailWithCode = async (email, verificationCode) => {
+    try {
+      setLoading(true);
+      
+      console.log('🔍 Verificando email con:', { email, verificationCode });
+      
+      const response = await fetch(`${API_BASE_URL}/auth/verify-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, verificationCode }),
+      });
+
+      const data = await response.json();
+      console.log('📥 Respuesta del servidor:', data);
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error en la verificación');
+      }
+
+      return { success: true, data: data.data };
+    } catch (error) {
+      console.error('Error en verificación:', error);
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reenviar código de verificación (usando email)
+  const resendVerificationCode = async (email) => {
+    try {
+      setLoading(true);
+      
+      const response = await fetch(`${API_BASE_URL}/auth/resend-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error reenviando código');
+      }
+
+      return { success: true, data: data.data };
+    } catch (error) {
+      console.error('Error reenviando código:', error);
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     token,
@@ -308,6 +369,8 @@ export const AuthProvider = ({ children }) => {
     register,
     verifyEmail,
     resendVerification,
+    verifyEmailWithCode,
+    resendVerificationCode,
     logout,
     apiRequest,
   };

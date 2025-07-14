@@ -15,8 +15,8 @@ Este es el backend completo para la aplicación Krizo, una plataforma de servici
 
 ## 📋 Requisitos
 
-- Node.js (v14 o superior)
-- MongoDB
+- Node.js (v18 o superior)
+- SQLite3 (incluido con Node.js)
 - npm o yarn
 
 ## 🛠️ Instalación
@@ -33,25 +33,27 @@ npm install
 ```
 
 3. **Configurar variables de entorno**
-Crear un archivo `.env` en la raíz del proyecto:
+Copiar el archivo de ejemplo y configurar:
+```bash
+cp env.example .env
+```
+
+Editar `.env` con tus configuraciones:
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/krizo
 JWT_SECRET=tu_jwt_secret_super_seguro_aqui
 JWT_EXPIRE=7d
 EMAIL_USER=tu_email@gmail.com
 EMAIL_PASS=tu_password_de_aplicacion
 EMAIL_FROM=noreply@krizo.com
+DB_PATH=./database/krizo.sqlite
 ```
 
-4. **Iniciar MongoDB**
-```bash
-# En Windows
-mongod
-
-# En macOS/Linux
-sudo systemctl start mongod
-```
+4. **Configurar Email (Opcional)**
+Para verificación de email, configurar Gmail:
+1. Activar verificación en 2 pasos
+2. Generar contraseña de aplicación
+3. Usar esa contraseña en `EMAIL_PASS`
 
 5. **Ejecutar el servidor**
 ```bash

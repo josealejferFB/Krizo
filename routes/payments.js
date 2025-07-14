@@ -1,292 +1,176 @@
 const express = require('express');
-const User = require('../models/User');
-const Request = require('../models/Request');
-const { authenticateToken } = require('../middleware/auth');
-
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const { authenticateToken } = require('../middleware/auth-sqlite');
+const { db } = require('../database/users');
 
-// @route   GET /api/payments/wallet
-// @desc    Obtener información de la wallet del usuario
-// @access  Private
-router.get('/wallet', authenticateToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id)
-      .populate('wallet.transactions')
-      .select('wallet');
-
-    res.json({
-      success: true,
-      data: {
-        balance: user.wallet.balance,
-        transactions: user.wallet.transactions || []
-      }
-    });
-
-  } catch (error) {
-    console.error('Error obteniendo wallet:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
+// Configuración de almacenamiento para multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-// @route   POST /api/payments/deposit
-// @desc    Depositar dinero en la wallet
-// @access  Private
-router.post('/deposit', authenticateToken, async (req, res) => {
-  try {
-    const { amount, method } = req.body;
-
-    if (!amount || amount <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Monto válido es requerido'
-      });
+const upload = multer({ 
+  storage: storage,
+  fileFilter: function (req, file, cb) {
+    // Solo permitir imágenes
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten archivos de imagen'), false);
     }
-
-    if (!method || !['card', 'bank_transfer', 'cash'].includes(method)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Método de pago válido es requerido'
-      });
-    }
-
-    // TODO: Integrar con pasarela de pagos real
-    // Por ahora simulamos el proceso
-
-    // Crear transacción
-    const transaction = {
-      type: 'deposit',
-      amount: amount,
-      method: method,
-      status: 'completed',
-      description: `Depósito de $${amount}`,
-      timestamp: new Date()
-    };
-
-    // Actualizar balance del usuario
-    const user = await User.findById(req.user._id);
-    user.wallet.balance += amount;
-    user.wallet.transactions.push(transaction);
-    await user.save();
-
-    res.json({
-      success: true,
-      message: 'Depósito realizado exitosamente',
-      data: {
-        newBalance: user.wallet.balance,
-        transaction
-      }
-    });
-
-  } catch (error) {
-    console.error('Error realizando depósito:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB máximo
   }
 });
 
-// @route   POST /api/payments/withdraw
-// @desc    Retirar dinero de la wallet
-// @access  Private
-router.post('/withdraw', authenticateToken, async (req, res) => {
+// POST /api/payments/submit - Enviar comprobante de pago
+router.post('/submit', authenticateToken, async (req, res) => {
   try {
-    const { amount, method, accountInfo } = req.body;
-
-    if (!amount || amount <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Monto válido es requerido'
-      });
-    }
-
-    if (!method || !['bank_transfer', 'paypal'].includes(method)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Método de retiro válido es requerido'
-      });
-    }
-
-    const user = await User.findById(req.user._id);
-
-    if (user.wallet.balance < amount) {
-      return res.status(400).json({
-        success: false,
-        message: 'Saldo insuficiente'
-      });
-    }
-
-    // TODO: Integrar con servicio de retiros real
-    // Por ahora simulamos el proceso
-
-    // Crear transacción
-    const transaction = {
-      type: 'withdrawal',
-      amount: -amount,
-      method: method,
-      status: 'pending',
-      description: `Retiro de $${amount}`,
-      accountInfo: accountInfo,
-      timestamp: new Date()
-    };
-
-    // Actualizar balance del usuario
-    user.wallet.balance -= amount;
-    user.wallet.transactions.push(transaction);
-    await user.save();
-
-    res.json({
-      success: true,
-      message: 'Solicitud de retiro procesada',
-      data: {
-        newBalance: user.wallet.balance,
-        transaction
-      }
-    });
-
-  } catch (error) {
-    console.error('Error procesando retiro:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
-  }
-});
-
-// @route   POST /api/payments/pay-request
-// @desc    Pagar una solicitud de servicio
-// @access  Private
-router.post('/pay-request', authenticateToken, async (req, res) => {
-  try {
-    const { requestId, method = 'wallet' } = req.body;
-
-    if (!requestId) {
-      return res.status(400).json({
-        success: false,
-        message: 'ID de solicitud es requerido'
-      });
-    }
-
-    const request = await Request.findById(requestId)
-      .populate('provider', 'firstName lastName');
-
-    if (!request) {
-      return res.status(404).json({
-        success: false,
-        message: 'Solicitud no encontrada'
-      });
-    }
-
-    // Verificar que el usuario es el cliente de la solicitud
-    if (request.client.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permisos para pagar esta solicitud'
-      });
-    }
-
-    if (request.payment.status === 'paid') {
-      return res.status(400).json({
-        success: false,
-        message: 'La solicitud ya ha sido pagada'
-      });
-    }
-
-    const amount = request.pricing.finalPrice || request.pricing.estimatedPrice;
-
-    if (method === 'wallet') {
-      // Pago con wallet
-      const user = await User.findById(req.user._id);
-
-      if (user.wallet.balance < amount) {
-        return res.status(400).json({
+    console.log('🔧 POST /api/payments/submit - Datos recibidos:', req.body);
+    console.log('🔧 Client ID:', req.user.id);
+    
+    const { 
+      quote_id, 
+      payment_method, 
+      amount, 
+      reference, 
+      payment_date, 
+      payment_time,
+      payment_screenshot 
+    } = req.body;
+    
+    const clientId = req.user.id;
+    
+    // Obtener información de la cotización
+    console.log('🔧 Buscando cotización con ID:', quote_id);
+    db.get('SELECT * FROM quotes WHERE id = ?', [quote_id], (err, quote) => {
+      if (err) {
+        console.error('❌ Error al obtener cotización:', err);
+        return res.status(500).json({
           success: false,
-          message: 'Saldo insuficiente en la wallet'
+          message: 'Error interno del servidor'
         });
       }
-
-      // Crear transacción de pago
-      const paymentTransaction = {
-        type: 'payment',
-        amount: -amount,
-        method: 'wallet',
-        status: 'completed',
-        description: `Pago por servicio: ${request.serviceDetails.description}`,
-        requestId: request._id,
-        timestamp: new Date()
-      };
-
-      // Actualizar balance del cliente
-      user.wallet.balance -= amount;
-      user.wallet.transactions.push(paymentTransaction);
-      await user.save();
-
-      // Crear transacción de ingreso para el proveedor
-      const provider = await User.findById(request.provider);
-      const incomeTransaction = {
-        type: 'income',
-        amount: amount * 0.85, // 85% para el proveedor, 15% comisión
-        method: 'wallet',
-        status: 'completed',
-        description: `Ingreso por servicio: ${request.serviceDetails.description}`,
-        requestId: request._id,
-        timestamp: new Date()
-      };
-
-      provider.wallet.balance += incomeTransaction.amount;
-      provider.wallet.transactions.push(incomeTransaction);
-      await provider.save();
-
-      // Actualizar estado de pago de la solicitud
-      request.payment.status = 'paid';
-      request.payment.method = 'wallet';
-      request.payment.paidAt = new Date();
-      await request.save();
-
-      res.json({
-        success: true,
-        message: 'Pago realizado exitosamente',
-        data: {
-          newBalance: user.wallet.balance,
-          transaction: paymentTransaction
-        }
-      });
-
-    } else {
-      // Pago con tarjeta u otro método
-      // TODO: Integrar con pasarela de pagos
       
-      // Simular proceso de pago
-      const transaction = {
-        type: 'payment',
-        amount: -amount,
-        method: method,
-        status: 'completed',
-        description: `Pago por servicio: ${request.serviceDetails.description}`,
-        requestId: request._id,
-        timestamp: new Date()
-      };
+      console.log('🔧 Cotización encontrada:', quote);
+      
+      if (!quote) {
+        console.log('❌ Cotización no encontrada');
+        return res.status(404).json({
+          success: false,
+          message: 'Cotización no encontrada'
+        });
+      }
+      
+      // Insertar el pago
+      console.log('🔧 Insertando pago con datos:', {
+        quote_id,
+        clientId,
+        worker_id: quote.worker_id,
+        payment_method,
+        amount,
+        reference,
+        payment_date,
+        payment_time,
+        payment_screenshot
+      });
+      
+      const insertQuery = `
+        INSERT INTO payments (
+          quote_id, 
+          client_id, 
+          worker_id, 
+          payment_method, 
+          payment_amount, 
+          payment_reference, 
+          payment_date, 
+          payment_time,
+          payment_screenshot, 
+          status, 
+          created_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending_verification', datetime('now'))
+      `;
+      
+      db.run(insertQuery, [
+        quote_id,
+        clientId,
+        quote.worker_id,
+        payment_method,
+        amount,
+        reference,
+        payment_date,
+        payment_time,
+        payment_screenshot
+      ], function(err) {
+        if (err) {
+          console.error('❌ Error al insertar pago:', err);
+          return res.status(500).json({
+            success: false,
+            message: 'Error al procesar el pago'
+          });
+        }
+        
+        console.log('✅ Pago insertado correctamente con ID:', this.lastID);
+        res.json({
+          success: true,
+          message: 'Pago enviado correctamente',
+          payment_id: this.lastID
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Error en POST /api/payments/submit:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
 
-      // Actualizar estado de pago de la solicitud
-      request.payment.status = 'paid';
-      request.payment.method = method;
-      request.payment.paidAt = new Date();
-      await request.save();
-
+// GET /api/payments/worker - Obtener pagos del trabajador autenticado
+router.get('/worker', authenticateToken, async (req, res) => {
+  try {
+    const workerId = req.user.id;
+    const { status } = req.query;
+    
+    let query = `
+      SELECT p.*, 
+             c.nombres as client_firstName, 
+             c.apellidos as client_lastName
+      FROM payments p
+      JOIN users c ON p.client_id = c.id
+      WHERE p.worker_id = ?
+    `;
+    const params = [workerId];
+    if (status) {
+      query += ` AND p.status = ?`;
+      params.push(status);
+    }
+    query += ` ORDER BY p.created_at DESC`;
+    
+    db.all(query, params, (err, payments) => {
+      if (err) {
+        console.error('Error al obtener pagos del trabajador:', err);
+        return res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
       res.json({
         success: true,
-        message: 'Pago procesado exitosamente',
-        data: {
-          transaction
-        }
+        payments: payments
       });
-    }
-
+    });
   } catch (error) {
-    console.error('Error procesando pago:', error);
+    console.error('Error en GET /api/payments/worker:', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'
@@ -294,87 +178,296 @@ router.post('/pay-request', authenticateToken, async (req, res) => {
   }
 });
 
-// @route   GET /api/payments/transactions
-// @desc    Obtener historial de transacciones
-// @access  Private
-router.get('/transactions', authenticateToken, async (req, res) => {
+// GET /api/payments/worker/:workerId - Obtener pagos del trabajador (alternativa)
+router.get('/worker/:workerId', authenticateToken, async (req, res) => {
   try {
-    const { type, page = 1, limit = 20 } = req.query;
+    const workerId = req.params.workerId;
+    const { status } = req.query;
+    
+    let query = `
+      SELECT p.*, 
+             c.nombres as client_firstName, 
+             c.apellidos as client_lastName
+      FROM payments p
+      JOIN users c ON p.client_id = c.id
+      WHERE p.worker_id = ?
+    `;
+    
+    const params = [workerId];
+    
+    // Si se especifica un status, agregar el filtro
+    if (status) {
+      query += ` AND p.status = ?`;
+      params.push(status);
+    }
+    
+    query += ` ORDER BY p.created_at DESC`;
+    
+    db.all(query, params, (err, payments) => {
+      if (err) {
+        console.error('Error al obtener pagos del trabajador:', err);
+        return res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
+      
+      res.json({
+        success: true,
+        payments: payments
+      });
+    });
+  } catch (error) {
+    console.error('Error en GET /api/payments/worker/:workerId:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
 
-    const user = await User.findById(req.user._id)
-      .populate('wallet.transactions')
-      .select('wallet');
+// GET /api/payments/client/:clientId - Obtener pagos del cliente
+router.get('/client/:clientId', authenticateToken, async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    
+    const query = `
+      SELECT p.*, 
+             w.nombres as worker_firstName, 
+             w.apellidos as worker_lastName
+      FROM payments p
+      JOIN users w ON p.worker_id = w.id
+      WHERE p.client_id = ?
+      ORDER BY p.created_at DESC
+    `;
+    
+    db.all(query, [clientId], (err, payments) => {
+      if (err) {
+        console.error('Error al obtener pagos del cliente:', err);
+        return res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
+      
+      res.json({
+        success: true,
+        payments: payments
+      });
+    });
+  } catch (error) {
+    console.error('Error en GET /api/payments/client/:clientId:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
 
-    let transactions = user.wallet.transactions || [];
+// PUT /api/payments/:paymentId/verify - Verificar pago (trabajador)
+router.put('/:paymentId/verify', authenticateToken, async (req, res) => {
+  try {
+    const paymentId = req.params.paymentId;
+    const workerId = req.user.id;
+    const { status } = req.body; // 'verified' o 'rejected'
+    
+    // Verificar que el pago pertenece al trabajador
+    db.get('SELECT * FROM payments WHERE id = ? AND worker_id = ?', [paymentId, workerId], (err, payment) => {
+      if (err) {
+        console.error('Error al verificar pago:', err);
+        return res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
+      
+      if (!payment) {
+        return res.status(404).json({
+          success: false,
+          message: 'Pago no encontrado'
+        });
+      }
+      
+      // Actualizar el estado del pago
+      const updateQuery = `
+        UPDATE payments
+        SET status = ?, updated_at = datetime('now')
+        WHERE id = ?
+      `;
+      
+      db.run(updateQuery, [status, paymentId], function(err) {
+        if (err) {
+          console.error('Error al actualizar pago:', err);
+          return res.status(500).json({
+            success: false,
+            message: 'Error al actualizar el pago'
+          });
+        }
+        
+        res.json({
+          success: true,
+          message: `Pago ${status === 'verified' ? 'verificado' : 'rechazado'} correctamente`
+        });
+      });
+    });
+  } catch (error) {
+    console.error('Error en PUT /api/payments/:paymentId/verify:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
 
-    // Filtrar por tipo si se especifica
-    if (type) {
-      transactions = transactions.filter(t => t.type === type);
+// POST /api/payments/upload-screenshot - Subir imagen de comprobante
+router.post('/upload-screenshot', authenticateToken, upload.single('screenshot'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No se subió ningún archivo' 
+      });
     }
 
-    // Ordenar por fecha (más recientes primero)
-    transactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    // URL pública de la imagen
+    const baseUrl = req.protocol + '://' + req.get('host');
+    const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
-    // Paginación
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const paginatedTransactions = transactions.slice(skip, skip + parseInt(limit));
+    console.log('📸 Imagen subida:', {
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      size: req.file.size,
+      url: imageUrl
+    });
 
-    res.json({
-      success: true,
-      data: {
-        transactions: paginatedTransactions,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total: transactions.length,
-          pages: Math.ceil(transactions.length / parseInt(limit))
+    res.json({ 
+      success: true, 
+      url: imageUrl,
+      filename: req.file.filename,
+      message: 'Imagen subida correctamente'
+    });
+
+  } catch (error) {
+    console.error('Error al subir imagen:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error al procesar la imagen'
+    });
+  }
+});
+
+// GET /api/payments/worker-info/:workerId - Obtener información de pago del worker
+router.get('/worker-info/:workerId', authenticateToken, async (req, res) => {
+  try {
+    const workerId = req.params.workerId;
+    
+    const query = `
+      SELECT 
+        u.id,
+        u.nombres,
+        u.apellidos,
+        u.telefono,
+        u.email,
+        u.paypal_email,
+        u.binance_id,
+        wi.payment_methods,
+        wi.payment_info
+      FROM users u
+      LEFT JOIN worker_info wi ON u.id = wi.user_id
+      WHERE u.id = ? AND u.tipo = 'krizoworker'
+    `;
+    
+    db.get(query, [workerId], (err, worker) => {
+      if (err) {
+        console.error('Error al obtener información del worker:', err);
+        return res.status(500).json({
+          success: false,
+          message: 'Error interno del servidor'
+        });
+      }
+      
+      if (!worker) {
+        return res.status(404).json({
+          success: false,
+          message: 'Worker no encontrado'
+        });
+      }
+      
+      // Parsear los métodos de pago si existen
+      let paymentMethods = [];
+      let paymentInfo = {};
+      
+      if (worker.payment_methods) {
+        try {
+          paymentMethods = JSON.parse(worker.payment_methods);
+        } catch (e) {
+          console.error('Error al parsear payment_methods:', e);
         }
       }
-    });
-
-  } catch (error) {
-    console.error('Error obteniendo transacciones:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
-  }
-});
-
-// @route   GET /api/payments/request/:requestId
-// @desc    Obtener información de pago de una solicitud
-// @access  Private
-router.get('/request/:requestId', authenticateToken, async (req, res) => {
-  try {
-    const request = await Request.findById(req.params.requestId)
-      .select('pricing payment client provider');
-
-    if (!request) {
-      return res.status(404).json({
-        success: false,
-        message: 'Solicitud no encontrada'
-      });
-    }
-
-    // Verificar que el usuario tiene acceso a esta información
-    if (request.client.toString() !== req.user._id.toString() && 
-        request.provider.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permisos para ver esta información'
-      });
-    }
-
-    res.json({
-      success: true,
-      data: {
-        pricing: request.pricing,
-        payment: request.payment
+      
+      if (worker.payment_info) {
+        try {
+          paymentInfo = JSON.parse(worker.payment_info);
+        } catch (e) {
+          console.error('Error al parsear payment_info:', e);
+        }
       }
+      
+      // Crear métodos de pago desde los datos del usuario
+      const userPaymentMethods = [];
+      
+      if (worker.paypal_email) {
+        userPaymentMethods.push({
+          method: 'paypal',
+          name: 'PayPal',
+          email: worker.paypal_email
+        });
+      }
+      
+      if (worker.binance_id) {
+        userPaymentMethods.push({
+          method: 'binance',
+          name: 'Binance Pay',
+          id: worker.binance_id
+        });
+      }
+      
+      if (worker.telefono) {
+        userPaymentMethods.push({
+          method: 'transfer',
+          name: 'Transferencia',
+          phone: worker.telefono
+        });
+      }
+      
+      // Combinar métodos de la tabla worker_info con los del usuario
+      const allPaymentMethods = [...userPaymentMethods, ...paymentMethods];
+      
+      console.log('🔧 Worker data:', {
+        id: worker.id,
+        nombres: worker.nombres,
+        paypal_email: worker.paypal_email,
+        binance_id: worker.binance_id,
+        telefono: worker.telefono,
+        userPaymentMethods,
+        allPaymentMethods
+      });
+      
+      res.json({
+        success: true,
+        worker: {
+          id: worker.id,
+          nombres: worker.nombres,
+          apellidos: worker.apellidos,
+          telefono: worker.telefono,
+          email: worker.email,
+          paymentMethods: allPaymentMethods,
+          paymentInfo: paymentInfo
+        }
+      });
     });
-
   } catch (error) {
-    console.error('Error obteniendo información de pago:', error);
+    console.error('Error en GET /api/payments/worker-info/:workerId:', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor'
@@ -382,62 +475,29 @@ router.get('/request/:requestId', authenticateToken, async (req, res) => {
   }
 });
 
-// @route   POST /api/payments/refund
-// @desc    Solicitar reembolso
-// @access  Private
-router.post('/refund', authenticateToken, async (req, res) => {
-  try {
-    const { requestId, reason } = req.body;
-
-    if (!requestId || !reason) {
+// Manejo de errores de multer
+router.use((error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
         success: false,
-        message: 'ID de solicitud y razón son requeridos'
+        message: 'El archivo es demasiado grande. Máximo 5MB'
       });
     }
-
-    const request = await Request.findById(requestId);
-
-    if (!request) {
-      return res.status(404).json({
-        success: false,
-        message: 'Solicitud no encontrada'
-      });
-    }
-
-    // Verificar que el usuario es el cliente de la solicitud
-    if (request.client.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: 'No tienes permisos para solicitar reembolso de esta solicitud'
-      });
-    }
-
-    if (request.payment.status !== 'paid') {
-      return res.status(400).json({
-        success: false,
-        message: 'La solicitud debe estar pagada para solicitar reembolso'
-      });
-    }
-
-    // TODO: Implementar lógica de reembolso real
-    // Por ahora solo marcamos como reembolsado
-
-    request.payment.status = 'refunded';
-    await request.save();
-
-    res.json({
-      success: true,
-      message: 'Solicitud de reembolso procesada'
-    });
-
-  } catch (error) {
-    console.error('Error procesando reembolso:', error);
-    res.status(500).json({
+  }
+  
+  if (error.message === 'Solo se permiten archivos de imagen') {
+    return res.status(400).json({
       success: false,
-      message: 'Error interno del servidor'
+      message: 'Solo se permiten archivos de imagen (JPG, PNG, etc.)'
     });
   }
+
+  console.error('Error en upload:', error);
+  res.status(500).json({
+    success: false,
+    message: 'Error al subir el archivo'
+  });
 });
 
 module.exports = router; 

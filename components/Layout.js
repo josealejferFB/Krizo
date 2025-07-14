@@ -42,6 +42,7 @@ export default function Layout({ children, navigation }) {
   const menuOptions = [
     { title: 'Inicio', icon: 'home', screen: 'Home' },
     { title: 'Servicios', icon: 'tools', screen: 'Services' },
+    { title: 'Mis Cotizaciones', icon: 'file-document-outline', screen: 'ClientQuotes' },
     { title: 'Mi Perfil', icon: 'account', screen: 'MyProfile' },
     { title: 'Billetera', icon: 'wallet', screen: 'Wallet' }, // Cambia 'Details' por 'Wallet'
     { title: 'Promociones', icon: 'tag', screen: 'Details' },

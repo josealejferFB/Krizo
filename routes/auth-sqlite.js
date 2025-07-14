@@ -94,7 +94,8 @@ router.post('/register', validateRegistrationData, async (req, res) => {
       apellidos,
       cedula,
       telefono,
-      tipo
+      tipo,
+      document_url
     } = req.body;
 
     // Verificar si el email ya existe
@@ -137,7 +138,8 @@ router.post('/register', validateRegistrationData, async (req, res) => {
       email,
       telefono,
       password: hashedPassword,
-      tipo: tipo || 'cliente'
+      tipo: tipo || 'cliente',
+      document_url: document_url || null
     };
 
     const newUser = await createUser(userData);
@@ -206,20 +208,40 @@ router.post('/register', validateRegistrationData, async (req, res) => {
 // @access  Public
 router.post('/verify-email', async (req, res) => {
   try {
-    const { userId, verificationCode } = req.body;
+    const { userId, email, verificationCode } = req.body;
+    
+    console.log('🔍 Datos recibidos en verificación:', { userId, email, verificationCode });
 
-    if (!userId || !verificationCode) {
+    if (!verificationCode) {
       return res.status(400).json({
         success: false,
-        message: 'Usuario y código de verificación son requeridos'
+        message: 'Código de verificación es requerido'
       });
     }
 
-    const result = await verifyUserEmail(userId, verificationCode);
+    let user;
+    if (userId) {
+      user = await getUserById(userId);
+    } else if (email) {
+      user = await getUserByEmail(email);
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Usuario (ID o email) y código de verificación son requeridos'
+      });
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado'
+      });
+    }
+
+    const result = await verifyUserEmail(user.id, verificationCode);
 
     if (result.success) {
       // Obtener datos del usuario para enviar email de bienvenida
-      const user = await getUserById(userId);
       if (user) {
         const welcomeEmailResult = await sendWelcomeEmail(user.email, `${user.nombres} ${user.apellidos}`);
         if (welcomeEmailResult.success) {
@@ -248,16 +270,19 @@ router.post('/verify-email', async (req, res) => {
 // @access  Public
 router.post('/resend-verification', async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, email } = req.body;
 
-    if (!userId) {
+    let user;
+    if (userId) {
+      user = await getUserById(userId);
+    } else if (email) {
+      user = await getUserByEmail(email);
+    } else {
       return res.status(400).json({
         success: false,
-        message: 'ID de usuario es requerido'
+        message: 'ID de usuario o email es requerido'
       });
     }
-
-    const user = await getUserById(userId);
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -347,6 +372,8 @@ router.post('/login', async (req, res) => {
       email: user.email,
       firstName: user.nombres,
       lastName: user.apellidos,
+      cedula: user.cedula,
+      telefono: user.telefono,
       userType: userType,
       isEmailVerified: false,
       isPhoneVerified: false,
@@ -437,6 +464,8 @@ router.post('/worker-login', async (req, res) => {
       email: user.email,
       firstName: user.nombres,
       lastName: user.apellidos,
+      cedula: user.cedula,
+      telefono: user.telefono,
       userType: 'mechanic', // Por defecto, se puede actualizar después
       isEmailVerified: false,
       isPhoneVerified: false,
@@ -522,6 +551,8 @@ router.get('/me', async (req, res) => {
       email: user.email,
       firstName: user.nombres,
       lastName: user.apellidos,
+      cedula: user.cedula,
+      telefono: user.telefono,
       userType: userType,
       isEmailVerified: false,
       isPhoneVerified: false,

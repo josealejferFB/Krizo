@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensions } from 'react-native';
 import { useResponsiveDimensions } from '../context/DimensionsContext'; // Ajusta la ruta si es diferente
 import { Text, TextInput } from 'react-native-paper';
@@ -6,12 +6,16 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../components/ThemedBackgroundGradient';
 import { ThemedInput, ThemedButton } from '../components/ThemedUIElements';
 import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../context/AuthContext';
 
 export default function MyProfileScreen({ navigation }) {
-  const [firstName, setFirstName] = useState('Juan');
-  const [lastName, setLastName] = useState('Pérez');
-  const [email, setEmail] = useState('juan.perez@email.com');
-  const [birthDate, setBirthDate] = useState('1990-01-01');
+  const { user } = useAuth();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [cedula, setCedula] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [tipo, setTipo] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [editing, setEditing] = useState(false);
 
@@ -22,6 +26,26 @@ export default function MyProfileScreen({ navigation }) {
   const [carPlate, setCarPlate] = useState('ABC-1234');
   const [carColor, setCarColor] = useState('Rojo');
   const { paddingAmount, bottomPosition, responsiveWidth, width, height } = useResponsiveDimensions();
+
+  // Cargar datos del usuario cuando el componente se monta
+  useEffect(() => {
+    if (user) {
+      // Usar firstName/lastName si están disponibles (formato nuevo)
+      if (user.firstName && user.lastName) {
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
+      } else if (user.nombres && user.apellidos) {
+        // Usar nombres/apellidos si están disponibles (formato antiguo)
+        setFirstName(user.nombres);
+        setLastName(user.apellidos);
+      }
+      
+      setEmail(user.email || '');
+      setCedula(user.cedula || '');
+      setTelefono(user.telefono || '');
+      setTipo(user.userType || user.tipo || '');
+    }
+  }, [user]);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -192,13 +216,13 @@ export default function MyProfileScreen({ navigation }) {
                   </View>
                 </View>
                 <View style={styles.infoRow}>
-                  <MaterialCommunityIcons name="calendar" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <MaterialCommunityIcons name="card-account-details" size={26} color="#FC5501" style={styles.infoIcon} />
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.infoLabel}>Fecha de nacimiento</Text>
+                    <Text style={styles.infoLabel}>Cédula</Text>
                     {editing ? (
                       <TextInput
-                        value={birthDate}
-                        onChangeText={setBirthDate}
+                        value={cedula}
+                        onChangeText={setCedula}
                         style={styles.editInput}
                         mode="flat"
                         underlineColor="#FC5501"
@@ -211,12 +235,91 @@ export default function MyProfileScreen({ navigation }) {
                             placeholder: '#C24100',
                           }
                         }}
+                        keyboardType="numeric"
                       />
                     ) : (
-                      <Text style={styles.infoValue}>{birthDate}</Text>
+                      <Text style={styles.infoValue}>{cedula}</Text>
                     )}
                   </View>
                 </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="phone" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Teléfono</Text>
+                    {editing ? (
+                      <TextInput
+                        value={telefono}
+                        onChangeText={setTelefono}
+                        style={styles.editInput}
+                        mode="flat"
+                        underlineColor="#FC5501"
+                        activeUnderlineColor="#FC5501"
+                        theme={{
+                          colors: {
+                            background: '#fff',
+                            text: '#262525', // Color de texto oscuro
+                            primary: '#FC5501',
+                            placeholder: '#C24100',
+                          }
+                        }}
+                        keyboardType="phone-pad"
+                      />
+                    ) : (
+                      <Text style={styles.infoValue}>{telefono}</Text>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="account-group" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Tipo de usuario</Text>
+                    <Text style={styles.infoValue}>
+                      {tipo === 'client' ? 'Cliente' : 
+                       tipo === 'krizoworker' ? 'Trabajador Krizo' : 
+                       tipo === 'cliente' ? 'Cliente' : 
+                       tipo === 'trabajador' ? 'Trabajador' : 
+                       tipo || 'No especificado'}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Estado de verificación */}
+              <Text style={styles.sectionTitle}>Estado de cuenta</Text>
+              <View style={styles.infoCard}>
+                <View style={styles.infoRow}>
+                  <MaterialCommunityIcons name="email-check" size={26} color="#FC5501" style={styles.infoIcon} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.infoLabel}>Email verificado</Text>
+                    <View style={styles.verificationStatus}>
+                      <MaterialCommunityIcons 
+                        name={user?.isEmailVerified ? "check-circle" : "alert-circle"} 
+                        size={20} 
+                        color={user?.isEmailVerified ? "#4CAF50" : "#FF9800"} 
+                      />
+                      <Text style={[
+                        styles.verificationText,
+                        { color: user?.isEmailVerified ? "#4CAF50" : "#FF9800" }
+                      ]}>
+                        {user?.isEmailVerified ? "Verificado" : "Pendiente de verificación"}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                {user?.document_url && (
+                  <View style={styles.infoRow}>
+                    <MaterialCommunityIcons name="file-document" size={26} color="#FC5501" style={styles.infoIcon} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.infoLabel}>Documento de identidad</Text>
+                      <View style={styles.verificationStatus}>
+                        <MaterialCommunityIcons name="check-circle" size={20} color="#4CAF50" />
+                        <Text style={[styles.verificationText, { color: "#4CAF50" }]}>
+                          Subido
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                )}
               </View>
 
               {/* Ficha de información del vehículo */}
@@ -589,5 +692,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textAlign: 'left',
     paddingLeft: 2,
+  },
+  verificationStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  verificationText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: 6,
+    letterSpacing: 0.3,
   },
 });

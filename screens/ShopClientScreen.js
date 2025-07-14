@@ -1,77 +1,77 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Text, Card, Searchbar, Switch, Button } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { Text, Card, Searchbar, Switch, Button, Avatar, Chip } from 'react-native-paper';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ShopClientScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: 'Filtro de aceite Corolla 2000',
-      quantity: 10,
-      price: '1.000Bs',
-      image: 'https://http2.mlstatic.com/D_NQ_NP_689607-MLV69641010806_052023-O.webp',
-      available: true,
-    },
-    {
-      id: 2,
-      name: 'Pastillas de freno',
-      quantity: 5,
-      price: '700Bs',
-      image: 'https://www.ro-des.com/wp-content/uploads/2014/04/Pastillas-de-freno.jpg',
-      available: false,
-    },
-    {
-      id: 3,
-      name: 'Bujías Iridium',
-      quantity: 12,
-      price: '500Bs',
-      image: 'https://www.championautoparts.com/content/loc-na/loc-us/fmmp-champion/es_US/Products/Spark-Plugs/Automotive-Spark-Plugs/Iridium-Spark-Plug/_jcr_content/product-feature/featureContent1/image.img.png/Champion-Iridium-Spark-Plug-Assortment-Hi-Res-1493226273888.png',
-      available: true,
-    },
-    {
-      id: 4,
-      name: 'Amortiguador Trasero',
-      quantity: 3,
-      price: '3.500Bs',
-      image: 'https://megarepuestosing.com/35615-large_default/amortiguador-delantero-aveo.jpg',
-      available: true,
-    },
-  ]);
-
-  const onChangeSearch = (query) => setSearchQuery(query);
-
-  const toggleProductAvailability = (productId) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === productId ? { ...product, available: !product.available } : product
-      )
-    );
-  };
-
-  const handleEditProduct = (product) => {
-    console.log('Edit product:', product.name);
-  };
-
-const handleBuyProduct = (product) => {
-    console.log('Comprar producto:', product.name, 'Precio:', product.price);
-    // Aquí puedes implementar la lógica de compra:
-    // - Añadir al carrito
-    // - Navegar a una pantalla de confirmación de compra
-    // - Mostrar un mensaje de éxito/error
-    if (product.available) {
-      alert(`¡${product.name} añadido al carrito por ${product.price}!`);
+  const [shops, setShops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Obtener trabajadores de la ruta o cargar desde API
+  useEffect(() => {
+    if (route.params?.workers) {
+      // Filtrar solo tiendas de repuestos
+      const shopWorkers = route.params.workers.filter(
+        worker => worker.services.includes('repuestos')
+      );
+      setShops(shopWorkers);
+      setLoading(false);
     } else {
-      alert(`${product.name} no está disponible actualmente.`);
+      loadShops();
+    }
+  }, [route.params]);
+
+  const loadShops = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://192.168.1.14:5000/api/users/workers');
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          // Filtrar solo tiendas de repuestos
+          const shopWorkers = result.data.filter(
+            worker => worker.services.includes('repuestos')
+          );
+          setShops(shopWorkers);
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando tiendas:', error);
+      Alert.alert('Error', 'No se pudieron cargar las tiendas');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const onChangeSearch = (query) => setSearchQuery(query);
+
+  const handleContactShop = (shop) => {
+    Alert.alert(
+      'Contactar Tienda',
+      `¿Deseas contactar a ${shop.name}?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { 
+          text: 'Contactar', 
+          onPress: () => {
+            // Aquí se implementaría la lógica para contactar
+            Alert.alert('Éxito', `Contactando a ${shop.name}`);
+          }
+        }
+      ]
+    );
+  };
+
+  const filteredShops = shops.filter((shop) =>
+    shop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    shop.descripcion.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    shop.ciudad.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -103,10 +103,10 @@ const handleBuyProduct = (product) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.manageProductsText}>Administrar Productos y Repuestos</Text>
+        <Text style={styles.manageProductsText}>Tiendas de Repuestos Disponibles</Text>
 
         <Searchbar
-          placeholder="Buscar producto"
+          placeholder="Buscar tienda o repuestos"
           onChangeText={onChangeSearch}
           value={searchQuery}
           style={styles.searchBar}
@@ -115,36 +115,47 @@ const handleBuyProduct = (product) => {
           placeholderTextColor="#999"
         />
 
-        <View style={styles.productsGrid}>
-          {filteredProducts.map((product) => (
-            <Card key={product.id} style={styles.productCard}>
-              <View style={styles.productCardContent}>
-                <Image source={{ uri: product.image }} style={styles.productImage} />
-                <View style={styles.productDetails}>
-                  <Text style={styles.productName}>{product.name}</Text>
-                  <Text style={styles.productQuantity}>Cantidad: {product.quantity}</Text>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#FC5501" />
+            <Text style={styles.loadingText}>Cargando tiendas...</Text>
+          </View>
+        ) : filteredShops.length > 0 ? (
+          <View style={styles.productsGrid}>
+            {filteredShops.map((shop) => (
+              <Card key={shop.id} style={styles.productCard}>
+                <View style={styles.productCardContent}>
+                  <Avatar.Icon size={60} icon="store" style={styles.shopAvatar} color="white" />
+                  <View style={styles.productDetails}>
+                    <View style={styles.nameAndFeatured}>
+                      <Text style={styles.productName}>{shop.name}</Text>
+                      <Chip style={styles.availableChip} textStyle={styles.availableChipText}>
+                        Disponible
+                      </Chip>
+                    </View>
+                    <Text style={styles.productQuantity}>{shop.descripcion}</Text>
+                    <Text style={styles.shopLocation}>{shop.ciudad} - {shop.zona}</Text>
+                    <Text style={styles.shopAvailability}>Disponibilidad: {shop.disponibilidad}</Text>
+                  </View>
                 </View>
-              </View>
-              <Text style={styles.productPrice}>{product.price}</Text>
-              <View style={styles.cardActions}>
-                <View style={styles.switchContainer}>
-                  <Text style={styles.switchText}>
-                    {product.available ? 'Disponible' : 'Agotado'}
-                  </Text>
-                </View>
-              </View>
-              <Button
-                mode="contained"
-                onPress={() => handleBuyProduct(product)}
-                style={styles.buyButton}
-                labelStyle={styles.buyButtonLabel}
-                disabled={!product.available} 
-              >
-                Comprar
-              </Button>
-            </Card>
-          ))}
-        </View>
+                <Button
+                  mode="contained"
+                  onPress={() => handleContactShop(shop)}
+                  style={styles.buyButton}
+                  labelStyle={styles.buyButtonLabel}
+                >
+                  Contactar
+                </Button>
+              </Card>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Icon name="store" size={64} color="#ccc" />
+            <Text style={styles.emptyText}>No hay tiendas disponibles</Text>
+            <Text style={styles.emptySubtext}>Intenta más tarde</Text>
+          </View>
+        )}
       </ScrollView>
     </LinearGradient>
   );
@@ -305,6 +316,61 @@ const styles = StyleSheet.create({
   },
   editButton: {
     padding: 5,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#FC5501',
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#666',
+    fontWeight: 'bold',
+    marginTop: 16,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+  },
+  availableChip: {
+    backgroundColor: '#4CAF50',
+    height: 30,
+  },
+  availableChipText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  nameAndFeatured: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  shopAvatar: {
+    backgroundColor: '#FC5501',
+    marginBottom: 10,
+  },
+  shopLocation: {
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 3,
+  },
+  shopAvailability: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
   },
 });
 

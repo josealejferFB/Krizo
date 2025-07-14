@@ -1,15 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ThemedBackgroundGradient from '../../components/ThemedBackgroundGradient';
 
 export default function KrizoWorkerServiceConfigScreen({ navigation }) {
-  // Estados simulados para switches (puedes conectar con backend en el futuro)
-  const [mechanicEnabled, setMechanicEnabled] = React.useState(true);
-  const [craneEnabled, setCraneEnabled] = React.useState(false);
-  const [storeEnabled, setStoreEnabled] = React.useState(true);
-
   return (
     <ThemedBackgroundGradient>
       <ScrollView contentContainerStyle={styles.container}>
@@ -26,100 +21,42 @@ export default function KrizoWorkerServiceConfigScreen({ navigation }) {
         </TouchableOpacity>
 
         <View style={styles.card}>
-          <Text style={styles.title}>Configurar servicios</Text>
+          <Text style={styles.title}>Configuración de Servicios</Text>
           <Text style={styles.subtitle}>
-            Aquí podrás activar o desactivar los servicios que ofreces como trabajador.
+            Configura los servicios que ofreces y tu información de trabajo.
           </Text>
 
-          {/* Botón para Mecánico */}
-          <View style={styles.serviceRow}>
+          {/* Botón para Perfil de Servicios */}
+          <TouchableOpacity 
+            style={styles.profileRow}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('KrizoWorkerServiceProfile')}
+          >
             <View style={styles.iconCircle}>
               <MaterialCommunityIcons name="tools" size={28} color="#FC5501" />
             </View>
-            <View style={styles.serviceTextBox}>
-              <Text
-                style={[
-                  styles.statusText,
-                  mechanicEnabled ? styles.statusActive : styles.statusInactive,
-                ]}
-              >
-                {mechanicEnabled ? 'Activo' : 'Desactivado'}
-              </Text>
-              <Text style={styles.serviceText}>Mecánico</Text>
-              <Text style={styles.serviceSubText}>Ofrece asistencia mecánica</Text>
+            <View style={styles.profileTextBox}>
+              <Text style={styles.profileText}>Perfil de Servicios</Text>
+              <Text style={styles.profileSubText}>Configuración de servicios ofrecidos</Text>
             </View>
-            <Switch
-              value={mechanicEnabled}
-              onValueChange={setMechanicEnabled}
-              thumbColor={mechanicEnabled ? "#FC5501" : "#FFD6B8"}
-              trackColor={{ false: "#FFD6B8", true: "#FC5501" }}
-            />
-            <TouchableOpacity style={styles.configButton} 
-            onPress={() => navigation.replace('MechanicConfig')}
-            activeOpacity={0.7}>
-              <MaterialCommunityIcons name="cog" size={24} color="#FC5501" />
-            </TouchableOpacity>
-          </View>
+            <MaterialCommunityIcons name="chevron-right" size={28} color="#FC5501" />
+          </TouchableOpacity>
 
-          {/* Botón para Grúa */}
-          <View style={styles.serviceRow}>
+          {/* Botón para Métodos de Pago */}
+          <TouchableOpacity 
+            style={styles.profileRow}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('KrizoWorkerPaymentMethods')}
+          >
             <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="tow-truck" size={28} color="#FC5501" />
+              <MaterialCommunityIcons name="credit-card" size={28} color="#FC5501" />
             </View>
-            <View style={styles.serviceTextBox}>
-              <Text
-                style={[
-                  styles.statusText,
-                  craneEnabled ? styles.statusActive : styles.statusInactive,
-                ]}
-              >
-                {craneEnabled ? 'Activo' : 'Desactivado'}
-              </Text>
-              <Text style={styles.serviceText}>Grúa</Text>
-              <Text style={styles.serviceSubText}>Ofrece servicios de grúa y remolque</Text>
+            <View style={styles.profileTextBox}>
+              <Text style={styles.profileText}>Métodos de Pago</Text>
+              <Text style={styles.profileSubText}>Configura PayPal y Binance Pay</Text>
             </View>
-            <Switch
-              value={craneEnabled}
-              onValueChange={setCraneEnabled}
-              thumbColor={craneEnabled ? "#FC5501" : "#FFD6B8"}
-              trackColor={{ false: "#FFD6B8", true: "#FC5501" }}
-            />
-            <TouchableOpacity style={styles.configButton}
-            onPress={() => navigation.replace('CraneConfig')}
-            activeOpacity={0.7}>
-              <MaterialCommunityIcons name="cog" size={24} color="#FC5501" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Botón para Tienda */}
-          <View style={styles.serviceRow}>
-            <View style={styles.iconCircle}>
-              <MaterialCommunityIcons name="store" size={28} color="#FC5501" />
-            </View>
-            <View style={styles.serviceTextBox}>
-              <Text
-                style={[
-                  styles.statusText,
-                  storeEnabled ? styles.statusActive : styles.statusInactive,
-                ]}
-              >
-                {storeEnabled ? 'Activo' : 'Desactivado'}
-              </Text>
-              <Text style={styles.serviceText}>Tienda</Text>
-              <Text style={styles.serviceSubText}>Vende repuestos y productos</Text>
-            </View>
-            <Switch
-              value={storeEnabled}
-              onValueChange={setStoreEnabled}
-              thumbColor={storeEnabled ? "#FC5501" : "#FFD6B8"}
-              trackColor={{ false: "#FFD6B8", true: "#FC5501" }}
-            />
-            <TouchableOpacity style={styles.configButton}
-            onPress={() => navigation.replace('ShopConfig')}
-            activeOpacity={0.7}>
-              <MaterialCommunityIcons name="cog" size={24} color="#FC5501" />
-            </TouchableOpacity>
-          </View>
+            <MaterialCommunityIcons name="chevron-right" size={28} color="#FC5501" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ThemedBackgroundGradient>
@@ -195,14 +132,14 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     fontStyle: 'italic',
   },
-  serviceRow: {
+  profileRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#262525',
     borderRadius: 18,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-    marginBottom: 18,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    marginBottom: 16,
     width: '100%',
     elevation: 2,
     shadowColor: '#FC5501',
@@ -211,70 +148,27 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#FFD6B8',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 16,
   },
-  serviceTextBox: {
+  profileTextBox: {
     flex: 1,
     justifyContent: 'center',
   },
-  serviceText: {
-    fontSize: 17,
+  profileText: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#FFD6B8',
-    marginBottom: 2,
+    marginBottom: 4,
   },
-  serviceSubText: {
-    fontSize: 13,
+  profileSubText: {
+    fontSize: 14,
     color: '#FFD6B8',
     opacity: 0.8,
-  },
-  statusText: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    marginBottom: 2,
-    marginLeft: 2,
-  },
-  statusActive: {
-    color: '#1BC100',
-  },
-  statusInactive: {
-    color: '#FF3D00',
-  },
-  configButton: {
-    marginLeft: 10,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 6,
-    elevation: 2,
-    shadowColor: '#FC5501',
-    shadowOpacity: 0.10,
-    shadowRadius: 2,
-  },
-  removeAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#FF3D00',
-    borderRadius: 18,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    marginTop: 18,
-    width: '100%',
-    elevation: 3,
-    shadowColor: '#FC5501',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-  },
-  removeAllText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    letterSpacing: 0.5,
   },
 });

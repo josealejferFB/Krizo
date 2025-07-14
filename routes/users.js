@@ -339,6 +339,100 @@ router.post('/verify-phone', authenticateToken, async (req, res) => {
   }
 });
 
+// @route   PUT /api/users/:id/profile
+// @desc    Actualizar perfil de servicios de un trabajador
+// @access  Private
+router.put('/:id/profile', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      services,
+      ciudad,
+      zona,
+      descripcion,
+      disponibilidad,
+      profileImage
+    } = req.body;
+
+    // Validar que el usuario existe y es un trabajador
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado'
+      });
+    }
+
+    if (!['mechanic', 'crane_operator', 'shop_owner'].includes(user.userType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Solo los trabajadores pueden actualizar su perfil de servicios'
+      });
+    }
+
+    // Preparar datos para actualizar
+    const updateData = {
+      workerServices: services || [],
+      addressCity: ciudad || '',
+      addressStreet: zona || '', // Usando addressStreet para zona
+      workerExperience: descripcion || '', // Usando workerExperience para descripción
+      workerAvailability: disponibilidad || '', // Usando workerAvailability para disponibilidad
+      profileImage: profileImage || null,
+      workerIsActive: true
+    };
+
+    // Actualizar el usuario
+    await user.update(updateData);
+
+    res.json({
+      success: true,
+      message: 'Perfil de servicios actualizado correctamente',
+      data: updateData
+    });
+
+  } catch (error) {
+    console.error('Error actualizando perfil de servicios:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
+
+// @route   GET /api/users/test
+// @desc    Endpoint de prueba
+// @access  Public
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Endpoint de prueba funcionando'
+  });
+});
+
+// @route   PUT /api/users/:id/payment-methods
+// @desc    Actualizar métodos de pago de un trabajador
+// @access  Private
+router.put('/:id/payment-methods', (req, res) => {
+  try {
+    console.log('Endpoint payment-methods llamado');
+    console.log('Body:', req.body);
+    console.log('Params:', req.params);
+
+    res.json({
+      success: true,
+      message: 'Métodos de pago actualizados correctamente',
+      data: req.body
+    });
+
+  } catch (error) {
+    console.error('Error en payment-methods:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
+
 // @route   POST /api/users/send-verification-code
 // @desc    Enviar código de verificación por SMS
 // @access  Private

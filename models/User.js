@@ -242,6 +242,18 @@ const User = sequelize.define('User', {
   passwordResetExpires: {
     type: DataTypes.DATE,
     allowNull: true
+  },
+  // Métodos de pago
+  paypalEmail: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    validate: {
+      isEmail: true
+    }
+  },
+  binanceId: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
   tableName: 'users',

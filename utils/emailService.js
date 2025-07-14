@@ -2,18 +2,30 @@ const nodemailer = require('nodemailer');
 
 // Configuración del transportador de Gmail
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // true para 465, false para otros puertos
   auth: {
-    user: process.env.GMAIL_USER || 'tu-email@gmail.com',
-    pass: process.env.GMAIL_APP_PASSWORD || 'tu-app-password'
+    user: process.env.GMAIL_USER || 'equipo.krizo@gmail.com',
+    pass: process.env.GMAIL_APP_PASSWORD || 'hnggevabdkmmfizy'
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
 // Función para enviar código de verificación
 const sendVerificationEmail = async (email, verificationCode, userName) => {
   try {
+    console.log('📧 Configuración de email:', {
+      user: process.env.GMAIL_USER || 'equipo.krizo@gmail.com',
+      pass: process.env.GMAIL_APP_PASSWORD ? '✅ Configurado' : '❌ No configurado',
+      env_user: process.env.GMAIL_USER,
+      env_pass: process.env.GMAIL_APP_PASSWORD ? 'SÍ' : 'NO'
+    });
+
     const mailOptions = {
-      from: process.env.GMAIL_USER || 'tu-email@gmail.com',
+      from: process.env.GMAIL_USER || 'equipo.krizo@gmail.com',
       to: email,
       subject: '🔐 Verifica tu cuenta - Krizo',
       html: `
@@ -67,7 +79,7 @@ const sendVerificationEmail = async (email, verificationCode, userName) => {
 const sendWelcomeEmail = async (email, userName) => {
   try {
     const mailOptions = {
-      from: process.env.GMAIL_USER || 'tu-email@gmail.com',
+      from: process.env.GMAIL_USER || 'equipo.krizo@gmail.com',
       to: email,
       subject: '🎉 ¡Bienvenido a Krizo!',
       html: `
