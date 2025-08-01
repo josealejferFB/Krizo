@@ -14,6 +14,7 @@ export default function PaymentScreen({ route, navigation }) {
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [paypalEmail, setPaypalEmail] = useState('');
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   const handlePayment = async () => {
     if (!paymentMethod) {
@@ -47,7 +48,7 @@ export default function PaymentScreen({ route, navigation }) {
         }
       };
 
-      const response = await fetch(`http://192.168.1.14:5000/api/payments`, {
+      const response = await fetch(`${API_BASE_URL}/payments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

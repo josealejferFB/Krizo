@@ -21,6 +21,7 @@ export default function KrizoWorkerCompletedOrdersScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
   const [screenshotModalVisible, setScreenshotModalVisible] = useState(false);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   useEffect(() => {
     loadData();
@@ -43,7 +44,7 @@ export default function KrizoWorkerCompletedOrdersScreen({ navigation }) {
 
   const loadAcceptedPayments = async () => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/payments/worker/${user.id}?status=verified`, {
+      const response = await fetch(`${API_BASE_URL}/payments/worker/${user.id}?status=verified`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -60,7 +61,7 @@ export default function KrizoWorkerCompletedOrdersScreen({ navigation }) {
 
   const loadCompletedRequests = async () => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/requests/worker/${user.id}/completed`, {
+      const response = await fetch(`${API_BASE_URL}/requests/worker/${user.id}/completed`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

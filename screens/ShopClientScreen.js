@@ -11,7 +11,8 @@ const ShopClientScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+
   // Obtener trabajadores de la ruta o cargar desde API
   useEffect(() => {
     if (route.params?.workers) {
@@ -29,7 +30,7 @@ const ShopClientScreen = () => {
   const loadShops = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://192.168.1.14:5000/api/users/workers');
+      const response = await fetch('${API_BASE_URL}/users/workers');
       
       if (response.ok) {
         const result = await response.json();

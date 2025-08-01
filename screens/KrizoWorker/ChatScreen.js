@@ -18,6 +18,8 @@ const ChatScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { sessionId, clientName, serviceType } = route.params;
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+
   
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -36,7 +38,7 @@ const ChatScreen = () => {
 
   const loadMessages = async () => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/chat/messages/${sessionId}?sender_type=worker`, {
+      const response = await fetch(`${API_BASE_URL}/chat/messages/${sessionId}?sender_type=worker`, {
         headers: {
           'Authorization': `Bearer test-token`
         }
@@ -67,7 +69,7 @@ const ChatScreen = () => {
         sender_type: 'worker'
       };
 
-      const response = await fetch('http://192.168.1.14:5000/api/chat/messages', {
+      const response = await fetch('${API_BASE_URL}/chat/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

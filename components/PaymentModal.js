@@ -19,6 +19,7 @@ const PaymentModal = ({ visible, onClose, quote, onPaymentCompleted }) => {
   const { token, user } = useAuth();
   const [selectedMethod, setSelectedMethod] = useState('paypal');
   const [isProcessing, setIsProcessing] = useState(false);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   const paymentMethods = [
     {
@@ -45,7 +46,7 @@ const PaymentModal = ({ visible, onClose, quote, onPaymentCompleted }) => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Actualizar estado de la cotización
-      const response = await fetch(`http://192.168.1.14:5000/api/quotes/${quote.id}/pay`, {
+      const response = await fetch(`${API_BASE_URL}/quotes/${quote.id}/pay`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

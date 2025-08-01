@@ -20,6 +20,7 @@ export default function EnhancedPaymentScreen({ route, navigation }) {
   const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [workerInfo, setWorkerInfo] = useState(null);
   const [loadingWorkerInfo, setLoadingWorkerInfo] = useState(true);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Cargar información del worker
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function EnhancedPaymentScreen({ route, navigation }) {
 
   const loadWorkerInfo = async () => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/payments/worker-info/${quote.worker_id}`, {
+      const response = await fetch(`${API_BASE_URL}/payments/worker-info/${quote.worker_id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -150,7 +151,7 @@ export default function EnhancedPaymentScreen({ route, navigation }) {
         type: 'image/jpeg',
       });
 
-      const response = await fetch('http://192.168.1.14:5000/api/payments/upload-screenshot', {
+      const response = await fetch('${API_BASE_URL}/payments/upload-screenshot', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -251,9 +252,9 @@ export default function EnhancedPaymentScreen({ route, navigation }) {
       };
 
       console.log('🔧 Enviando pago con datos:', paymentData);
-      console.log('🔧 URL:', 'http://192.168.1.14:5000/api/payments/submit');
+      console.log('🔧 URL:', '${API_BASE_URL}/payments/submit');
 
-      const response = await fetch('http://192.168.1.14:5000/api/payments/submit', {
+      const response = await fetch('${API_BASE_URL}/payments/submit', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

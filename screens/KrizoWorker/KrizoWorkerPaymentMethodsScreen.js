@@ -12,6 +12,7 @@ export default function KrizoWorkerPaymentMethodsScreen({ navigation }) {
   const [isLoadingPaypal, setIsLoadingPaypal] = useState(false);
   const [isLoadingBinance, setIsLoadingBinance] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Cargar datos guardados al abrir la pantalla
   useEffect(() => {
@@ -21,7 +22,7 @@ export default function KrizoWorkerPaymentMethodsScreen({ navigation }) {
   // Función para cargar métodos de pago guardados
   const loadPaymentMethods = async () => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/users/6/payment-methods`, {
+      const response = await fetch(`${API_BASE_URL}/users/6/payment-methods`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ export default function KrizoWorkerPaymentMethodsScreen({ navigation }) {
     setIsLoadingPaypal(true);
     
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/users/6/payment-methods`, {
+      const response = await fetch(`${API_BASE_URL}/users/6/payment-methods`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +110,7 @@ export default function KrizoWorkerPaymentMethodsScreen({ navigation }) {
     setIsLoadingBinance(true);
     
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/users/6/payment-methods`, {
+      const response = await fetch(`${API_BASE_URL}/users/6/payment-methods`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

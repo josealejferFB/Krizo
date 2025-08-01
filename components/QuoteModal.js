@@ -23,7 +23,8 @@ const QuoteModal = ({ visible, onClose, request, onQuoteSent }) => {
   const [estimatedTime, setEstimatedTime] = useState('');
   const [notes, setNotes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+	console.log(API_BASE_URL)
   const addService = () => {
     setServices([...services, { description: '', price: '' }]);
   };
@@ -82,7 +83,7 @@ const QuoteModal = ({ visible, onClose, request, onQuoteSent }) => {
         status: 'pending'
       };
 
-      const response = await fetch('http://192.168.1.14:5000/api/quotes', {
+      const response = await fetch('${API_BASE_URL}/quotes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

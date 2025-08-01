@@ -38,6 +38,7 @@ const ServicesScreen = () => {
   const navigation = useNavigation();
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
   const [stats, setStats] = useState({
     mecanicos: 0,
     gruas: 0,
@@ -52,7 +53,7 @@ const ServicesScreen = () => {
   const loadWorkers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://192.168.1.14:5000/api/users/workers');
+      const response = await fetch('${API_BASE_URL}/users/workers');
       
       if (response.ok) {
         const result = await response.json();
@@ -69,6 +70,7 @@ const ServicesScreen = () => {
         }
       }
     } catch (error) {
+		  console.error('Error al cargar:', response.status);
       console.error('Error cargando trabajadores:', error);
     } finally {
       setLoading(false);

@@ -9,6 +9,7 @@ export default function MechanicRequestsScreen({ navigation }) {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // ID del trabajador (Armando Delgado - ID 6 según los logs)
   const workerId = 6;
@@ -20,7 +21,7 @@ export default function MechanicRequestsScreen({ navigation }) {
   const loadRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://192.168.1.14:5000/api/requests/worker/${workerId}`);
+      const response = await fetch(`${API_BASE_URL}/requests/worker/${workerId}`);
       const result = await response.json();
 
       if (response.ok) {
@@ -40,7 +41,7 @@ export default function MechanicRequestsScreen({ navigation }) {
 
   const updateRequestStatus = async (requestId, newStatus) => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/requests/${requestId}/status`, {
+      const response = await fetch(`${API_BASE_URL}/requests/${requestId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'

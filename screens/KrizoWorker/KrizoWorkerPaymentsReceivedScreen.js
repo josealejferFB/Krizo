@@ -19,6 +19,7 @@ export default function KrizoWorkerPaymentsReceivedScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [screenshotModalVisible, setScreenshotModalVisible] = useState(false);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   useEffect(() => {
     loadPayments();
@@ -27,7 +28,7 @@ export default function KrizoWorkerPaymentsReceivedScreen({ navigation }) {
   const loadPayments = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://192.168.1.14:5000/api/payments/worker/${user.id}`, {
+      const response = await fetch(`${API_BASE_URL}/payments/worker/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -49,7 +50,7 @@ export default function KrizoWorkerPaymentsReceivedScreen({ navigation }) {
 
   const handleVerifyPayment = async (paymentId, status) => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/payments/${paymentId}/verify`, {
+      const response = await fetch(`${API_BASE_URL}/payments/${paymentId}/verify`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

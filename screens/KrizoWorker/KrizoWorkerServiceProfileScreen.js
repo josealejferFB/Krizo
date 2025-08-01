@@ -44,6 +44,7 @@ export default function KrizoWorkerServiceProfileScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(true); // Por defecto en modo edición
   const [hasData, setHasData] = useState(false);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Cargar datos guardados al abrir la pantalla
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function KrizoWorkerServiceProfileScreen({ navigation }) {
     try {
       console.log('Cargando datos del perfil para usuario:', user.id);
       
-      const response = await fetch(`http://192.168.1.14:5000/api/users/${user.id}/profile`, {
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}/profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +158,7 @@ export default function KrizoWorkerServiceProfileScreen({ navigation }) {
       console.log('Enviando datos:', profileData);
 
       // Llamada real al endpoint PUT /users/:id/profile
-      const response = await fetch(`http://192.168.1.14:5000/api/users/${user.id}/profile`, {
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const [isWorker, setIsWorker] = useState(false);
 
   // URL base de la API - usar IP de la computadora para conexión móvil
-  const API_BASE_URL = 'http://192.168.1.14:5000/api';
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Verificar si el usuario está autenticado al cargar la app
   useEffect(() => {

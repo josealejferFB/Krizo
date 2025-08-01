@@ -14,6 +14,7 @@ export default function KrizoWorkerRequestsScreen({ navigation }) {
   const [workerProfile, setWorkerProfile] = useState(null);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // ID del trabajador (Armando Delgado - ID 6 según los logs)
   const workerId = user?.id || 6;
@@ -30,7 +31,7 @@ export default function KrizoWorkerRequestsScreen({ navigation }) {
 
   const loadWorkerProfile = async () => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/users/${workerId}`);
+      const response = await fetch(`${API_BASE_URL}/users/${workerId}`);
       const result = await response.json();
 
       if (response.ok) {
@@ -48,7 +49,7 @@ export default function KrizoWorkerRequestsScreen({ navigation }) {
     try {
       setLoading(true);
       console.log('🔄 Recargando solicitudes pendientes del worker...');
-      const response = await fetch(`http://192.168.1.14:5000/api/requests?status=pending`, {
+      const response = await fetch(`${API_BASE_URL}/requests?status=pending`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ export default function KrizoWorkerRequestsScreen({ navigation }) {
 
   const handleAcceptRequest = async (request) => {
     try {
-      const response = await fetch(`http://192.168.1.14:5000/api/requests/${request.id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/requests/${request.id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ export default function KrizoWorkerRequestsScreen({ navigation }) {
           style: 'destructive',
           onPress: async () => {
             try {
-              const response = await fetch(`http://192.168.1.14:5000/api/requests/${request.id}/status`, {
+              const response = await fetch(`${API_BASE_URL}/requests/${request.id}/status`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',

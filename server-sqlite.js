@@ -409,7 +409,7 @@ const startServer = async () => {
     await initializeDatabase();
     
     const PORT = process.env.PORT || 5000;
-    
+
     server.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Servidor SQLite3 corriendo en puerto ${PORT}`);
       console.log(`📱 API disponible en: http://localhost:${PORT}`);

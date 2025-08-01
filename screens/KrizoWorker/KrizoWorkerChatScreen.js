@@ -26,6 +26,7 @@ const KrizoWorkerChatScreen = ({ navigation, route }) => {
   const [sessionId, setSessionId] = useState(null);
   const [clientInfo, setClientInfo] = useState(null);
   const scrollViewRef = useRef();
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Obtener información de la sesión de chat desde la navegación
   useEffect(() => {
@@ -54,7 +55,7 @@ const KrizoWorkerChatScreen = ({ navigation, route }) => {
         console.log('🔄 KrizoWorker cargando mensajes para sesión:', sessionId);
       }
       
-      const response = await fetch(`http://192.168.1.14:5000/api/chat/messages/${sessionId}?sender_type=worker`, {
+      const response = await fetch(`${API_BASE_URL}/chat/messages/${sessionId}?sender_type=worker`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -119,7 +120,7 @@ const KrizoWorkerChatScreen = ({ navigation, route }) => {
 
       console.log('📤 Datos del mensaje:', messageData);
 
-      const response = await fetch('http://192.168.1.14:5000/api/chat/messages', {
+      const response = await fetch('${API_BASE_URL}/chat/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

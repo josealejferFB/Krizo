@@ -24,6 +24,7 @@ const ServiceRequestModal = ({ visible, onClose, mechanic, onRequestSent }) => {
   const [location, setLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   const urgencyOptions = [
     { key: 'low', label: 'Baja', color: '#4CAF50', icon: 'clock-outline' },
@@ -92,7 +93,7 @@ const ServiceRequestModal = ({ visible, onClose, mechanic, onRequestSent }) => {
 
       console.log('🚀 Enviando solicitud con datos:', JSON.stringify(requestData, null, 2));
 
-      const response = await fetch('http://192.168.1.14:5000/api/requests', {
+      const response = await fetch('${API_BASE_URL}/requests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

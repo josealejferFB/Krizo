@@ -11,6 +11,7 @@ export default function ClientQuotesScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   useEffect(() => {
     loadQuotes();
@@ -21,7 +22,7 @@ export default function ClientQuotesScreen({ navigation }) {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`http://192.168.1.14:5000/api/quotes/client`, {
+      const response = await fetch(`${API_BASE_URL}/quotes/client`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -58,7 +59,7 @@ export default function ClientQuotesScreen({ navigation }) {
           text: 'Aceptar',
           onPress: async () => {
             try {
-              const response = await fetch(`http://192.168.1.14:5000/api/quotes/${quote.id}/accept`, {
+              const response = await fetch(`${API_BASE_URL}/quotes/${quote.id}/accept`, {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -98,7 +99,7 @@ export default function ClientQuotesScreen({ navigation }) {
           style: 'destructive',
           onPress: async () => {
             try {
-              const response = await fetch(`http://192.168.1.14:5000/api/quotes/${quote.id}/reject`, {
+              const response = await fetch(`${API_BASE_URL}/quotes/${quote.id}/reject`, {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,

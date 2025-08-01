@@ -19,6 +19,7 @@ const KrizoWorkerChatListScreen = ({ navigation }) => {
   const [chatSessions, setChatSessions] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   useEffect(() => {
     loadChatSessions();
@@ -27,7 +28,7 @@ const KrizoWorkerChatListScreen = ({ navigation }) => {
   const loadChatSessions = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://192.168.1.14:5000/api/chat/sessions/worker/${user.id}`, {
+      const response = await fetch(`${API_BASE_URL}/chat/sessions/worker/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

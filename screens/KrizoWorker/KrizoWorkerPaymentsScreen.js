@@ -10,7 +10,8 @@ export default function KrizoWorkerPaymentsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [selectedScreenshot, setSelectedScreenshot] = useState(null);
   const [screenshotModalVisible, setScreenshotModalVisible] = useState(false);
-
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+	
   useEffect(() => {
     fetchPayments();
   }, []);
@@ -22,7 +23,7 @@ export default function KrizoWorkerPaymentsScreen({ navigation }) {
       console.log('🔐 Token completo:', token);
       
       // Solo obtener pagos pendientes de verificación
-      const response = await fetch('http://192.168.1.14:5000/api/payments/worker?status=pending_verification', {
+      const response = await fetch('${API_BASE_URL}/payments/worker?status=pending_verification', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -37,6 +38,8 @@ export default function KrizoWorkerPaymentsScreen({ navigation }) {
         console.error('Error al cargar pagos:', response.status);
       }
     } catch (error) {
+		        console.error('Error al cargar pagos:', response.status);
+
       console.error('Error al cargar pagos:', error);
     } finally {
       setLoading(false);
@@ -84,7 +87,7 @@ export default function KrizoWorkerPaymentsScreen({ navigation }) {
     try {
       const token = await AsyncStorage.getItem('krizo_token');
       
-      const response = await fetch(`http://192.168.1.14:5000/api/payments/${paymentId}/verify`, {
+      const response = await fetch(`${API_BASE_URL}/payments/${paymentId}/verify`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

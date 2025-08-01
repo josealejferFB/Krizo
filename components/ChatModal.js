@@ -28,6 +28,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
   const [priceInput, setPriceInput] = useState('');
   const [sessionId, setSessionId] = useState(null);
   const scrollViewRef = useRef();
+  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Crear sesión de chat cuando se abre
   useEffect(() => {
@@ -63,7 +64,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
       console.log('🔄 Buscando sesión de chat existente...');
       
       // Primero buscar si ya existe una sesión activa entre este cliente y trabajador
-      const searchResponse = await fetch(`http://192.168.1.14:5000/api/chat/sessions/search?client_id=${user.id}&worker_id=${mechanic.id}`, {
+      const searchResponse = await fetch(`${API_BASE_URL}/chat/sessions/search?client_id=${user.id}&worker_id=${mechanic.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -88,7 +89,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
 
       console.log('📤 Datos de sesión:', sessionData);
 
-      const response = await fetch('http://192.168.1.14:5000/api/chat/session', {
+      const response = await fetch('${API_BASE_URL}/chat/session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +138,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
         console.log('🔄 Cliente cargando mensajes para sesión:', sessionId);
       }
       
-      const response = await fetch(`http://192.168.1.14:5000/api/chat/messages/${sessionId}?sender_type=${userType}`, {
+      const response = await fetch(`${API_BASE_URL}/chat/messages/${sessionId}?sender_type=${userType}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -210,7 +211,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
 
       console.log('📤 Enviando datos:', messageData);
 
-      const response = await fetch('http://192.168.1.14:5000/api/chat/messages', {
+      const response = await fetch('${API_BASE_URL}/chat/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +262,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
     
     try {
       // Actualizar sesión con precio acordado
-      const response = await fetch(`http://192.168.1.14:5000/api/chat/session/${sessionId}`, {
+      const response = await fetch(`${API_BASE_URL}/chat/session/${sessionId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -284,7 +285,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
           sender_type: 'worker'
         };
 
-        await fetch('http://192.168.1.14:5000/api/chat/messages', {
+        await fetch('${API_BASE_URL}/chat/messages', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
