@@ -86,6 +86,9 @@ NODE_ENV=development
 # JWT Secret (cambiar por uno seguro)
 JWT_SECRET=tu_jwt_secret_super_seguro_aqui
 
+# URL de la API (cambiar por la IP de la máquina del back)
+EXPO_PUBLIC_API_URL=http://192.168.1.105:5000/api
+
 # Configuración de email (Gmail con contraseña de aplicación)
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
@@ -96,19 +99,40 @@ EMAIL_PASS=tu_password_de_aplicacion
 DB_PATH=./database/krizo.sqlite
 ```
 
-### **4. Configurar Email (Opcional)**
+### **4. Configurar URL de la API**
+
+Para que funcionen las rutas en desarrollo:
+
+En Windows, abrir la terminal y ejecutar:
+```bash
+ipconfig
+```
+
+En macOS/Linux abrir la terminal y ejecutar:
+
+```bash
+ifconfig
+```
+
+Abrir el archivo .env y reemplazar la URL base del API con la IP actual, por ejemplo:
+
+```bash
+EXPO_PUBLIC_API_URL=http://192.168.1.14:5000/api
+```
+
+### **5. Configurar Email (Opcional)**
 Para que funcione la verificación de email, configurar Gmail:
 1. Activar verificación en 2 pasos en tu cuenta Gmail
 2. Generar contraseña de aplicación
 3. Usar esa contraseña en `EMAIL_PASS`
 
-### **5. Inicializar la Base de Datos**
+### **6. Inicializar la Base de Datos**
 ```bash
 # El servidor creará automáticamente las tablas al iniciar
 npm run server:dev
 ```
 
-### **6. Ejecutar el Proyecto**
+### **7. Ejecutar el Proyecto**
 
 #### **Opción A: Desarrollo Completo (Backend + Frontend)**
 ```bash
