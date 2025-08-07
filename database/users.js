@@ -93,6 +93,138 @@ const initUsersTable = () => {
   });
 };
 
+const initShopsTable = () => {
+  return new Promise((resolve, reject) => {
+    // 1. SQL para crear la tabla 'shops' si no existe
+    const createTableSQL = `
+      CREATE TABLE IF NOT EXISTS shops (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        descripcion TEXT,
+        ciudad TEXT,
+        zona TEXT,
+        disponibilidad TEXT,
+        services TEXT, -- Almacenado como una cadena de texto separada por comas (ej. 'repuestos,mecanica')
+        profile_image_url TEXT, -- URL de la imagen de perfil de la tienda
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    db.transaction(tx => {
+      tx.executeSql(createTableSQL, [],
+        () => {
+          console.log('✅ Tabla shops creada/verificada correctamente.');
+
+          // 2. SQL para agregar columnas si no existen (útil para migraciones)
+          // Si añades nuevas columnas en el futuro, agrégalas aquí.
+          const addColumnsSQL = [
+            // Ejemplos de columnas que podrías añadir más tarde si las necesitaras:
+            // 'ALTER TABLE shops ADD COLUMN rating REAL DEFAULT 0',
+            // 'ALTER TABLE shops ADD COLUMN is_verified INTEGER DEFAULT 0'
+            // Ya incluimos profile_image_url en el CREATE TABLE, pero si no estuviera:
+            // 'ALTER TABLE shops ADD COLUMN profile_image_url TEXT'
+          ];
+
+          let completedColumns = 0;
+          if (addColumnsSQL.length === 0) {
+            // Si no hay columnas para añadir, pasamos directamente a crear índices
+            resolveIndexes();
+            return;
+          }
+
+          addColumnsSQL.forEach((columnSQL, index) => {
+            tx.executeSql(columnSQL, [],
+              () => {
+                console.log(`✅ Columna ${index + 1} agregada/verificada.`);
+                completedColumns++;
+                if (completedColumns === addColumnsSQL.length) {
+                  resolveIndexes();
+                }
+              },
+              (_, error) => {
+                // Ignorar el error si la columna ya existe
+                if (error.message.includes('duplicate column name')) {
+                  console.log(`ℹ️ Columna ${index + 1} ya existe, ignorando.`);
+                  completedColumns++;
+                  if (completedColumns === addColumnsSQL.length) {
+                    resolveIndexes();
+                  }
+                } else {
+                  console.error(`❌ Error agregando columna ${index + 1}:`, error.message);
+                  reject(error);
+                }
+                return false; // Indicar que hubo un error o que ya existe
+              }
+            );
+          });
+
+          const resolveIndexes = () => {
+            // 3. SQL para crear índices para mejorar el rendimiento de búsquedas
+            const createIndexesSQL = [
+              'CREATE INDEX IF NOT EXISTS idx_shops_name ON shops(name)',
+              'CREATE INDEX IF NOT EXISTS idx_shops_ciudad ON shops(ciudad)',
+              'CREATE INDEX IF NOT EXISTS idx_shops_services ON shops(services)'
+            ];
+
+            let completedIndexes = 0;
+            createIndexesSQL.forEach((indexSQL, index) => {
+              tx.executeSql(indexSQL, [],
+                () => {
+                  console.log(`✅ Índice ${index + 1} creado/verificado.`);
+                  completedIndexes++;
+                  if (completedIndexes === createIndexesSQL.length) {
+                    resolve(); // Resuelve la promesa principal una vez todo esté listo
+                  }
+                },
+                (_, error) => {
+                  console.error(`❌ Error creando índice ${index + 1}:`, error.message);
+                  reject(error);
+                  return false;
+                }
+              );
+            });
+          };
+        },
+        (_, error) => {
+          console.error('❌ Error creando tabla shops:', error.message);
+          reject(error);
+          return false; // Indicar que hubo un error
+        }
+      );
+    });
+  });
+};
+
+const saveShop = async (shopData) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `INSERT INTO shops (name, descripcion, ciudad, zona, disponibilidad, services, profile_image_url)
+         VALUES (?, ?, ?, ?, ?, ?, ?);`,
+        [
+          shopData.name,
+          shopData.descripcion,
+          shopData.ciudad,
+          shopData.zona,
+          shopData.disponibilidad,
+          shopData.services ? shopData.services.join(',') : '', // Convertir array a cadena
+          shopData.profile_image_url || null // Manejar caso donde no hay imagen
+        ],
+        (_, { insertId }) => {
+          console.log('Tienda guardada con ID:', insertId);
+          resolve(insertId);
+        },
+        (_, error) => {
+          console.error('Error al guardar la tienda:', error);
+          reject(error);
+          return false;
+        }
+      );
+    });
+  });
+};
+
 // Función para insertar un nuevo usuario
 const createUser = (userData) => {
   return new Promise((resolve, reject) => {
@@ -1123,6 +1255,8 @@ const getMessagesBySessionId = (sessionId) => {
 
 module.exports = {
   initUsersTable,
+  initShopsTable,
+  saveShop,
   initRequestsTable,
   createUser,
   getUserById,

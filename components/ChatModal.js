@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
+  FlatList,
+  Image,
+  Dimensions,
   Text,
   Modal,
   StyleSheet,
@@ -16,6 +19,37 @@ import { Button, Card, Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../context/AuthContext';
+import ImageViewer from 'react-native-image-zoom-viewer'; // Importa el componente del visor de imágenes
+
+const { width } = Dimensions.get('window');
+
+// Ejemplo de datos, usar imágenes reales
+const DUMMY_IMAGES = [
+  {
+    id: '1',
+    image: require('../assets/card_image_1.png'),
+    title: 'Redes Sociales',
+    description: 'Entérate de nuestras últimas novedades y promociones.',
+  },
+  {
+    id: '2',
+    image: require('../assets/card_image_2.png'),
+    title: 'Trabaja con Nosotros',
+    description: 'Únete a nuestro equipo y crece con nosotros.',
+  },
+  {
+    id: '3',
+    image: require('../assets/card_image_3.png'),
+    title: 'Tienda de Repuestos',
+    description: 'Encuentra las mejores piezas y accesorios para tu vehículo.',
+  },
+  {
+    id: '4',
+    image: require('../assets/card_image_4.png'),
+    title: 'Asistencia Vial Profesional',
+    description: 'Ayuda inmediata en carretera para cualquier emergencia.',
+  },
+];
 
 const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) => {
   const { token, user } = useAuth();
@@ -28,33 +62,40 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
   const [priceInput, setPriceInput] = useState('');
   const [sessionId, setSessionId] = useState(null);
   const scrollViewRef = useRef();
-  const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+  const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
-  // Crear sesión de chat cuando se abre
+  // --- NUEVOS ESTADOS PARA LA GALERÍA DE IMÁGENES ---
+  const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedImageInfo, setSelectedImageInfo] = useState({ title: '', image: null });
+const imagesForViewer = DUMMY_IMAGES.map(img => ({
+  url: '', // Esta propiedad 'url' es necesaria pero puede estar vacía para imágenes locales
+  props: {
+    source: img.image // <- Aquí pasas la imagen local a la propiedad 'source'
+  }
+}));
+
   useEffect(() => {
     if (visible && mechanic && !sessionId) {
       createChatSession();
     }
   }, [visible, mechanic]);
 
-  // Cargar mensajes cuando hay sessionId
   useEffect(() => {
     if (sessionId) {
       loadMessages();
     }
   }, [sessionId]);
 
-  // Cargar mensajes cuando el modal se abre
   useEffect(() => {
     if (visible && sessionId) {
       loadMessages();
     }
   }, [visible, sessionId]);
 
-  // Polling automático para nuevos mensajes cuando el modal está visible
   useEffect(() => {
     if (visible && sessionId) {
-      const interval = setInterval(loadMessages, 5000); // Polling cada 5 segundos
+      const interval = setInterval(loadMessages, 5000);
       return () => clearInterval(interval);
     }
   }, [visible, sessionId]);
@@ -62,12 +103,9 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
   const createChatSession = async () => {
     try {
       console.log('🔄 Buscando sesión de chat existente...');
-      
-      // Primero buscar si ya existe una sesión activa entre este cliente y trabajador
+
       const searchResponse = await fetch(`${API_BASE_URL}/chat/sessions/search?client_id=${user.id}&worker_id=${mechanic.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (searchResponse.ok) {
@@ -87,9 +125,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
         service_type: 'mecanico'
       };
 
-      console.log('📤 Datos de sesión:', sessionData);
-
-      const response = await fetch('${API_BASE_URL}/chat/session', {
+      const response = await fetch(`${API_BASE_URL}/chat/session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,17 +134,11 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
         body: JSON.stringify(sessionData)
       });
 
-      console.log('📥 Respuesta del servidor:', response.status);
-
       if (response.ok) {
         const result = await response.json();
-        console.log('📥 Datos de respuesta:', result);
-        
         if (result.success) {
           console.log('✅ Sesión creada con ID:', result.data.id);
           setSessionId(result.data.id);
-          
-          // Mensaje inicial del trabajador
           const initialMessage = {
             id: 1,
             text: `Hola, soy ${mechanic?.name || 'el mecánico'}. ¿En qué puedo ayudarte? Cuéntame sobre el problema con tu vehículo.`,
@@ -130,41 +160,29 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
 
   const loadMessages = async () => {
     if (!sessionId) return;
-
     try {
-      // Solo mostrar log cada 10 cargas para evitar spam
-      const shouldLog = Math.random() < 0.1; // 10% de probabilidad
+      const shouldLog = Math.random() < 0.1;
       if (shouldLog) {
         console.log('🔄 Cliente cargando mensajes para sesión:', sessionId);
       }
-      
       const response = await fetch(`${API_BASE_URL}/chat/messages/${sessionId}?sender_type=${userType}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
       if (response.ok) {
         const result = await response.json();
-        
         if (result.success && result.data) {
-          // Transformar los mensajes del formato del servidor al formato del componente
           const transformedMessages = result.data.map(msg => ({
             id: msg.id,
             text: msg.message,
             sender: msg.sender_type,
             timestamp: new Date(msg.created_at).toLocaleTimeString()
           }));
-          
-          // Solo mostrar log si hay cambios en el número de mensajes
           if (shouldLog && transformedMessages.length !== messages.length) {
             console.log('🔄 Mensajes transformados cliente:', transformedMessages.length, 'mensajes');
           }
-          
-          // Reemplazar todos los mensajes en lugar de agregar
           setMessages(transformedMessages);
-          
-          // Scroll al final después de cargar mensajes
           setTimeout(() => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
           }, 100);
@@ -178,40 +196,18 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
   };
 
   const sendMessage = async () => {
-    console.log('🔄 Intentando enviar mensaje...');
-    console.log('📝 Mensaje:', newMessage);
-    console.log('🆔 SessionId:', sessionId);
-    console.log('👤 UserType:', userType);
-    console.log('⏳ Sending:', sending);
-
-    if (!newMessage.trim()) {
-      console.log('❌ Mensaje vacío');
+    if (!newMessage.trim() || sending || !sessionId) {
+      if (!sessionId) Alert.alert('Error', 'No hay sesión de chat activa');
       return;
     }
-    
-    if (sending) {
-      console.log('❌ Ya está enviando');
-      return;
-    }
-    
-    if (!sessionId) {
-      console.log('❌ No hay sessionId');
-      Alert.alert('Error', 'No hay sesión de chat activa');
-      return;
-    }
-
     try {
       setSending(true);
-      
       const messageData = {
         session_id: sessionId,
         message: newMessage,
         sender_type: userType
       };
-
-      console.log('📤 Enviando datos:', messageData);
-
-      const response = await fetch('${API_BASE_URL}/chat/messages', {
+      const response = await fetch(`${API_BASE_URL}/chat/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -219,16 +215,9 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
         },
         body: JSON.stringify(messageData)
       });
-
-      console.log('📥 Respuesta del servidor:', response.status);
-
       if (response.ok) {
         const result = await response.json();
-        console.log('📥 Datos de respuesta:', result);
-        
         if (result.success) {
-          console.log('✅ Mensaje enviado correctamente');
-          // Agregar el mensaje a la lista local
           const newMsg = {
             id: result.data.id,
             text: result.data.message,
@@ -238,16 +227,12 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
           setMessages(prev => [...prev, newMsg]);
           setNewMessage('');
         } else {
-          console.error('❌ Error en respuesta:', result.message);
           Alert.alert('Error', result.message || 'No se pudo enviar el mensaje');
         }
       } else {
-        const errorText = await response.text();
-        console.error('❌ Error HTTP:', response.status, errorText);
         Alert.alert('Error', 'No se pudo enviar el mensaje');
       }
     } catch (error) {
-      console.error('❌ Error enviando mensaje:', error);
       Alert.alert('Error', 'No se pudo enviar el mensaje');
     } finally {
       setSending(false);
@@ -259,9 +244,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
       Alert.alert('Error', 'Por favor ingresa un precio');
       return;
     }
-    
     try {
-      // Actualizar sesión con precio acordado
       const response = await fetch(`${API_BASE_URL}/chat/session/${sessionId}`, {
         method: 'PUT',
         headers: {
@@ -273,19 +256,15 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
           status: 'price_agreed'
         })
       });
-
       if (response.ok) {
         setAgreedPrice(priceInput);
         setShowPriceInput(false);
-        
-        // Enviar mensaje de confirmación de precio
         const priceMessage = {
           session_id: sessionId,
           message: `Perfecto, el precio acordado es ${priceInput}. Procedemos con el servicio.`,
           sender_type: 'worker'
         };
-
-        await fetch('${API_BASE_URL}/chat/messages', {
+        await fetch(`${API_BASE_URL}/chat/messages`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -295,7 +274,6 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
         });
       }
     } catch (error) {
-      console.error('Error acordando precio:', error);
       Alert.alert('Error', 'No se pudo acordar el precio');
     }
   };
@@ -305,26 +283,43 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
       Alert.alert('Error', 'Primero deben acordar un precio antes de proceder');
       return;
     }
-
     Alert.alert(
       'Confirmar Servicio',
       `¿Estás seguro de que quieres proceder con el servicio por ${agreedPrice}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Confirmar', 
-          onPress: () => {
-            onConfirmService(agreedPrice);
-            onClose();
-          }
+      [{ text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Confirmar',
+        onPress: () => {
+          onConfirmService(agreedPrice);
+          onClose();
         }
-      ]
+      }]
     );
   };
 
+  // --- NUEVA FUNCIÓN PARA RENDERIZAR LAS MINIATURAS DE LA GALERÍA ---
+  const renderImageThumbnail = ({ item, index }) => (
+    <TouchableOpacity
+      style={styles.galleryImageTouchable}
+      onPress={() => {
+        setCurrentImageIndex(index);
+          setSelectedImageInfo({
+			title: item.title,
+			image: item.image,
+			});
+        setIsImageViewerVisible(true);
+      }}
+    >
+      <Image
+        source={ item.image }
+        style={styles.galleryImage}
+        resizeMode="cover"
+      />
+    </TouchableOpacity>
+  );
+
   const renderMessage = (message) => {
     const isClient = message.sender === 'client';
-    
     return (
       <View key={message.id} style={[
         styles.messageContainer,
@@ -366,7 +361,6 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
               <Icon name="close" size={24} color="white" />
             </TouchableOpacity>
-            
             <View style={styles.workerInfo}>
               <Avatar.Text size={40} label={mechanic?.name?.charAt(0) || 'M'} style={styles.avatar} />
               <View style={styles.workerDetails}>
@@ -374,7 +368,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
                 <Text style={styles.workerStatus}>Mecánico • En línea</Text>
               </View>
             </View>
-            
+
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.refreshButton} onPress={loadMessages}>
                 <Icon name="refresh" size={20} color="white" />
@@ -391,6 +385,17 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
             </View>
           </View>
         </LinearGradient>
+
+        {/* --- Galería de imágenes (carrusel) del vendedor --- */}
+        <View style={styles.galleryContainer}>
+          <FlatList
+            data={DUMMY_IMAGES}
+            keyExtractor={(item, index) => String(index)}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            renderItem={renderImageThumbnail} // Llama a la nueva función de renderizado
+          />
+        </View>
 
         {/* Contenedor principal del chat */}
         <View style={styles.chatContainer}>
@@ -422,15 +427,15 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
               returnKeyType="send"
               onSubmitEditing={sendMessage}
             />
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.sendButton}
               onPress={sendMessage}
               disabled={!newMessage.trim() || sending}
             >
-              <Icon 
-                name="send" 
-                size={24} 
-                color={newMessage.trim() && !sending ? 'white' : '#ccc'} 
+              <Icon
+                name="send"
+                size={24}
+                color={newMessage.trim() && !sending ? 'white' : '#ccc'}
               />
             </TouchableOpacity>
           </View>
@@ -447,7 +452,7 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
                   placeholder="$65"
                   keyboardType="numeric"
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.priceButton}
                   onPress={handlePriceAgreement}
                 >
@@ -478,11 +483,69 @@ const ChatModal = ({ visible, onClose, mechanic, onConfirmService, userType }) =
           )}
         </View>
       </KeyboardAvoidingView>
+
+      {/* --- NUEVO MODAL PARA EL VISOR DE IMÁGENES --- */}
+      <Modal
+        visible={isImageViewerVisible}
+        transparent={true}
+        onRequestClose={() => setIsImageViewerVisible(false)}
+      >
+        <ImageViewer
+          imageUrls={imagesForViewer}
+          index={currentImageIndex}
+          onSwipeDown={() => setIsImageViewerVisible(false)}
+          enableSwipeDown
+          saveToLocal
+          onChange={(index) => setCurrentImageIndex(index)} 
+          renderHeader={() => (
+            <View style={styles.imageViewerHeader}>
+              <TouchableOpacity onPress={() => setIsImageViewerVisible(false)}>
+                <Icon name="close" size={24} color="white" />
+              </TouchableOpacity>
+			<Text style={styles.imageViewerTitle}>
+            {DUMMY_IMAGES[currentImageIndex]?.title}
+          </Text>
+            </View>
+          )}
+        />
+      </Modal>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  galleryContainer: {
+    height: 200,
+    marginTop: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  galleryImage: {
+    width: width * 0.4, // Imágenes más pequeñas
+    height: '100%',
+    marginHorizontal: 5,
+    borderRadius: 10,
+  },
+  galleryImageTouchable: {
+    marginRight: 10,
+    borderRadius: 10,
+  },
+  imageViewerHeader: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+    right: 20, // Añade 'right' para que el título no se salga de la pantalla
+    flexDirection: 'column', // Permite que los elementos se organicen en una fila
+    zIndex: 100,
+    justifyContent: 'space-between' // Distribuye el botón de cierre y el título
+  },
+    imageViewerTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 0, // Permite que el texto ocupe el espacio restante
+    textAlign: 'center', // Centra el texto
+    zIndex: 0
+  },
   modalContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5'
@@ -692,7 +755,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: '#666'
-  }
+  },
 });
 
-export default ChatModal; 
+export default ChatModal;

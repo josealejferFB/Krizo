@@ -120,7 +120,7 @@ const KrizoWorkerChatScreen = ({ navigation, route }) => {
 
       console.log('📤 Datos del mensaje:', messageData);
 
-      const response = await fetch('${API_BASE_URL}/chat/messages', {
+      const response = await fetch(`${API_BASE_URL}/chat/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

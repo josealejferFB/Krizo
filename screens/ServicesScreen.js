@@ -53,7 +53,7 @@ const ServicesScreen = () => {
   const loadWorkers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_BASE_URL}/users/workers');
+      const response = await fetch(`${API_BASE_URL}/users/workers`);
       
       if (response.ok) {
         const result = await response.json();
@@ -70,7 +70,6 @@ const ServicesScreen = () => {
         }
       }
     } catch (error) {
-		  console.error('Error al cargar:', response.status);
       console.error('Error cargando trabajadores:', error);
     } finally {
       setLoading(false);

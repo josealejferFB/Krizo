@@ -23,7 +23,7 @@ export default function KrizoWorkerPaymentsScreen({ navigation }) {
       console.log('🔐 Token completo:', token);
       
       // Solo obtener pagos pendientes de verificación
-      const response = await fetch('${API_BASE_URL}/payments/worker?status=pending_verification', {
+      const response = await fetch(`${API_BASE_URL}/payments/worker?status=pending_verification`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

@@ -98,7 +98,7 @@ useEffect(() => {
   );
 
   return (
-    <Layout navigation={navigation}>
+    <View>
       {/* Fondo degradado como antes */}
       <LinearGradient
         colors={['#FC5501', '#C24100']}
@@ -182,12 +182,12 @@ useEffect(() => {
           </View>
 
           <View style={themedStyles.cardsRow}>
-            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('Services')}>
+            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('MechanicClient')}>
               <MaterialCommunityIcons name="tools" size={40} color="#FC5501" />
               <Text style={themedStyles.cardTitle}>Servicios Mecánicos</Text>
               <Text style={themedStyles.cardDesc}>Reparación, mantenimiento y más</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('Services')}>
+            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('CraneClient')}>
               <MaterialCommunityIcons name="tow-truck" size={40} color="#FC5501" />
               <Text style={themedStyles.cardTitle}>Solicitar Grúa</Text>
               <Text style={themedStyles.cardDesc}>Asistencia vial inmediata</Text>
@@ -195,7 +195,7 @@ useEffect(() => {
           </View>
 
           <View style={themedStyles.cardsRow}>
-            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('Services')}>
+            <TouchableOpacity style={themedStyles.serviceCard} onPress={() => navigation.navigate('ShopClient')}>
               <MaterialCommunityIcons name="car-cog" size={40} color="#FC5501" />
               <Text style={themedStyles.cardTitle}>Repuestos</Text>
               <Text style={themedStyles.cardDesc}>Pide repuestos originales</Text>
@@ -223,6 +223,6 @@ useEffect(() => {
           </View>
         </View>
       </ScrollView>
-    </Layout>
+    </View>
   );
 }

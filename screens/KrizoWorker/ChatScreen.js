@@ -69,7 +69,7 @@ const ChatScreen = () => {
         sender_type: 'worker'
       };
 
-      const response = await fetch('${API_BASE_URL}/chat/messages', {
+      const response = await fetch(`${API_BASE_URL}/chat/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

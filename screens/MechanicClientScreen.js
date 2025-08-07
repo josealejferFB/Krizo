@@ -41,7 +41,7 @@ const MechanicServiceRN = () => {
   const loadMechanics = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_BASE_URL}/users/workers');
+      const response = await fetch(`${API_BASE_URL}/users/workers`);
       
       if (response.ok) {
         const result = await response.json();
@@ -136,7 +136,7 @@ const MechanicServiceRN = () => {
         agreed_price: finalServiceDetails.agreedPrice
       };
 
-      const response = await fetch('${API_BASE_URL}/requests', {
+      const response = await fetch(`${API_BASE_URL}/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -210,7 +210,9 @@ const MechanicServiceRN = () => {
           <Icon style={{ marginLeft: 30 }} name="tools" size={24} color="white" />
         </View>
       </View>
+      
       <ScrollView contentContainerStyle={styles.mechanicsList}>
+      
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#FC5501" />

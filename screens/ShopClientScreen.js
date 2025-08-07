@@ -4,19 +4,36 @@ import { Text, Card, Searchbar, Switch, Button, Avatar, Chip } from 'react-nativ
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ChatModal from '../components/ChatModal';
+import { useAuth } from '../context/AuthContext';
 
 const ShopClientScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { user, token } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [shops, setShops] = useState([]);
+  const [filteredShops, setFilteredShops] = useState([]); // Nuevo estado para los filtrados
   const [loading, setLoading] = useState(true);
+  const [chatModalVisible, setChatModalVisible] = useState(false);
+  const [selectedShop, setSelectedShop] = useState(null);
+  const [serviceRequestModalVisible, setServiceRequestModalVisible] = useState(false);
+
+
   const API_BASE_URL =  process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 
   // Obtener trabajadores de la ruta o cargar desde API
-  useEffect(() => {
+ useEffect(() => {
+    // Si no hay un usuario, redirige a la pantalla de inicio de sesión
+    if (!user) {
+      // Puedes mostrar un mensaje y luego redirigir
+      Alert.alert('Sesión expirada', 'Por favor, inicia sesión de nuevo.', [
+        { text: 'OK', onPress: () => navigation.replace('Login') }
+      ]);
+      return;
+    }
+
     if (route.params?.workers) {
-      // Filtrar solo tiendas de repuestos
       const shopWorkers = route.params.workers.filter(
         worker => worker.services.includes('repuestos')
       );
@@ -25,17 +42,21 @@ const ShopClientScreen = () => {
     } else {
       loadShops();
     }
-  }, [route.params]);
+  }, [route.params, user]);
+
 
   const loadShops = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_BASE_URL}/users/workers');
-      
+      // Incluye el token de autenticación en la cabecera de la petición si es necesario
+      const response = await fetch(`${API_BASE_URL}/users/workers`, {
+        headers: {
+          'Authorization': `Bearer ${token}` // <--- Usa el token aquí
+        }
+      });
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          // Filtrar solo tiendas de repuestos
           const shopWorkers = result.data.filter(
             worker => worker.services.includes('repuestos')
           );
@@ -50,9 +71,33 @@ const ShopClientScreen = () => {
     }
   };
 
+useEffect(() => {
+  const lowerCaseSearchQuery = searchQuery.toLowerCase();
+  const newFilteredShops = shops.filter((shop) =>
+    (shop.name && shop.name.toLowerCase().includes(lowerCaseSearchQuery)) ||
+    (shop.descripcion && shop.descripcion.toLowerCase().includes(lowerCaseSearchQuery)) ||
+    (shop.ciudad && shop.ciudad.toLowerCase().includes(lowerCaseSearchQuery)) ||
+    (shop.services && Array.isArray(shop.services) &&
+     shop.services.some(service => service && service.toLowerCase().includes(lowerCaseSearchQuery)))
+  );
+  setFilteredShops(newFilteredShops); // ¡Actualiza el estado filtrado!
+
+  // Opcional: Actualizar el título de la navegación aquí
+  if (navigation) {
+    navigation.setOptions({
+      title: `Tiendas: ${newFilteredShops.length}`,
+    });
+  }
+
+}, [shops, searchQuery, navigation]);
+
   const onChangeSearch = (query) => setSearchQuery(query);
 
-  const handleContactShop = (shop) => {
+ const handleContactShop = (shop) => {
+    if (!user) {
+      Alert.alert('Error', 'Debes iniciar sesión para contactar a una tienda.');
+      return;
+    }
     Alert.alert(
       'Contactar Tienda',
       `¿Deseas contactar a ${shop.name}?`,
@@ -61,19 +106,29 @@ const ShopClientScreen = () => {
         { 
           text: 'Contactar', 
           onPress: () => {
-            // Aquí se implementaría la lógica para contactar
-            Alert.alert('Éxito', `Contactando a ${shop.name}`);
+            setSelectedShop(shop);
+            setChatModalVisible(true);
           }
         }
       ]
     );
   };
 
-  const filteredShops = shops.filter((shop) =>
-    shop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    shop.descripcion.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    shop.ciudad.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleRequestService = (shop) => {
+    setSelectedShop(shop);
+    setServiceRequestModalVisible(true);
+  };
+
+  const handleChatConfirm = (agreedPrice) => {
+    setChatModalVisible(false);
+    // Abrir modal de ubicación después del chat
+    setLocationModalVisible(true);
+    // Guardar el precio acordado
+    setServiceDetails(prev => ({
+      ...prev,
+      agreedPrice: agreedPrice
+    }));
+  };
 
   return (
     <LinearGradient
@@ -147,6 +202,16 @@ const ShopClientScreen = () => {
                 >
                   Contactar
                 </Button>
+                {/* ... */}
+                <ChatModal
+                  visible={chatModalVisible}
+                  onClose={() => setChatModalVisible(false)}
+                  mechanic={selectedShop}
+                  onConfirmService={handleChatConfirm}
+                  userType="client"
+                  // Podría pasa el ID del usuario aquí si el modal lo necesita
+                  // currentUserId={user.id}
+                />
               </Card>
             ))}
           </View>
@@ -355,7 +420,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   nameAndFeatured: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     marginBottom: 5,
   },

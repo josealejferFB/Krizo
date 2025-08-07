@@ -151,7 +151,7 @@ export default function EnhancedPaymentScreen({ route, navigation }) {
         type: 'image/jpeg',
       });
 
-      const response = await fetch('${API_BASE_URL}/payments/upload-screenshot', {
+      const response = await fetch(`${API_BASE_URL}/payments/upload-screenshot`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -252,9 +252,9 @@ export default function EnhancedPaymentScreen({ route, navigation }) {
       };
 
       console.log('🔧 Enviando pago con datos:', paymentData);
-      console.log('🔧 URL:', '${API_BASE_URL}/payments/submit');
+      console.log('🔧 URL:', `${API_BASE_URL}/payments/submit`);
 
-      const response = await fetch('${API_BASE_URL}/payments/submit', {
+      const response = await fetch(`${API_BASE_URL}/payments/submit`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

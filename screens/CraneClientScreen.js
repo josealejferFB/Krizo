@@ -29,7 +29,7 @@ const CraneClientScreen = () => {
   const loadCranes = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_BASE_URL}/users/workers');
+      const response = await fetch(`${API_BASE_URL}/users/workers`);
       
       if (response.ok) {
         const result = await response.json();
