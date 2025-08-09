@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Linking from 'expo-linking';
 import LocationRequestModal from './LocationRequestModal';
-import ChatModal from '../components/ChatModal';
+import ChatModal from './ChatModal';
 import ServiceRequestModal from '../components/ServiceRequestModal';
 import { useAuth } from '../context/AuthContext';
 

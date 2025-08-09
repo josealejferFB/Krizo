@@ -4,7 +4,7 @@ import { Text, Card, Searchbar, Switch, Button, Avatar, Chip } from 'react-nativ
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ChatModal from '../components/ChatModal';
+import ChatModal from './ChatModal';
 import { useAuth } from '../context/AuthContext';
 
 const ShopClientScreen = () => {

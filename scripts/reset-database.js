@@ -167,7 +167,7 @@ const resetDatabase = () => {
                         telefono: '3000000010',
                         password: '123456',
                         tipo: 'krizoworker',
-                        services: '["mecanica", "grua"]', // Servicios de mecánico
+                        services: '["mecanico", "grua"]', // Servicios de mecánico
                         ciudad: 'San Juan de Los Morros',
                         zona: 'La Florida',
                         descripcion: 'Especialista en mecánica automotriz, frenos, y reparación de motor. Servicios a domicilio disponibles.',
