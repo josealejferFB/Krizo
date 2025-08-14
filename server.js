@@ -15,6 +15,8 @@ const notificationRoutes = require('./routes/notifications');
 const serviceRequestRoutes = require('./routes/requests');
 const quoteRoutes = require('./routes/quotes');
 const paymentRoutes = require('./routes/payments');
+const productsRouter = require('./routes/products');
+
 
 // Comentar rutas del sistema anterior
 // const serviceRoutes = require('./routes/services');
@@ -84,6 +86,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/service-requests', serviceRequestRoutes);
 app.use('/api/quotes', quoteRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/products', productsRouter);
+
 
 // Comentar rutas del sistema anterior
 // app.use('/api/services', serviceRoutes);
@@ -103,7 +107,9 @@ app.get('/', (req, res) => {
       users: '/api/users',
       requests: '/api/requests',
       serviceRequests: '/api/service-requests',
-      quotes: '/api/quotes'
+      quotes: '/api/quotes',
+      products: '/api/products'
+
     }
   });
 });

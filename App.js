@@ -36,6 +36,7 @@ import ChatScreen from './screens/KrizoWorker/ChatScreen';
 import MechanicConfigScreen from './screens/KrizoWorker/MechanicConfigScreen';
 import CraneConfigScreen from './screens/KrizoWorker/CraneConfigScreen';
 import ShopConfigScreen from './screens/KrizoWorker/ShopConfigScreen';
+import ProductListScreen from './screens/KrizoWorker/ProductListScreen';
 import KrizoWorkerChatListScreen from './screens/KrizoWorker/KrizoWorkerChatListScreen';
 import KrizoWorkerChatScreen from './screens/KrizoWorker/KrizoWorkerChatScreen';
 import KrizoWorkerPaymentsReceivedScreen from './screens/KrizoWorker/KrizoWorkerPaymentsReceivedScreen';
@@ -160,8 +161,13 @@ function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="ShopConfig"
+              name="KrizoWorkerShopConfig"
               component={ShopConfigScreen}
+              options={{ headerShown: false }}
+            />
+                        <Stack.Screen
+              name="KrizoWorkerProductList"
+              component={ProductListScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen

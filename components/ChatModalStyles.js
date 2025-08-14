@@ -22,7 +22,6 @@ export const styles = StyleSheet.create({
   },
 	categoryBar: {
     paddingHorizontal: 15,
-    paddingVertical: 10,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
@@ -30,9 +29,12 @@ export const styles = StyleSheet.create({
   categoryButton: {
     paddingHorizontal: 15,
     paddingVertical: 8,
+    marginVertical: 8,
+
     borderRadius: 20,
     backgroundColor: '#f0f0f0',
     marginRight: 10,
+    alignItems: 'center',
   },
   categoryButtonActive: {
     backgroundColor: '#FC5501',
@@ -44,6 +46,8 @@ export const styles = StyleSheet.create({
   categoryButtonTextActive: {
     color: 'white',
     fontWeight: 'bold',
+    alignItems: 'center',
+
   },
   actionButtonsContainer: {
     flexDirection: 'row',
@@ -95,13 +99,12 @@ export const styles = StyleSheet.create({
     color: '#555',
   },
   galleryContainer: {
-    height: 200,
-    marginTop: 20,
+    height: 220,
     backgroundColor: '#f5f5f5',
   },
   galleryImage: {
     width: width * 0.4, // Imágenes más pequeñas
-    height: '75%',
+    height: '60%',
     marginHorizontal: 5,
     borderRadius: 10,
   },
@@ -142,7 +145,8 @@ export const styles = StyleSheet.create({
   workerName: {
     color: 'white',
     fontSize: 18,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+width: 150,
   },
   workerStatus: {
     color: 'rgba(255,255,255,0.8)',
@@ -316,5 +320,11 @@ export const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     color: '#666'
+  },
+  productTitleText: {
+  textAlign: 'center' 
+  },
+  productPriceText: {
+  textAlign: 'center' 
   },
 });

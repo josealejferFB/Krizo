@@ -1,80 +1,119 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
-import { Appbar, Text, TextInput, Button } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, Linking, Platform } from 'react-native';
+import { Appbar, Text, TextInput, Button } from 'react-native-paper'; // Asegúrate de importar Picker
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-// If you're using Expo, you would typically import ImagePicker like this:
-// import * as ImagePicker from 'expo-image-picker';
-// If not using Expo, you'd use a different library like react-native-image-picker
-// For this example, we'll just simulate the image pick.
+import { useAuth } from '../../context/AuthContext';
+import * as ImagePicker from 'expo-image-picker';
 
 const ShopConfigScreen = () => {
   const navigation = useNavigation();
+  const { token } = useAuth();
+  const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+  const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL || 'http://192.168.1.14:5000/api';
 
   const [productName, setProductName] = useState('');
   const [productBrand, setProductBrand] = useState('');
   const [productQuantity, setProductQuantity] = useState('');
   const [productPrice, setProductPrice] = useState('');
-  const [productImageUri, setProductImageUri] = useState(null); // State to store image URI
+  const [productImageUri, setProductImageUri] = useState(null);
+  const [productCategory, setProductCategory] = useState(''); // Estado para la categoría
 
-  // Function to handle picking an image (simulated for now)
+  // Definir las categorías
+  const categories = [
+    { label: 'Selecciona una categoría', value: '' },
+    { label: 'Motores', value: 'motores' },
+    { label: 'Pastillas', value: 'pastillas' },
+    { label: 'Baterías', value: 'baterias' },
+    { label: 'Aceites', value: 'aceites' },
+    { label: 'Filtros', value: 'filtros' },
+    // Agrega más categorías según sea necesario
+  ];
+
   const pickImage = async () => {
-    // In a real app with expo-image-picker:
-    /*
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProductImageUri(result.assets[0].uri);
+    try {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            'Permisos requeridos',
+            'Por favor otorga permisos para acceder a tu galería',
+            [
+              { text: 'Cancelar', style: 'cancel' },
+              { text: 'Abrir configuración', onPress: () => Linking.openSettings() }
+            ]
+          );
+          return;
+        }
+      }
+      
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        aspect: [4, 3],
+        quality: 0.8,
+      });
+      if (!result.canceled) {
+        setProductImageUri(result.assets[0].uri);
+        Alert.alert('Imagen seleccionada', 'La imagen se ha cargado correctamente');
+      }
+    } catch (error) {
+      console.error('Error al seleccionar imagen:', error);
+      Alert.alert('Error', 'No se pudo seleccionar la imagen');
     }
-    */
-    Alert.alert(
-      "Subir Imagen",
-      "Esto simularía la apertura de la galería/cámara. Selecciona una imagen de prueba.",
-      [
-        {
-          text: "Seleccionar Imagen",
-          onPress: () => setProductImageUri('https://via.placeholder.com/150/0000FF/FFFFFF?text=Tu+Producto'),
-        },
-        { text: "Cancelar", style: "cancel" }
-      ]
-    );
   };
 
-  const handleSaveChanges = () => {
-    if (!productName || !productBrand || !productQuantity || !productPrice || !productImageUri) {
+  const handleSaveChanges = async () => {
+    if (!productName || !productBrand || !productQuantity || !productPrice || !productImageUri || !productCategory) {
       Alert.alert('Campos Incompletos', 'Por favor, rellena todos los campos y selecciona una imagen.');
       return;
     }
 
-    // Here you would typically send this data to your backend API
-    const newProduct = {
-      name: productName,
-      brand: productBrand,
-      quantity: parseInt(productQuantity), // Convert to number
-      price: parseFloat(productPrice), // Convert to number
-      imageUri: productImageUri,
-      // You might also add a unique ID, timestamp, etc.
-    };
+    const formData = new FormData();
+    formData.append('name', productName);
+    formData.append('brand', productBrand);
+    formData.append('quantity', parseInt(productQuantity));
+    formData.append('price', parseFloat(productPrice));
+    formData.append('category', productCategory); // Agregar la categoría al FormData
 
-    console.log('Guardando nuevo producto:', newProduct);
-    Alert.alert('Producto Añadido', 'El producto ha sido guardado exitosamente.');
+    // Agregar la imagen como archivo
+    formData.append('image', {
+      uri: productImageUri,
+      name: `product_${Date.now()}.jpg`, // Nombre único
+      type: 'image/jpeg'
+    });
 
-    // Optionally, reset form fields after saving
-    setProductName('');
-    setProductBrand('');
-    setProductQuantity('');
-    setProductPrice('');
-    setProductImageUri(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/products`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`        
+        },
+      });
 
-    // You might also nigate back or to a product list screen
-    // navigation.goBack();
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Producto Añadido', 'El producto ha sido guardado exitosamente.');
+        // Reiniciar campos después de guardar
+        setProductName('');
+        setProductBrand('');
+        setProductQuantity('');
+        setProductPrice('');
+        setProductCategory(''); // Reiniciar categoría
+        setProductImageUri(null);
+      } else {
+        Alert.alert('Error', data.message || 'Error al guardar el producto.');
+      }
+    } catch (error) {
+      console.error('Error al registrar el producto:', error);
+      Alert.alert('Error', 'Error al registrar el producto.');
+    }
   };
 
   return (
@@ -85,17 +124,17 @@ const ShopConfigScreen = () => {
       <View style={styles.headerOrangeContainer}>
         <View style={styles.headerRow}>
           <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.7}
-              >
-                <Icon
-                  name="arrow-left-bold-circle"
-                  size={38}
-                  color="#FC5501"
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Icon
+              name="arrow-left-bold-circle"
+              size={38}
+              color="#FC5501"
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
 
           <View style={styles.appBarTitleContent}>
             <Text style={styles.appBarTitle}>Añadir producto</Text>
@@ -150,6 +189,17 @@ const ShopConfigScreen = () => {
           theme={{ colors: { text: '#333', primary: '#FC5501', placeholder: '#666' } }}
         />
 
+        {/* Selector de categoría */}
+        <Picker
+  selectedValue={productCategory}
+  onValueChange={(itemValue) => setProductCategory(itemValue)}
+  style={styles.picker}
+>
+  {categories.map((cat) => (
+    <Picker.Item key={cat.value} label={cat.label} value={cat.value} />
+  ))}
+</Picker>
+
         <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
           <Icon name="camera-plus" size={24} color="#FC5501" />
           <Text style={styles.imagePickerButtonText}>
@@ -191,7 +241,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    justifyContent: 'center', // Center title
+    justifyContent: 'center',
   },
   backButton: {
     backgroundColor: '#fff',
@@ -213,7 +263,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    // Adjust margin to counteract back button and center title
   },
   appBarTitle: {
     color: 'white',
@@ -224,30 +273,34 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 20,
     paddingBottom: 20,
-    // alignItems: 'center', // Removed as inputs should be left-aligned by default now
   },
   textInput: {
     width: '100%',
     marginBottom: 15,
-    backgroundColor: 'white', // Ensure white background for inputs
+    backgroundColor: 'white',
+  },
+  picker: {
+    width: '100%',
+    marginBottom: 15,
+    backgroundColor: 'white',
   },
   imagePickerButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f0f0f0', // Light gray background
+    backgroundColor: '#f0f0f0',
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 20,
     marginTop: 5,
-    marginBottom: 20, // Space before save button
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ccc',
     width: '100%',
   },
   imagePickerButtonText: {
     fontSize: 16,
-    color: '#FC5501', // Orange text
+    color: '#FC5501',
     marginLeft: 10,
     fontWeight: 'bold',
   },
@@ -256,8 +309,8 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 8,
     resizeMode: 'cover',
-    marginBottom: 20, // Space between image preview and button
-    alignSelf: 'center', // Center the image preview
+    marginBottom: 20,
+    alignSelf: 'center',
   },
   saveChangesButton: {
     backgroundColor: '#FC5501',

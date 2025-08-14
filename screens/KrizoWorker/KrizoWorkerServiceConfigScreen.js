@@ -57,6 +57,22 @@ export default function KrizoWorkerServiceConfigScreen({ navigation }) {
             </View>
             <MaterialCommunityIcons name="chevron-right" size={28} color="#FC5501" />
           </TouchableOpacity>
+          
+          {/* Botón para Métodos de Pago */}
+          <TouchableOpacity 
+            style={styles.profileRow}
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('KrizoWorkerProductList')}
+          >
+            <View style={styles.iconCircle}>
+              <MaterialCommunityIcons name="store" size={28} color="#FC5501" />
+            </View>
+            <View style={styles.profileTextBox}>
+              <Text style={styles.profileText}>Tienda de Repuestos</Text>
+              <Text style={styles.profileSubText}>Configura los repuestos y sus precios</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={28} color="#FC5501" />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ThemedBackgroundGradient>

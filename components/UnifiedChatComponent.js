@@ -12,22 +12,16 @@ import {
   Modal,
   Image,
   FlatList,
-  Linking
+  Linking,
+  ActivityIndicator
 } from 'react-native';
 import { Button, Card, Avatar } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { useAuth } from '../context/AuthContext';
 import { styles } from './ChatModalStyles'; // Asegúrate de que este archivo exista y contenga los estilos
-
-const DUMMY_IMAGES = [
-  { id: '1', image: require('../assets/card_image_1.png'), title: 'Redes Sociales', category: 'Promociones', stock: 5 },
-  { id: '2', image: require('../assets/card_image_2.png'), title: 'Trabaja con Nosotros', category: 'Empresa', stock: 10 },
-  { id: '3', image: require('../assets/card_image_3.png'), title: 'Tienda de Repuestos', category: 'Productos', stock: 1 },
-  { id: '4', image: require('../assets/card_image_4.png'), title: 'Asistencia Vial Profesional', category: 'Servicios', stock: 0 },
-];
-
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
+const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL || 'http://192.168.1.14:5000/';
 
 const UnifiedChatComponent = ({
   sessionId,
@@ -45,26 +39,29 @@ const UnifiedChatComponent = ({
   const [isLoading, setIsLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const scrollViewRef = useRef();
-
   const [showGallery, setShowGallery] = useState(false);
   const [showPayPal, setShowPayPal] = useState(false);
   const [showBinance, setShowBinance] = useState(false);
   const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [currentImageTitle, setCurrentImageTitle] = useState('');
-  const imagesWithStock = DUMMY_IMAGES.filter(img => img.stock > 0);
-  const categories = ['Todas', ...new Set(imagesWithStock.map(img => img.category))];
-  
+  const [products, setProducts] = useState([]); // Estado para almacenar los productos
+    const [loadingProducts, setLoadingProducts] = useState(false);
+      const [productsError, setProductsError] = useState(null);
+  const imagesWithStock = products.filter(product => product.stock > 0);
+  const categories = ['Todas', ...new Set(imagesWithStock.map(product => product.category))];
   const [selectedCategory, setSelectedCategory] = useState('Todas');
-     const [selectedImageInfo, setSelectedImageInfo] = useState({ title: '', image: null }); 
-  const finalFilteredImages = selectedCategory === 'Todas'
-    ? imagesWithStock
-    : imagesWithStock.filter(img => img.category === selectedCategory);
+  const [selectedImageInfo, setSelectedImageInfo] = useState({ title: '', image: null });
 
-  const imagesForViewer = finalFilteredImages.map(img => ({
-    url: '',
-    props: { source: img.image }
+const filteredProducts = selectedCategory === 'Todas' 
+  ? products 
+  : products.filter(product => product.category === selectedCategory);
+
+  const imagesForViewer = filteredProducts.map(img => ({
+    url: `${SERVER_URL}${img.imageUri}`, // Asegúrate de que tu API devuelva la URL de la imagen
+    props: { source: { uri: `${SERVER_URL}${img.imageUri}` } } // Cambia esto si la imagen está en un formato diferente
   }));
+
 
   useEffect(() => {
     let intervalId;
@@ -108,6 +105,33 @@ const UnifiedChatComponent = ({
     };
   }, [sessionId, token]);
 
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      setLoadingProducts(true);
+      const response = await fetch(`${API_BASE_URL}/products`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setProducts(result.data || []);
+        }
+      } else {
+        throw new Error('No se pudieron cargar los productos');
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setProductsError(error.message);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  fetchProducts();
+}, [token]);
+
   const sendMessage = async () => {
     if (!newMessage.trim() || sending || !sessionId) return;
     try {
@@ -147,19 +171,38 @@ const UnifiedChatComponent = ({
       </View>
     );
   };
+
+const renderImageThumbnail = ({ item, index }) => {
+  const isAvailable = item.quantity > 0;
   
-  const renderImageThumbnail = ({ item, index }) => (
+  return (
     <TouchableOpacity
       style={styles.galleryImageTouchable}
       onPress={() => {
         setCurrentImageIndex(index);
+        setCurrentImageTitle(item.name);
         setIsImageViewerVisible(true);
-		setCurrentImageTitle(item.title);
       }}
+      disabled={!isAvailable}
     >
-      <Image source={item.image} style={styles.galleryImage} resizeMode="cover" />
+      <Image 
+        source={{ uri: `${SERVER_URL}${item.imageUri}` }} 
+        style={[
+          styles.galleryImage, 
+          !isAvailable && styles.outOfStockImage
+        ]} 
+        resizeMode="cover" 
+      />
+      {!isAvailable && (
+        <View style={styles.outOfStockOverlay}>
+          <Text style={styles.outOfStockText}>Agotado</Text>
+        </View>
+      )}
+      <Text style={styles.productTitleText}>{item.name}</Text>
+      <Text style={styles.productPriceText}>${item.price}</Text>
     </TouchableOpacity>
   );
+};
 
   return (
     <KeyboardAvoidingView
@@ -188,22 +231,85 @@ const UnifiedChatComponent = ({
         </View>
       )}
 
-      {showWorkerFeatures && showGallery && (
-        <View style={styles.galleryContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryBar}>
-            {categories.map((category) => (
-              <TouchableOpacity key={category} style={[styles.categoryButton, selectedCategory === category && styles.categoryButtonActive]} 
-              onPress={() => setSelectedCategory(category)}>
-                <Text style={[styles.categoryButtonText, selectedCategory === category && styles.categoryButtonTextActive]}>{category}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <FlatList data={finalFilteredImages}
-          keyExtractor={(item, index) => String(index)}  
-          horizontal showsHorizontalScrollIndicator={false} 
-          renderItem={renderImageThumbnail} />
-        </View>
-      )}
+{showWorkerFeatures && showGallery && (
+  <View style={styles.galleryContainer}>
+    {loadingProducts ? (
+      <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FC5501" />
+      </View>
+    ) : productsError ? (
+      <View style={styles.errorContainer}>
+        <Icon name="alert-circle" size={24} color="#FF0000" />
+        <Text style={styles.errorText}>{productsError}</Text>
+      </View>
+    ) : (
+      <>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.categoryBar}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity 
+              key={category} 
+              style={[
+                styles.categoryButton, 
+                selectedCategory === category && styles.categoryButtonActive
+              ]} 
+              onPress={() => setSelectedCategory(category)}
+            >
+              <Text style={[
+                styles.categoryButtonText, 
+                selectedCategory === category && styles.categoryButtonTextActive
+              ]}>
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <FlatList 
+          data={filteredProducts}
+          keyExtractor={(item) => item.id.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={renderImageThumbnail}
+          ListEmptyComponent={
+            <View style={styles.emptyProductContainer}>
+              <Text>No hay productos disponibles</Text>
+            </View>
+          }
+        />
+      </>
+    )}
+  </View>
+)}
+
+<Modal visible={isImageViewerVisible} transparent onRequestClose={() => setIsImageViewerVisible(false)}>
+  <ImageViewer 
+    imageUrls={filteredProducts.map(p => ({ url: p.imageUri }))}
+    index={currentImageIndex}
+    onSwipeDown={() => setIsImageViewerVisible(false)}
+    enableSwipeDown
+    enableImageZoom={true}
+    renderHeader={() => (
+      <View style={styles.imageViewerHeader}>
+        <Text style={styles.imageViewerTitle}>
+          {filteredProducts[currentImageIndex]?.name}
+        </Text>
+                <Text style={styles.imageViewerTitle}>
+          {filteredProducts[currentImageIndex]?.imageUri}
+        </Text>
+        <TouchableOpacity 
+          style={styles.closeButton} 
+          onPress={() => setIsImageViewerVisible(false)}
+        >
+          <Icon name="close" size={28} color="white" />
+        </TouchableOpacity>
+      </View>
+    )}
+  />
+</Modal>
 
       {showWorkerFeatures && showPayPal && (
         <View style={styles.paymentContainer}>
@@ -264,25 +370,28 @@ const UnifiedChatComponent = ({
         </TouchableOpacity>
       </View>
 
-      <Modal visible={isImageViewerVisible} transparent onRequestClose={() => setIsImageViewerVisible(false)}>
+<Modal visible={isImageViewerVisible} transparent onRequestClose={() => setIsImageViewerVisible(false)}>
   <ImageViewer 
-    imageUrls={imagesForViewer} 
-    index={currentImageIndex} 
-    onSwipeDown={() => setIsImageViewerVisible(false)} 
+    imageUrls={filteredProducts.map(p => ({ url: `${SERVER_URL}${p.imageUri}` }))} // Asegúrate de que la URL esté bien formada
+    index={currentImageIndex}
+    onSwipeDown={() => setIsImageViewerVisible(false)}
     enableSwipeDown
-    onChange={(index) => setCurrentImageIndex(index)}
     renderHeader={() => (
       <View style={styles.imageViewerHeader}>
-        <TouchableOpacity style={styles.closeButton} onPress={() => setIsImageViewerVisible(false)}>
-          <Icon name="close" size={24} color="white" />
-        </TouchableOpacity>
         <Text style={styles.imageViewerTitle}>
-          {finalFilteredImages[currentImageIndex]?.title}
+          {filteredProducts[currentImageIndex]?.name}
         </Text>
-      </View> 
+        <TouchableOpacity 
+          style={styles.closeButton} 
+          onPress={() => setIsImageViewerVisible(false)}
+        >
+          <Icon name="close" size={28} color="white" />
+        </TouchableOpacity>
+      </View>
     )}
   />
 </Modal>
+
     </KeyboardAvoidingView>
   );
 };
