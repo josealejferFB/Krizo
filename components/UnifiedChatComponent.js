@@ -20,7 +20,7 @@ import { Button, Card, Avatar } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import { useAuth } from '../context/AuthContext'
-import { styles } from './ChatModalStyles' // Asegúrate de que este archivo exista y contenga los estilos
+import { styles } from './ChatModalStyles'
 
 const API_BASE_URL =
   process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api'
@@ -129,7 +129,7 @@ const UnifiedChatComponent = ({
                 productDetails: msg.product_details
                   ? JSON.parse(msg.product_details)
                   : null,
-                purchaseStatus: msg.purchase_status,
+                purchaseStatus: msg.purchase_status !== null ? msg.purchase_status : 'pending',
               }))
               setMessages(transformedMessages)
               if (transformedMessages.length > 0) {
@@ -193,10 +193,10 @@ const UnifiedChatComponent = ({
     setIsBuying(true);
     const messageData = {
       session_id: sessionId,
-      message: `¡Quiero comprar ${quantity} unidad(es) de ${product.name} por $${product.price * quantity}!`, // Mensaje actualizado
+      message: `¡Quiero comprar ${quantity} unidad(es) de ${product.name} por $${product.price * quantity}!`, 
       sender_type: userType,
       purchase_request: true,
-      product_details: JSON.stringify({ ...product, quantity }), // Añade la cantidad a los detalles
+      product_details: JSON.stringify({ ...product, quantity }), 
     };
 
     const response = await fetch(`${API_BASE_URL}/chat/messages`, {
@@ -224,7 +224,6 @@ const UnifiedChatComponent = ({
 };
 
   const handlePurchaseAction = async (messageId, productId, action) => {
-    // action can be 'accept' or 'reject'
     try {
       const response = await fetch(`${API_BASE_URL}/chat/purchase/${messageId}`, {
         method: 'POST',
@@ -236,18 +235,15 @@ const UnifiedChatComponent = ({
       })
 
       if (response.ok) {
-        // Refresh messages to see the updated status
-        // You might want to optimize this later
-        // and just update the message status in the state
         const updatedMessages = messages.map((msg) =>
           msg.id === messageId
-            ? { ...msg, purchaseStatus: action, text: `Solicitud de compra ${action === 'accept' ? 'aceptada' : 'rechazada'}.` }
+            ? { ...msg, purchaseStatus: action, text: `Solicitud de compra ${action === 'accepted' ? 'aceptada' : 'rechazada'}.` }
             : msg
         )
         setMessages(updatedMessages)
         Alert.alert(
           'Éxito',
-          `Solicitud de compra ${action === 'accept' ? 'aceptada' : 'rechazada'}.`
+          `Solicitud de compra ${action === 'accepted' ? 'aceptada' : 'rechazada'}.`
         )
       } else {
         throw new Error('No se pudo actualizar el estado de la compra.')
@@ -261,8 +257,8 @@ const UnifiedChatComponent = ({
   const renderPurchaseCard = (message) => {
     const { productDetails, purchaseStatus } = message
     const isKrizoWorker = userType === 'krizoworker'
-    const isAccepted = purchaseStatus === 'accept'
-    const isRejected = purchaseStatus === 'reject'
+    const isAccepted = purchaseStatus === 'accepted'
+    const isRejected = purchaseStatus === 'rejected'
 
     return (
       <View
@@ -298,14 +294,14 @@ const UnifiedChatComponent = ({
               ) : (
                 <>
                   <Button
-                    onPress={() => handlePurchaseAction(message.id, productDetails.id, 'accept')}
+                    onPress={() => handlePurchaseAction(message.id, productDetails.id, 'accepted')}
                     mode="contained"
                     style={styles.acceptButton}
                   >
                     Aceptar
                   </Button>
                   <Button
-                    onPress={() => handlePurchaseAction(message.id, productDetails.id, 'reject')}
+                    onPress={() => handlePurchaseAction(message.id, productDetails.id, 'rejected')}
                     mode="outlined"
                     style={styles.rejectButton}
                   >
@@ -315,9 +311,9 @@ const UnifiedChatComponent = ({
               )
             ) : (
               <Text style={styles.purchaseStatusText}>
-                Estado: {purchaseStatus === 'accept'
+                Estado: {purchaseStatus === 'accepted'
                   ? 'Aceptado ✅'
-                  : purchaseStatus === 'reject'
+                  : purchaseStatus === 'rejected'
                     ? 'Rechazado ❌'
                     : 'Pendiente... ⏳'}
               </Text>

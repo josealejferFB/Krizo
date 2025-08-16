@@ -321,6 +321,45 @@ router.put('/messages/:sessionId/read', authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/purchase/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { action } = req.body;
+
+  // No necesitas product_id aquí, ya que no existe en la tabla de mensajes
+
+  if (!['accepted', 'rejected'].includes(action)) {
+    return res.status(400).json({ success: false, message: 'Acción no válida.' });
+  }
+
+  try {
+    // ⚠️ Consulta SQL corregida para usar solo la id del mensaje
+    const updateSQL = `
+      UPDATE messages 
+      SET purchase_status = ?, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ?
+    `;
+
+    const result = await new Promise((resolve, reject) => {
+      db.run(updateSQL, [action, id], function(err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(this.changes);
+        }
+      });
+    });
+
+    if (result > 0) {
+      return res.status(200).json({ success: true, message: 'Solicitud procesada correctamente.' });
+    } else {
+      return res.status(404).json({ success: false, message: 'Solicitud no encontrada.' });
+    }
+  } catch (error) {
+    console.error('Error al procesar la solicitud:', error);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  }
+});
+
 // Función para enviar notificación push
 async function sendPushNotification(sessionId, senderType, message) {
   try {
@@ -328,14 +367,11 @@ async function sendPushNotification(sessionId, senderType, message) {
     const session = await getChatSession(sessionId);
     if (!session) return;
 
-    // Determinar el destinatario
     const recipientId = senderType === 'client' ? session.worker_id : session.client_id;
     
-    // Obtener token de notificación del destinatario
     const recipient = await getUserById(recipientId);
     if (!recipient || !recipient.push_token) return;
 
-    // Enviar notificación push
     const notificationData = {
       to: recipient.push_token,
       title: senderType === 'client' ? 'Nuevo mensaje del cliente' : 'Nuevo mensaje del trabajador',
@@ -346,8 +382,6 @@ async function sendPushNotification(sessionId, senderType, message) {
       }
     };
 
-    // Aquí implementarías el envío real de notificación push
-    // Por ahora solo log
     console.log('📱 Notificación push enviada:', notificationData);
 
   } catch (error) {
