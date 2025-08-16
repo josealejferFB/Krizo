@@ -100,16 +100,27 @@ const KrizoWorkerChatListScreen = ({ navigation }) => {
         clientInfo: {
           firstName: item.client_firstName,
           lastName: item.client_lastName,
-          id: item.client_id
+          id: item.client_id,
+                  imageUrl: item.client_image_url
         }
       })}
     >
       <View style={styles.chatHeader}>
-        <Avatar.Text 
-          size={50} 
+      {item.client_image_url ? (
+        // ⚠️ Usamos Avatar.Image si hay una URL de imagen ⚠️
+        <Avatar.Image
+          size={50}
+          source={{ uri: item.client_image_url }}
+          style={styles.avatar}
+        />
+      ) : (
+        // De lo contrario, mantenemos el Avatar.Text con las iniciales
+        <Avatar.Text
+          size={50}
           label={`${item.client_firstName?.charAt(0) || 'C'}${item.client_lastName?.charAt(0) || ''}`}
           style={styles.avatar}
         />
+      )}
         <View style={styles.chatInfo}>
           <Text style={styles.clientName}>
             {item.client_firstName} {item.client_lastName}

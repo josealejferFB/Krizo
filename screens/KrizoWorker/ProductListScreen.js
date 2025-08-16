@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { Text, Card, Searchbar, Button, Chip } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -45,6 +45,12 @@ const ProductsManagementScreen = () => {
     
   };
 
+    const refreshProducts = useCallback(() => {
+        console.log('🔄 Refrescando la lista de productos...');
+        loadProducts();
+    }, []);
+
+
   useEffect(() => {
     const lowerCaseSearchQuery = searchQuery.toLowerCase();
     const newFilteredProducts = products.filter(product =>
@@ -58,7 +64,50 @@ const ProductsManagementScreen = () => {
   const onChangeSearch = (query) => setSearchQuery(query);
 
   const handleEditProduct = (product) => {
-    navigation.navigate('KrizoWorkerProductList', { product });
+	navigation.navigate('KrizoWorkerShopConfig', { productToEdit: product, onProductUpdated: refreshProducts })  
+	};
+  
+    const handleDeleteProduct = (productId) => {
+    Alert.alert(
+      "Confirmar Eliminación",
+      "¿Estás seguro de que quieres eliminar este producto?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        { 
+          text: "Eliminar", 
+          style: "destructive", 
+          onPress: async () => {
+            try {
+              setLoading(true);
+              const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+
+              const result = await response.json();
+
+              if (response.ok) {
+                Alert.alert('Éxito', 'Producto eliminado correctamente.');
+                refreshProducts(); // Refresca la lista de productos
+              } else {
+                Alert.alert('Error', result.message || 'Error al eliminar el producto.');
+              }
+            } catch (error) {
+              console.error('Error al eliminar el producto:', error);
+              Alert.alert('Error', 'No se pudo conectar con el servidor.');
+            } finally {
+              setLoading(false);
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
   };
   
 const FloatingButton = () => {
@@ -66,7 +115,7 @@ const FloatingButton = () => {
     <TouchableOpacity 
       style={styles.floatingButton}
       activeOpacity={0.8}
-      onPress={() => navigation.navigate('KrizoWorkerShopConfig')}
+      onPress={() => handleEditProduct()}
     >
       <MaterialCommunityIcons name="plus" size={28} color="white" />
     </TouchableOpacity>
@@ -116,6 +165,12 @@ const FloatingButton = () => {
           <View style={styles.productsGrid}>
             {filteredProducts.map((product) => (
               <Card key={product.id} style={styles.productCard}>
+              <TouchableOpacity 
+                  style={styles.deleteButton}
+                  onPress={() => handleDeleteProduct(product.id)}
+                >
+                  <MaterialCommunityIcons name="delete-circle" size={30} color="#ff3b30" />
+                </TouchableOpacity>
                 <View style={styles.productCardContent}>
                   <Text style={styles.productName}>{product.name}</Text>
                   <Text style={styles.productBrand}>{product.brand}</Text>
@@ -126,9 +181,9 @@ const FloatingButton = () => {
 				
                 </View>
                 <Card.Actions>
-<Button
+				<Button
                   mode="contained"
-                  onPress={() => handleEditProduct()}
+					onPress={() => handleEditProduct()}
                   style={styles.buyButton}
                   labelStyle={styles.buyButtonLabel}
                 >

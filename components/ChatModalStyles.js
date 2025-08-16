@@ -1,6 +1,8 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 
 const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
+
 
 export const styles = StyleSheet.create({
 	imageViewerHeader: {
@@ -12,11 +14,25 @@ export const styles = StyleSheet.create({
     zIndex: 100,
     justifyContent: 'space-between'
   },
+  imageViewerFooter: {
+  position: 'relative', // Asegúrate de que la posición sea correcta
+  left: width * 0.39,
+  height: height * 0.2, // Dale una altura fija
+  backgroundColor: 'rgba(0, 0, 0, 0.5)', // Color de fondo para que sea visible
+  },
     imageViewerTitle: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
-    flex: 0, // Permite que el texto ocupe el espacio restante
+    flex: 1, // Permite que el texto ocupe el espacio restante
+    textAlign: 'center',
+    zIndex: 0,
+  },
+    imageViewerPrice: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1, // Permite que el texto ocupe el espacio restante
     textAlign: 'center',
     zIndex: 0
   },
@@ -56,7 +72,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     backgroundColor: '#f9f9f9',
-
+	
   },
   actionButton: {
     alignItems: 'center',
@@ -97,6 +113,19 @@ export const styles = StyleSheet.create({
   paymentText: {
     fontSize: 16,
     color: '#555',
+  },
+  shadowBox: {
+          // Sombra para iOS
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  // Sombra para Android
+    elevation: 5,
+    zIndex: 999,
   },
   galleryContainer: {
     height: 220,
@@ -327,4 +356,85 @@ width: 150,
   productPriceText: {
   textAlign: 'center' 
   },
+  buyButton: {
+  position: 'relative',
+  backgroundColor: '#FC5501',
+  padding: 4,
+  borderRadius: 20,
+  alignItems: 'center',
+  marginVertical: 10,
+  marginRight: 8,
+  },
+  buyButtonText: {
+    color: 'white',
+  },
+  purchaseCard: {
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+    padding: 10,
+    margin: 10,
+    alignItems: 'center'
+  },
+  purchaseImage: {
+    width: '100%',
+    height: 100,
+    borderRadius: 8,
+    marginBottom: 10
+  },
+  purchaseTextContainer: {
+    flexDirection: 'row',
+  },
+  purchaseText: {
+    fontSize: 16
+  },
+  dotsText: {
+    fontSize: 16,
+    width: 30
+  },
+  purchaseOptionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 10
+  },
+  cancelButton: {
+    backgroundColor: '#FF3B30',
+    padding: 8,
+    borderRadius: 5
+  },
+  confirmButton: {
+    backgroundColor: '#4CD964',
+    padding: 8,
+    borderRadius: 5
+  },
+  buttonText: {
+    color: 'white'
+  },
+  // En tu ChatModalStyles.js
+quantityContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginRight: 10,
+},
+quantityButton: {
+  backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  borderRadius: 15,
+  width: 30,
+  height: 30,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+quantityButtonText: {
+  color: 'white',
+  fontSize: 18,
+  fontWeight: 'bold',
+},
+quantityText: {
+  color: 'white',
+  fontSize: 18,
+  marginHorizontal: 10,
+},
+purchaseCardContainer: {
+	width: '70%',
+	}
 });

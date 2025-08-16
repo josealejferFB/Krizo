@@ -89,6 +89,10 @@ JWT_SECRET=tu_jwt_secret_super_seguro_aqui
 # URL de la API (cambiar por la IP de la máquina del back)
 EXPO_PUBLIC_API_URL=http://192.168.1.105:5000/api
 
+# URL del servidor (cambiar por la IP de la máquina del back)
+# usado para recuperar imágenes
+EXPO_PUBLIC_SERVER_URL=http://192.168.1.108:5000/
+
 # Configuración de email (Gmail con contraseña de aplicación)
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587

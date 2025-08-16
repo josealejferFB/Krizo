@@ -17,6 +17,7 @@ const initProductsTable = () => {
         price REAL NOT NULL,
         category TEXT NOT NULL,
         imageUri TEXT,
+        is_deleted INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -69,19 +70,22 @@ const getProductById = (id) => {
   });
 };
 
-// Función para obtener todos los productos
 const getAllProducts = () => {
-  return new Promise((resolve, reject) => {
-    const selectSQL = 'SELECT * FROM products ORDER BY created_at DESC';
+  return new Promise((resolve, reject) => {
+    const selectSQL = `
+      SELECT * FROM products
+      WHERE is_deleted = 0
+      ORDER BY created_at DESC
+    `;
 
-    db.all(selectSQL, [], (err, rows) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
+    db.all(selectSQL, [], (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
 };
 
 // Función para actualizar un producto
@@ -111,21 +115,21 @@ const updateProduct = (id, productData) => {
 
 // Función para eliminar un producto
 const deleteProduct = (id) => {
-  return new Promise((resolve, reject) => {
-    const deleteSQL = 'DELETE FROM products WHERE id = ?';
+  return new Promise((resolve, reject) => {
+    const updateSQL = 'UPDATE products SET is_deleted = 1 WHERE id = ?';
 
-    db.run(deleteSQL, [id], function(err) {
-      if (err) {
-        reject(err);
-      } else {
-        if (this.changes > 0) {
-          resolve({ message: 'Producto eliminado correctamente' });
-        } else {
-          reject(new Error('Producto no encontrado'));
-        }
-      }
-    });
-  });
+    db.run(updateSQL, [id], function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        if (this.changes > 0) {
+          resolve({ message: 'Producto marcado como eliminado correctamente' });
+        } else {
+          reject(new Error('Producto no encontrado'));
+        }
+      }
+    });
+  });
 };
 
 // Exportar las funciones

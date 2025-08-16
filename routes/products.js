@@ -4,7 +4,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const { authenticateToken } = require('../middleware/auth-simple');
-const { db } = require('../database/products'); // Asegúrate de que la conexión a la base de datos esté configurada
+const { db, updateProduct, deleteProduct, getAllProducts } = require('../database/products');
 
 // Configuración de multer para manejar la carga de imágenes
 const storage = multer.diskStorage({
@@ -87,37 +87,104 @@ router.post('/', authenticateToken, upload.single('image'), async (req, res) => 
   }
 });
 
-// Obtener todos los productos
+// Obtener todos los productos (solo los no eliminados)
 router.get('/', async (req, res) => {
+  try {
+    // Llama a la función de la base de datos que ya filtra por 'is_deleted = 0'
+    const products = await getAllProducts();
+
+    res.json({
+      success: true,
+      data: products
+    });
+  } catch (error) {
+    console.error('Error obteniendo productos:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor'
+    });
+  }
+});
+
+router.put('/:id', upload.single('image'), async (req, res) => {
+  const { id } = req.params;
+  const { name, brand, quantity, price, category } = req.body;
+  
+  let imageUri;
+
+  // 1. Verificar si se ha subido un nuevo archivo
+  if (req.file) {
+    imageUri = req.file.path; // Usa la ruta del nuevo archivo
+  } else {
+    // 2. Si no hay nuevo archivo, usar la ruta existente del cuerpo de la solicitud
+    imageUri = req.body.imageUri;
+  }
+
+  // 3. Validar que los campos esenciales estén presentes
+  if (!name || !brand || !quantity || !price || !category || !imageUri) {
+    return res.status(400).json({
+      success: false,
+      message: 'Por favor, completa todos los campos requeridos, incluyendo la imagen.'
+    });
+  }
+
+  try {
+    // 4. Llamar a la función de actualización con todos los datos
+    const updatedProduct = await updateProduct(id, {
+      name,
+      brand,
+      quantity,
+      price,
+      category,
+      imageUri
+    });
+    
+    res.status(200).json({ success: true, data: updatedProduct });
+  } catch (error) {
+    console.error('Error al actualizar el producto:', error);
+    res.status(500).json({ success: false, message: `Error interno del servidor. ${error}` });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const query = 'SELECT * FROM products ORDER BY created_at DESC';
-
-    db.all(query, [], (err, products) => {
-      if (err) {
-        console.error('Error obteniendo productos:', err);
-        return res.status(500).json({
-          success: false,
-          message: 'Error interno del servidor'
-        });
-      }
-
-      res.json({
-        success: true,
-        data: products
-      });
-    });
-
+    const result = await deleteProduct(id);
+    res.status(200).json({ success: true, message: result.message });
   } catch (error) {
-    console.error('Error obteniendo productos:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno del servidor'
-    });
+    console.error('Error al eliminar el producto:', error);
+    if (error.message === 'Producto no encontrado') {
+      return res.status(404).json({ success: false, message: error.message });
+    }
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
   }
 });
 
+// Obtener un solo producto por ID
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const query = 'SELECT * FROM products WHERE id = ?';
+    db.get(query, [id], (err, product) => {
+      if (err) {
+        console.error('Error obteniendo producto:', err);
+        return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+      }
 
+      if (!product) {
+        return res.status(404).json({ success: false, message: 'Producto no encontrado' });
+      }
+
+      res.json({ success: true, data: product });
+    });
+
+  } catch (error) {
+    console.error('Error obteniendo producto:', error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
+});
 
 // Exportar el router
 module.exports = router;

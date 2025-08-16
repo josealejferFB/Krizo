@@ -203,7 +203,7 @@ router.get('/sessions/worker/:workerId', authenticateToken, async (req, res) => 
 // POST /api/chat/messages - Crear un nuevo mensaje
 router.post('/messages', authenticateToken, async (req, res) => {
   try {
-    const { session_id, message, sender_type } = req.body;
+    const { session_id, message, sender_type, purchase_request, product_details, purchase_status } = req.body;
     const sender_id = req.user.id;
 
     if (!session_id || !message || !sender_type) {
@@ -224,6 +224,9 @@ router.post('/messages', authenticateToken, async (req, res) => {
       session_id,
       sender_id,
       sender_type,
+      purchase_request, 
+      product_details,
+      purchase_status,
       message: message.trim()
     };
 
@@ -259,8 +262,6 @@ router.get('/messages/:sessionId', authenticateToken, async (req, res) => {
         message: 'sessionId es requerido'
       });
     }
-
-
 
     const messages = await getMessagesBySessionId(sessionId);
 

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, Linking, Platform } from 'react-native';
 import { Appbar, Text, TextInput, Button } from 'react-native-paper'; // Asegúrate de importar Picker
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const ShopConfigScreen = () => {
   const navigation = useNavigation();
+    const route = useRoute();
   const { token } = useAuth();
   const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
   const SERVER_URL = process.env.EXPO_PUBLIC_SERVER_URL || 'http://192.168.1.14:5000/api';
@@ -22,6 +23,9 @@ const ShopConfigScreen = () => {
   const [productImageUri, setProductImageUri] = useState(null);
   const [productCategory, setProductCategory] = useState(''); // Estado para la categoría
 
+const { productToEdit, onProductUpdated } = route.params || {};
+  const [isEditing, setIsEditing] = useState(false);
+  
   // Definir las categorías
   const categories = [
     { label: 'Selecciona una categoría', value: '' },
@@ -30,8 +34,23 @@ const ShopConfigScreen = () => {
     { label: 'Baterías', value: 'baterias' },
     { label: 'Aceites', value: 'aceites' },
     { label: 'Filtros', value: 'filtros' },
+    { label: 'Bujías', value: 'bujías' },
+
     // Agrega más categorías según sea necesario
   ];
+
+ useEffect(() => {
+    if (productToEdit) {
+      setIsEditing(true);
+      setProductName(productToEdit.name);
+      setProductBrand(productToEdit.brand);
+      setProductQuantity(String(productToEdit.quantity));
+      setProductPrice(String(productToEdit.price));
+      setProductCategory(productToEdit.category);
+      // For editing, we already have a URI from the server
+      setProductImageUri(`${SERVER_URL}${productToEdit.imageUri}`);
+    }
+  }, [productToEdit]);
 
   const pickImage = async () => {
     try {
@@ -66,55 +85,81 @@ const ShopConfigScreen = () => {
     }
   };
 
-  const handleSaveChanges = async () => {
-    if (!productName || !productBrand || !productQuantity || !productPrice || !productImageUri || !productCategory) {
-      Alert.alert('Campos Incompletos', 'Por favor, rellena todos los campos y selecciona una imagen.');
+const handleSaveChanges = async () => {
+  if (!productName || !productBrand || !productQuantity || !productPrice || !productImageUri || !productCategory) {
+    Alert.alert('Campos Incompletos', 'Por favor, rellena todos los campos y selecciona una imagen.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('name', productName);
+  formData.append('brand', productBrand);
+  formData.append('quantity', parseInt(productQuantity));
+  formData.append('price', parseFloat(productPrice));
+  formData.append('category', productCategory);
+
+  const isNewImageSelected = productImageUri && !productImageUri.startsWith(SERVER_URL);
+  if (isNewImageSelected) {
+    formData.append('image', {
+      uri: productImageUri,
+      name: `product_${Date.now()}.jpg`,
+      type: 'image/jpeg',
+    });
+  } else if (isEditing) {
+    formData.append('imageUri', productToEdit.imageUri);
+  }
+
+  const url = isEditing
+    ? `${API_BASE_URL}/products/${productToEdit.id}`
+    : `${API_BASE_URL}/products`;
+  console.log('URL de la API:', url);
+
+  const method = isEditing ? 'PUT' : 'POST';
+
+  try {
+    const response = await fetch(url, {
+      method: method,
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`        
+      },
+    });
+
+    const textResponse = await response.text(); // Obtén la respuesta como texto
+    console.log('Respuesta del servidor:', textResponse); // Imprime la respuesta
+
+    let data;
+    try {
+      data = JSON.parse(textResponse);
+    } catch (error) {
+      console.error('Error al analizar JSON:', error);
+      Alert.alert('Error', 'Error al procesar la respuesta del servidor.');
       return;
     }
 
-    const formData = new FormData();
-    formData.append('name', productName);
-    formData.append('brand', productBrand);
-    formData.append('quantity', parseInt(productQuantity));
-    formData.append('price', parseFloat(productPrice));
-    formData.append('category', productCategory); // Agregar la categoría al FormData
-
-    // Agregar la imagen como archivo
-    formData.append('image', {
-      uri: productImageUri,
-      name: `product_${Date.now()}.jpg`, // Nombre único
-      type: 'image/jpeg'
-    });
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/products`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`        
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert('Producto Añadido', 'El producto ha sido guardado exitosamente.');
-        // Reiniciar campos después de guardar
-        setProductName('');
-        setProductBrand('');
-        setProductQuantity('');
-        setProductPrice('');
-        setProductCategory(''); // Reiniciar categoría
-        setProductImageUri(null);
-      } else {
-        Alert.alert('Error', data.message || 'Error al guardar el producto.');
-      }
-    } catch (error) {
-      console.error('Error al registrar el producto:', error);
-      Alert.alert('Error', 'Error al registrar el producto.');
+    if (response.ok) {
+      Alert.alert('Éxito', isEditing ? 'Producto actualizado exitosamente.' : 'Producto añadido exitosamente.');
+      
+                  if (onProductUpdated) {
+                onProductUpdated(); 
+            }
+      
+      // Reiniciar campos después de guardar
+      setProductName('');
+      setProductBrand('');
+      setProductQuantity('');
+      setProductPrice('');
+      setProductCategory('');
+      setProductImageUri(null);
+    } else {
+      Alert.alert('Error', data.message || 'Error al guardar el producto.');
     }
-  };
+  } catch (error) {
+    console.error('Error al registrar el producto:', error);
+    Alert.alert('Error', 'Error al registrar el producto.');
+  }
+};
 
   return (
     <LinearGradient
@@ -137,7 +182,7 @@ const ShopConfigScreen = () => {
           </TouchableOpacity>
 
           <View style={styles.appBarTitleContent}>
-            <Text style={styles.appBarTitle}>Añadir producto</Text>
+<Text style={styles.appBarTitle}>{isEditing ? 'Editar producto' : 'Añadir producto'}</Text>
           </View>
         </View>
       </View>

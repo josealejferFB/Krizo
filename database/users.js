@@ -717,6 +717,9 @@ const initRequestsTable = () => {
         message TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         is_read INTEGER DEFAULT 0,
+        purchase_request BOOLEAN DEFAULT FALSE,
+        product_details TEXT DEFAULT NULL,
+        purchase_status TEXT DEFAULT 'pending',
         FOREIGN KEY (session_id) REFERENCES chat_sessions (id)
       )
     `;
@@ -1103,14 +1106,14 @@ const updateRequestStatus = (requestId, status) => {
 // Función para crear un nuevo mensaje
 const createMessage = (messageData) => {
   return new Promise((resolve, reject) => {
-    const { session_id, sender_id, sender_type, message } = messageData;
+    const { session_id, sender_id, sender_type, message, purchase_request, product_details, purchase_status } = messageData;
     
     const insertSQL = `
-      INSERT INTO messages (session_id, sender_id, sender_type, message)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO messages (session_id, sender_id, sender_type, message, purchase_request, product_details, purchase_status)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     
-    db.run(insertSQL, [session_id, sender_id, sender_type, message], function(err) {
+    db.run(insertSQL, [session_id, sender_id, sender_type, message, purchase_request, product_details, purchase_status], function(err) {
       if (err) {
         console.error('Error en createMessage:', err);
         reject(err);
