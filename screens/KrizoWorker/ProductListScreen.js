@@ -183,7 +183,7 @@ const FloatingButton = () => {
                 <Card.Actions>
 				<Button
                   mode="contained"
-					onPress={() => handleEditProduct()}
+					onPress={() => handleEditProduct(product)}
                   style={styles.buyButton}
                   labelStyle={styles.buyButtonLabel}
                 >

@@ -110,73 +110,6 @@ const SERVER_URL =
     }
   };
 
-const handleAccept = async (message) => {
-  console.log(`✅ Aceptar solicitud de compra con ID: ${message.id}`);
-  try {
-    const productDetails = typeof message.product_details === 'string'
-      ? JSON.parse(message.product_details)
-      : message.product_details;
-    
-    const response = await fetch(`${API_BASE_URL}/chat/purchase/${message.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        action: 'accepted',
-        product_id: productDetails.id,
-        quantity: productDetails.quantity
-      })
-    });
-
-    if (response.ok) {
-      const updatedMessages = messages.map(msg =>
-        msg.id === message.id
-          ? { ...msg, purchase_status: 'accepted' }
-          : msg
-      );
-      setMessages(updatedMessages);
-      Alert.alert("Éxito", "Solicitud de compra aceptada y stock actualizado.");
-    } else {
-      const errorText = await response.text();
-      Alert.alert("Error", `No se pudo aceptar la solicitud: ${errorText}`);
-    }
-  } catch (error) {
-    console.error("Error al aceptar la solicitud:", error);
-    Alert.alert("Error", "No se pudo procesar la solicitud.");
-  }
-};
-
-const handleReject = async (messageId) => {
-  console.log(`❌ Rechazar solicitud de compra con ID: ${messageId}`);
-  try {
-    const response = await fetch(`${API_BASE_URL}/chat/purchase/${messageId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ action: 'rejected' })
-    });
-
-    if (response.ok) {
-      const updatedMessages = messages.map(msg =>
-        msg.id === messageId
-          ? { ...msg, purchase_status: 'rejected' }
-          : msg
-      );
-      setMessages(updatedMessages);
-      Alert.alert("Rechazado", "Solicitud de compra rechazada.");
-    } else {
-      Alert.alert("Error", "No se pudo rechazar la solicitud.");
-    }
-  } catch (error) {
-    console.error("Error al rechazar la solicitud:", error);
-    Alert.alert("Error", "No se pudo procesar la solicitud.");
-  }
-};
-
 const handlePurchaseAction = async (message, action) => {
   try {
     const productDetails = typeof message.product_details === 'string'
@@ -211,8 +144,8 @@ console.log(response.ok)
       setMessages(updatedMessages);
       Alert.alert("Éxito", `Solicitud de compra ${action === 'accepted' ? 'aceptada' : 'rechazada'}.`);
     } else {
-      const errorResult = await response.text();
-console.log(errorResult)
+      const errorResult = await response.json();
+console.log(errorResult.message)
       Alert.alert("Error", `No se pudo procesar la solicitud: ${errorResult.message}`);
     }
   } catch (error) {
@@ -390,8 +323,8 @@ const styles = StyleSheet.create({
   backButton: { marginRight: 16, padding: 4 },
   headerInfo: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   avatar: { backgroundColor: 'rgba(255,255,255,0.2)' },
-  clientInfo: { marginLeft: 12 },
-  clientName: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  clientInfo: { marginLeft: 15 },
+  clientName: { color: 'white', fontSize: 16, fontWeight: 'bold', width: 150},
   clientType: { color: 'rgba(255,255,255,0.8)', fontSize: 12 },
   chatContainer: { flex: 1 },
   messagesContainer: { flex: 1 },

@@ -175,7 +175,7 @@ export const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
-width: 150,
+	width: 150,
   },
   workerStatus: {
     color: 'rgba(255,255,255,0.8)',

@@ -11,6 +11,7 @@ const {
   updateChatSession,
   getUserById
 } = require('../database/users');
+const { processPurchase } = require('../database/products');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
@@ -322,42 +323,37 @@ router.put('/messages/:sessionId/read', authenticateToken, async (req, res) => {
 });
 
 router.post('/purchase/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const { action } = req.body;
+    const { id } = req.params;
+    const { action } = req.body;
 
-  // No necesitas product_id aquí, ya que no existe en la tabla de mensajes
+    if (!['accepted', 'rejected'].includes(action)) {
+        return res.status(400).json({ success: false, message: 'Acción no válida.' });
+    }
 
-  if (!['accepted', 'rejected'].includes(action)) {
-    return res.status(400).json({ success: false, message: 'Acción no válida.' });
-  }
+    try {
+        // Necesitas obtener los detalles del producto desde el mensaje primero
+        const message = await new Promise((resolve, reject) => {
+            db.get('SELECT product_details FROM messages WHERE id = ?', [id], (err, row) => {
+                if (err) return reject(err);
+                if (!row) return reject(new Error('Solicitud no encontrada.'));
+                resolve(JSON.parse(row.product_details));
+            });
+        });
 
-  try {
-    // ⚠️ Consulta SQL corregida para usar solo la id del mensaje
-    const updateSQL = `
-      UPDATE messages 
-      SET purchase_status = ?, updated_at = CURRENT_TIMESTAMP 
-      WHERE id = ?
-    `;
+        const productId = message.id;
+        const quantity = message.quantity;
 
-    const result = await new Promise((resolve, reject) => {
-      db.run(updateSQL, [action, id], function(err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(this.changes);
-        }
-      });
-    });
+        // Llama a la nueva función que maneja toda la lógica de la base de datos
+        await processPurchase(id, productId, quantity, action);
 
-    if (result > 0) {
-      return res.status(200).json({ success: true, message: 'Solicitud procesada correctamente.' });
-    } else {
-      return res.status(404).json({ success: false, message: 'Solicitud no encontrada.' });
-    }
-  } catch (error) {
-    console.error('Error al procesar la solicitud:', error);
-    return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
-  }
+        res.status(200).json({ success: true, message: 'Solicitud procesada correctamente.' });
+    } catch (error) {
+        console.error('Error al procesar la solicitud:', error);
+        if (error.message.includes('Stock insuficiente')) {
+            return res.status(400).json({ success: false, message: error.message });
+        }
+        res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+    }
 });
 
 // Función para enviar notificación push
