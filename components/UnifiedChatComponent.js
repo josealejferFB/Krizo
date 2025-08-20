@@ -328,7 +328,6 @@ const UnifiedChatComponent = ({
 	 
    if (message.purchaseRequest) {
       return renderPurchaseCard(message)
-
     } 
 
     const isMyMessage = message.sender === userType
@@ -359,6 +358,53 @@ const UnifiedChatComponent = ({
       </View>
     )
   }
+
+const renderFooter = (currentIndex) => {
+  const selectedProduct = filteredProducts[currentIndex];
+  return (
+    <View style={styles.imageViewerFooter}>
+      {userType !== 'krizoworker' && (
+        <>
+          {/* Contenedor de cantidad */}
+          <View style={styles.quantityContainer}>
+            <TouchableOpacity
+              style={styles.quantityButton}
+              onPress={() => setQuantity((prev) => Math.max(1, prev - 1))}
+            >
+              <Text style={styles.quantityButtonText}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.quantityText}>{quantity}</Text>
+            <TouchableOpacity
+              style={styles.quantityButton}
+              onPress={() => {
+                if (quantity < selectedProduct?.quantity) {
+                  setQuantity((prev) => prev + 1);
+                } else {
+                  Alert.alert('Stock máximo alcanzado', `No puedes comprar más de ${selectedProduct?.quantity} unidades.`);
+                }
+              }}
+            >
+              <Text style={styles.quantityButtonText}>+</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Botón de compra */}
+          <TouchableOpacity
+            style={styles.buyButton}
+            onPress={() => sendPurchaseRequest(selectedProduct, quantity)}
+            disabled={isBuying}
+          >
+            {isBuying ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.buyButtonText}>Comprar</Text>
+            )}
+          </TouchableOpacity>
+        </>
+      )}
+    </View>
+  );
+};
 
   const renderImageThumbnail = ({ item, index }) => {
     const isAvailable = item.quantity > 0
@@ -565,47 +611,7 @@ const UnifiedChatComponent = ({
 
             </View>
           )}
-renderFooter={(currentIndex) => (
-  <View style={styles.imageViewerFooter}>
-    {userType !== 'krizoworker' && (
-      <View style={styles.quantityContainer}>
-        <TouchableOpacity
-          style={styles.quantityButton}
-          onPress={() => setQuantity(prev => Math.max(1, prev - 1))} // Previene que la cantidad sea menor a 1
-        >
-          <Text style={styles.quantityButtonText}>-</Text>
-        </TouchableOpacity>
-        <Text style={styles.quantityText}>{quantity}</Text>
-        <TouchableOpacity
-          style={styles.quantityButton}
-          onPress={() => {
-			  if (quantity < filteredProducts[currentImageIndex]?.quantity) {
-                setQuantity(prev => prev + 1);
-              } else {
-                Alert.alert('Stock máximo alcanzado', `No puedes comprar más de ${filteredProducts[currentImageIndex]?.quantity} unidades.`);
-              }
-			  }}
-        >
-          <Text style={styles.quantityButtonText}>+</Text>
-        </TouchableOpacity>
-      </View>
-    )}
-
-    {userType !== 'krizoworker' && (
-      <TouchableOpacity
-        style={styles.buyButton}
-        onPress={() => sendPurchaseRequest(filteredProducts[currentIndex], quantity)} // Pasa la cantidad a la función
-        disabled={isBuying}
-      >
-        {isBuying ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.buyButtonText}>Comprar</Text>
-        )}
-      </TouchableOpacity>
-    )}
-  </View>
-)}
+    renderFooter={renderFooter}
         />
       </Modal>
 

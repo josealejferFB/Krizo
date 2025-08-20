@@ -253,9 +253,7 @@ const renderMessage = (message) => {
             style={styles.avatar}
           />
           <View style={styles.clientInfo}>
-            <Text style={styles.clientName}>
-              {clientInfo?.firstName} {clientInfo?.lastName}
-            </Text>
+            <Text style={styles.clientName}>{clientInfo?.firstName} {clientInfo?.lastName}</Text>
             <Text style={styles.clientType}>Cliente</Text>
           </View>
         </View>
@@ -315,6 +313,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+justifyContent: 'flex-start',
     paddingHorizontal: 16,
     paddingVertical: 12,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -324,7 +323,7 @@ const styles = StyleSheet.create({
   headerInfo: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   avatar: { backgroundColor: 'rgba(255,255,255,0.2)' },
   clientInfo: { marginLeft: 15 },
-  clientName: { color: 'white', fontSize: 16, fontWeight: 'bold', width: 150},
+  clientName: { color: 'white', fontSize: 16, fontWeight: 'bold', width: 250 },
   clientType: { color: 'rgba(255,255,255,0.8)', fontSize: 12 },
   chatContainer: { flex: 1 },
   messagesContainer: { flex: 1 },

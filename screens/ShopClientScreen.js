@@ -19,6 +19,7 @@ const ShopClientScreen = () => {
   const [viewMode, setViewMode] = useState('shops');
   const [chatModalVisible, setChatModalVisible] = useState(false);
   const [selectedShop, setSelectedShop] = useState(null);
+const [productToBuy, setProductToBuy] = useState(null); // Añade esta línea
 
   const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.14:5000/api';
 const SERVER_URL =
@@ -48,10 +49,18 @@ const SERVER_URL =
         setShops(shopWorkers);
       }
 
-      const productsResult = await productsResponse.json();
-      if (productsResult.success) {
-        setProducts(productsResult.data);
-      }
+      
+const productsResult = await productsResponse.json();
+if (productsResult.success) {
+    // Inicializa la cantidad por defecto a comprar
+    const productsWithQuantity = productsResult.data.map(product => ({
+        ...product,
+        selectedQuantity: product.quantity == 0 ? 0 : 1
+    }));
+    setProducts(productsWithQuantity);
+}
+      
+      
     } catch (error) {
       console.error('Error loading data:', error);
       Alert.alert('Error', 'No se pudieron cargar los datos.');
@@ -82,30 +91,53 @@ const SERVER_URL =
   }, [searchQuery, viewMode, shops, products]);
 
   // Nueva función unificada para manejar el contacto
-  const handleContact = (item) => {
+const handleContact = (item) => {
     let shopToContact;
+    let productToBuy; // Nueva variable para el producto
+
     if (viewMode === 'shops') {
-      // Si estamos en la vista de tiendas, el item es la tienda
-      shopToContact = item;
+        shopToContact = item;
+        productToBuy = null; // No hay producto específico
     } else {
-      // Si estamos en la vista de productos, el item es el producto
-      // Buscamos la tienda dueña de ese producto
-      shopToContact = shops.find(shop => shop.id === item.ownerId);
-      if (!shopToContact) {
-        Alert.alert('Error', 'No se pudo encontrar la tienda asociada a este producto.');
-        return;
-      }
+        shopToContact = shops.find(shop => shop.id === item.ownerId);
+        productToBuy = item; // El item es el producto, que ya tiene 'selectedQuantity'
+        if (!shopToContact) {
+			console.log(item.ownerId)
+            Alert.alert('Error', 'No se pudo encontrar la tienda asociada a este producto.');
+            return;
+        }
     }
 
     if (!user) {
-      Alert.alert('Error', 'Debes iniciar sesión para contactar.');
-      return;
+        Alert.alert('Error', 'Debes iniciar sesión para contactar.');
+        return;
     }
 
     setSelectedShop(shopToContact);
+    setProductToBuy(productToBuy); // Nuevo estado para guardar el producto
     setChatModalVisible(true);
-  };
+};
 
+const handleCancelPurchase = () => {
+    setProductToBuy(null);
+};
+
+// Añade esta función a tu componente ShopClientScreen
+const handleQuantityChange = (productId, change) => {
+    setProducts(prevProducts =>
+        prevProducts.map(product => {
+            if (product.id === productId) {
+                const newQuantity = product.selectedQuantity + change;
+                return {
+                    ...product,
+                    // Limita la cantidad: no puede ser menor que 1 ni mayor que el stock disponible
+                    selectedQuantity: Math.min(Math.max(1, newQuantity), product.quantity),
+                };
+            }
+            return product;
+        })
+    );
+};
 
   const getCardToRender = () => {
     if (viewMode === 'shops') {
@@ -138,26 +170,38 @@ const SERVER_URL =
     } else {
       return (
         <View style={styles.productsGrid}>
-          {filteredProducts.length > 0 ? filteredProducts.map((product) => (
-            <Card key={product.id} style={styles.card}>
-              <View style={styles.cardContent}>
-                {product.imageUri ? (
-                  <Image source={{ uri: `{SERVER_URL}{product.imageUri}` }} style={styles.image} />
-                ) : (
-                  <Icon name="image-off-outline" size={100} color="#ccc" style={styles.noImagePlaceholder} />
-                )}
-                <View style={styles.details}>
-                  <Text style={styles.name}>{product.name}</Text>
-                  <Text style={styles.brand}>{product.brand}</Text>
-                  <Text style={styles.price}>${product.price}</Text>
+      {filteredProducts.length > 0 ? filteredProducts.map((product) => (
+        <Card key={product.id} style={styles.card}>
+          <View style={styles.cardContent}>
+            {product.imageUri ? (
+              <Image source={{ uri: `${SERVER_URL}${product.imageUri}` }} style={styles.image} />
+            ) : (
+              <Icon name="image-off-outline" size={100} color="#ccc" style={styles.noImagePlaceholder} />
+            )}
+            <View style={styles.details}>
+              <Text style={styles.name}>{product.name}</Text>
+              <Text style={styles.brand}>{product.brand}</Text>
+              <Text style={styles.price}>${product.price}</Text>
 
-                </View>
+              {/* NEW: Quantity Counter */}
+              <View style={styles.quantityContainer}>
+                <TouchableOpacity onPress={() => handleQuantityChange(product.id, -1)} style={styles.quantityButton}>
+                  <Icon name="minus" size={18} color="#FC5501" />
+                </TouchableOpacity>
+                <Text style={styles.quantityText}>{product.selectedQuantity}</Text>
+                <TouchableOpacity onPress={() => handleQuantityChange(product.id, 1)} style={styles.quantityButton}>
+                  <Icon name="plus" size={18} color="#FC5501" />
+                </TouchableOpacity>
               </View>
-              <Button mode="contained" onPress={() => handleContact(product)} style={styles.button}>
-                Contactar
-              </Button>
-            </Card>
-          )) : (
+              {/* END NEW */}
+
+            </View>
+          </View>
+          <Button mode="contained" onPress={() => handleContact(product)} style={styles.button}>
+            Contactar
+          </Button>
+        </Card>
+      )) : (
             <View style={styles.emptyContainer}>
               <Icon name="engine" size={64} color="#ccc" />
               <Text style={styles.emptyText}>No se encontraron productos</Text>
@@ -224,11 +268,18 @@ const SERVER_URL =
         ) : getCardToRender()}
       </ScrollView>
       <ChatModal
-        visible={chatModalVisible}
-        onClose={() => setChatModalVisible(false)}
-        mechanic={selectedShop}
-        userType="client"
-      />
+  visible={chatModalVisible}
+  onClose={() => {
+    setChatModalVisible(false);
+    setProductToBuy(null); // Limpia el estado al cerrar el modal
+  }}
+  mechanic={selectedShop}
+  productToBuy={productToBuy}
+  sessionId={selectedShop?.sessionId}
+  onCancelPurchase={handleCancelPurchase}
+  userType="client" 
+/>
+
     </LinearGradient>
   );
 };
@@ -431,6 +482,30 @@ const styles = StyleSheet.create({
     color: '#666',
     fontStyle: 'italic',
   },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginTop: 10,
+},
+quantityButton: {
+    padding: 5,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#FC5501',
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+},
+quantityText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginHorizontal: 10,
+},
+
 });
 
 export default ShopClientScreen;

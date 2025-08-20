@@ -30,7 +30,7 @@ const upload = multer({ storage });
 router.post('/', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { name, brand, quantity, price, category } = req.body; // No necesitas imageUri aquí
-    const user_id = req.user.id; // Suponiendo que el usuario que crea el producto es el que está autenticado
+    const ownerId = req.user.id; // Suponiendo que el usuario que crea el producto es el que está autenticado
 
     // Validar que todos los campos requeridos estén presentes
     if (!name || !brand || !quantity || !price || !category || !req.file) {
@@ -45,11 +45,11 @@ router.post('/', authenticateToken, upload.single('image'), async (req, res) => 
 
     // Crear producto
     const productQuery = `
-      INSERT INTO products (name, brand, quantity, price, category, imageUri, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+      INSERT INTO products (name, brand, quantity, price, category, imageUri, ownerId, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
     `;
 
-    db.run(productQuery, [name, brand, quantity, price, category, imageUri], function(err) {
+    db.run(productQuery, [name, brand, quantity, price, category, imageUri, ownerId], function(err) {
       if (err) {
         console.error('Error creando producto:', err);
         return res.status(500).json({

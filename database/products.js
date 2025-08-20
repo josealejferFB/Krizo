@@ -17,6 +17,7 @@ const initProductsTable = () => {
         price REAL NOT NULL,
         category TEXT NOT NULL,
         imageUri TEXT,
+        ownerId INTEGER NOT NULL,
         is_deleted INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -36,16 +37,16 @@ const initProductsTable = () => {
 };
 
 // Función para insertar un nuevo producto
-const createProduct = (productData) => {
+const createProduct = (productData, ownerId) => {
   return new Promise((resolve, reject) => {
     const { name, brand, quantity, price, category, imageUri } = productData;
 
     const insertSQL = `
-      INSERT INTO products (name, brand, quantity, price, category, imageUri)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO products (name, brand, quantity, price, category, imageUri, ownerId)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.run(insertSQL, [name, brand, quantity, price, category, imageUri || null], function(err) {
+    db.run(insertSQL, [name, brand, quantity, price, category, imageUri || null, ownerId], function(err) {
       if (err) {
         reject(err);
       } else {

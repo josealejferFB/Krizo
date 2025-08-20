@@ -5,6 +5,49 @@ const { height } = Dimensions.get('window');
 
 
 export const styles = StyleSheet.create({
+	initialPurchaseContainer: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    alignItems: 'center',
+},
+initialPurchaseText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginHorizontal: 10,
+    marginVertical: 10,
+    textAlign: 'center',
+},
+initialPurchaseDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+},
+initialPurchaseImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 10,
+    marginRight: 10,
+},
+initialPurchaseInfo: {
+    flex: 1,
+},
+initialPurchaseTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+},
+initialPurchasePrice: {
+    fontSize: 14,
+    color: '#666',
+},
+initialPurchaseButton: {
+    backgroundColor: '#FC5501',
+    borderRadius: 8,
+    width: '100%',
+    marginTop: 5,
+},
 	imageViewerHeader: {
     position: 'absolute',
     top: 80,
@@ -436,5 +479,11 @@ quantityText: {
 },
 purchaseCardContainer: {
 	width: '70%',
-	}
+	},
+	closePurchaseButton: {
+    position: 'absolute',
+    right: 5,
+    zIndex: 1,
+    marginTop: 5,
+},
 });
